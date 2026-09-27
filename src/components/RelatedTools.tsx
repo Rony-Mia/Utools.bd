@@ -76,6 +76,14 @@ export const ALL_RELATED_TOOLS: RelatedToolItem[] = [
     description: 'বিজয় ফন্টের লেখা ইউনিকোডে এবং ইউনিকোড লেখা বিজয়ে রূপান্তর করুন মুহূর্তের মধ্যে।',
     buttonText: 'বিজয় কনভার্টারে যান',
   },
+  {
+    id: 'typing-test',
+    to: '/typing-test',
+    badge: 'টেক্সট',
+    title: 'টাইপিং স্পিড টেস্ট (Typing Speed Test)',
+    description: 'বাংলা ও ইংরেজিতে আপনার টাইপিং গতি (WPM), নির্ভুলতা ও কীবোর্ড ভুল লাইভ পরীক্ষা করুন।',
+    buttonText: 'টাইপিং টেস্টে যান',
+  },
 ];
 
 interface RelatedToolsProps {

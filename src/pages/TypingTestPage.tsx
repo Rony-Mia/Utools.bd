@@ -28,6 +28,7 @@ import { TypingTextDisplay } from '../components/typing/TypingTextDisplay.tsx';
 import { TypingResult } from '../components/typing/TypingResult.tsx';
 import { TypingHistorySection } from '../components/typing/TypingHistorySection.tsx';
 import { TypingFaq, TYPING_FAQS } from '../components/typing/TypingFaq.tsx';
+import { RelatedTools } from '../components/RelatedTools.tsx';
 
 export const TypingTestPage: React.FC = () => {
   // ── Configuration State ───────────────────────────────────────────────────
@@ -470,6 +471,9 @@ export const TypingTestPage: React.FC = () => {
 
       {/* ── Helpful Guides & FAQ ─────────────────────────────────────────── */}
       <TypingFaq />
+
+      {/* ── Cross-Linking Section ("আরও দরকারি টুলস") ───────────────────── */}
+      <RelatedTools currentToolId="typing-test" />
     </div>
   );
 };
