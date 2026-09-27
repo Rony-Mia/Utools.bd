@@ -15,12 +15,12 @@ interface TypingModeSelectorProps {
   isRunning: boolean;
 }
 
-const DURATIONS: Array<{ id: TypingDuration; label: string; wordCount: string; tooltip: string }> = [
-  { id: 15, label: '১৫ সে.', wordCount: '৩৫ শব্দ', tooltip: '১৫ সেকেন্ড: ৩৫টি শব্দ (দ্রুতগতির টাইপারের জন্য নিরাপদ)' },
-  { id: 30, label: '৩০ সে.', wordCount: '৬০ শব্দ', tooltip: '৩০ সেকেন্ড: ৬০টি শব্দ (টেক্সট যেন কম না পড়ে)' },
-  { id: 60, label: '৬০ সে.', wordCount: '১২০ শব্দ', tooltip: '৬০ সেকেন্ড: ১২০টি শব্দ (স্ট্যান্ডার্ড মোড)' },
-  { id: 120, label: '১২০ সে.', wordCount: '২৫০ শব্দ', tooltip: '১২০ সেকেন্ড: ২৫০টি শব্দ (২ মিনিটের টেস্টের জন্য আবশ্যক)' },
-  { id: 'custom', label: 'কাস্টম', wordCount: '৫০০ শব্দ', tooltip: 'কাস্টম মোড: ডাইনামিক ৫০০ শব্দ বা নিজের টেক্সট' },
+const DURATIONS: Array<{ id: TypingDuration; label: string; tooltip: string }> = [
+  { id: 15, label: '১৫ সে.', tooltip: '১৫ সেকেন্ড (৩৫ শব্দ)' },
+  { id: 30, label: '৩০ সে.', tooltip: '৩০ সেকেন্ড (৬০ শব্দ)' },
+  { id: 60, label: '৬০ সে.', tooltip: '৬০ সেকেন্ড / ১ মিনিট (১২০ শব্দ - স্ট্যান্ডার্ড)' },
+  { id: 120, label: '১২০ সে.', tooltip: '১২০ সেকেন্ড / ২ মিনিট (২৫০ শব্দ)' },
+  { id: 'custom', label: 'কাস্টম', tooltip: 'কাস্টম মোড (ডাইনামিক ৫০০ শব্দ বা নিজের অনুচ্ছেদ)' },
 ];
 
 export const TypingModeSelector: React.FC<TypingModeSelectorProps> = ({
@@ -66,11 +66,11 @@ export const TypingModeSelector: React.FC<TypingModeSelectorProps> = ({
   };
 
   return (
-    <div className="bg-[#FFFFFF] border border-[#D5E4DB] rounded-2xl p-3 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
-      {/* Left: Language & Keyboard Controls */}
+    <div className="bg-[#FFFFFF] border border-[#D5E4DB] rounded-2xl p-2.5 sm:p-3 shadow-xs flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5 sm:gap-3">
+      {/* Left Group: Language & Layout & Difficulty */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
         {/* Language Segmented Control */}
-        <div className="inline-flex items-center bg-[#F0F4F2] p-1 rounded-xl border border-[#D5E4DB]">
+        <div className="inline-flex items-center bg-[#F0F4F2] p-0.5 sm:p-1 rounded-xl border border-[#D5E4DB]">
           <button
             type="button"
             onClick={() => handleLanguageClick('bangla')}
@@ -99,29 +99,25 @@ export const TypingModeSelector: React.FC<TypingModeSelectorProps> = ({
           </button>
         </div>
 
-        {/* Bangla Keyboard Layout Selector (Unicode vs Bijoy Classic vs Bijoy Unicode) */}
+        {/* Bangla Keyboard Layout (Unicode / Avro vs Bijoy Classic) */}
         {language === 'bangla' && (
-          <div className="inline-flex items-center bg-[#F0F4F2] p-1 rounded-xl border border-[#D5E4DB]">
-            <span className="hidden md:inline-flex items-center gap-1 pl-2 pr-1 text-[11px] text-[#4A5A52] font-semibold">
-              <Keyboard className="w-3 h-3 text-[#0B5D3B]" />
-              <span>লেআউট:</span>
-            </span>
+          <div className="inline-flex items-center bg-[#F0F4F2] p-0.5 sm:p-1 rounded-xl border border-[#D5E4DB]">
             <button
               type="button"
               onClick={() => handleKeyboardLayoutClick('unicode')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 keyboardLayout === 'unicode'
                   ? 'bg-[#0B5D3B] text-white shadow-xs'
                   : 'text-[#4A5A52] hover:text-[#0F1F17]'
               }`}
-              title="অভ্র, ফোনেটিক বা সিস্টেম ইউনিকোড কিবোর্ড"
+              title="ইউনিকোড / অভ্র ফোনেটিক কিবোর্ড"
             >
               ইউনিকোড (অভ্র)
             </button>
             <button
               type="button"
               onClick={() => handleKeyboardLayoutClick('bijoy')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 keyboardLayout === 'bijoy'
                   ? 'bg-[#0B5D3B] text-white shadow-xs'
                   : 'text-[#4A5A52] hover:text-[#0F1F17]'
@@ -130,43 +126,33 @@ export const TypingModeSelector: React.FC<TypingModeSelectorProps> = ({
             >
               বিজয় ক্লাসিক
             </button>
-            <button
-              type="button"
-              onClick={() => handleKeyboardLayoutClick('bijoy_unicode')}
-              className={`hidden sm:inline-block px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
-                keyboardLayout === 'bijoy_unicode'
-                  ? 'bg-[#0B5D3B] text-white shadow-xs'
-                  : 'text-[#4A5A52] hover:text-[#0F1F17]'
-              }`}
-              title="বিজয় লেআউটে ইউনিকোড টাইপিং (Ctrl+Alt+V / জাতীয় লেআউট)"
-            >
-              বিজয় ইউনিকোড
-            </button>
           </div>
         )}
 
-        {/* Difficulty Pill (Only for generated text) */}
+        {/* Difficulty Pill */}
         {duration !== 'custom' && (
-          <div className="inline-flex items-center bg-[#F8FAF9] p-1 rounded-xl border border-[#D5E4DB]">
+          <div className="inline-flex items-center bg-[#F8FAF9] p-0.5 sm:p-1 rounded-xl border border-[#D5E4DB]">
             <button
               type="button"
               onClick={() => onDifficultyChange('easy')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
                 difficulty === 'easy'
                   ? 'bg-white text-[#0B5D3B] shadow-2xs font-semibold'
                   : 'text-[#4A5A52] hover:text-[#0F1F17]'
               }`}
+              title="সহজ অনুচ্ছেদ"
             >
               সহজ
             </button>
             <button
               type="button"
               onClick={() => onDifficultyChange('hard')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer flex items-center gap-1 ${
                 difficulty === 'hard'
                   ? 'bg-white text-[#0B5D3B] shadow-2xs font-semibold'
                   : 'text-[#4A5A52] hover:text-[#0F1F17]'
               }`}
+              title="কঠিন ও যুক্তাক্ষরযুক্ত অনুচ্ছেদ"
             >
               <Sparkles className="w-3 h-3 text-[#F5A524]" />
               <span>যুক্তাক্ষর</span>
@@ -175,50 +161,41 @@ export const TypingModeSelector: React.FC<TypingModeSelectorProps> = ({
         )}
       </div>
 
-      {/* Middle: Duration Selector */}
-      <div className="flex items-center gap-1 bg-[#F0F4F2] p-1 rounded-xl border border-[#D5E4DB] overflow-x-auto max-w-full">
-        <span className="hidden sm:inline-flex items-center gap-1 pl-2 pr-1 text-[11px] text-[#4A5A52] font-medium">
-          <Clock className="w-3 h-3 text-[#0B5D3B]" />
-        </span>
-        {DURATIONS.map((d) => {
-          const isActive = duration === d.id;
-          return (
-            <button
-              key={String(d.id)}
-              type="button"
-              onClick={() => handleDurationClick(d.id)}
-              title={d.tooltip}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-                isActive
-                  ? 'bg-[#0B5D3B] text-white shadow-xs'
-                  : 'text-[#4A5A52] hover:text-[#0F1F17] hover:bg-white/60'
-              }`}
-              aria-pressed={isActive}
-            >
-              <span>{d.label}</span>
-              <span
-                className={`text-[10px] font-normal px-1 py-0.2 rounded ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-[#D5E4DB]/50 text-[#4A5A52]'
+      {/* Right Group: Duration Selector & Restart Button (full width on mobile, right-aligned on desktop) */}
+      <div className="flex items-center justify-between lg:justify-end gap-2 sm:gap-2.5 w-full lg:w-auto">
+        {/* Duration Segmented Control */}
+        <div className="flex-1 lg:flex-initial flex items-center justify-between sm:justify-start gap-1 bg-[#F0F4F2] p-0.5 sm:p-1 rounded-xl border border-[#D5E4DB]">
+          {DURATIONS.map((d) => {
+            const isActive = duration === d.id;
+            return (
+              <button
+                key={String(d.id)}
+                type="button"
+                onClick={() => handleDurationClick(d.id)}
+                title={d.tooltip}
+                className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer text-center ${
+                  isActive
+                    ? 'bg-[#0B5D3B] text-white shadow-xs'
+                    : 'text-[#4A5A52] hover:text-[#0F1F17] hover:bg-white/60'
                 }`}
+                aria-pressed={isActive}
               >
-                {d.wordCount}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                {d.label}
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Right: Quick Restart Button */}
-      <div className="flex items-center gap-2">
+        {/* Quick Restart Button */}
         <button
           type="button"
           onClick={onRestart}
           title="টেস্ট পুনরায় শুরু করুন (Shortcut: Tab বা Esc)"
-          className="px-3.5 py-1.5 rounded-xl border border-[#D5E4DB] bg-white hover:bg-[#F0F4F2] text-[#084A2E] text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+          className="shrink-0 px-3 sm:px-3.5 py-1.5 rounded-xl border border-[#D5E4DB] bg-white hover:bg-[#F0F4F2] text-[#084A2E] text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>রিস্টার্ট</span>
-          <span className="hidden md:inline-block font-mono text-[10px] text-[#4A5A52] bg-[#F0F4F2] px-1.5 py-0.5 rounded border border-[#D5E4DB]">
+          <span className="hidden xl:inline-block font-mono text-[10px] text-[#4A5A52] bg-[#F0F4F2] px-1 py-0.2 rounded border border-[#D5E4DB]">
             Tab
           </span>
         </button>

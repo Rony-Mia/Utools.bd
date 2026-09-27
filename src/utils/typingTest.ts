@@ -117,7 +117,7 @@ export function analyzeTypingProgress(
   const errorChars: Record<string, number> = {};
 
   for (let i = 0; i < totalTyped; i++) {
-    const inputChar = userInput[i];
+    const inputChar = effectiveInput[i];
     const expectedChar = referenceText[i];
 
     if (inputChar === expectedChar) {
@@ -125,7 +125,7 @@ export function analyzeTypingProgress(
     } else {
       uncorrectedErrorCount++;
       // Count mistake on the intended character (or input character)
-      const target = (expectedChar && expectedChar !== ' ') ? expectedChar.toLowerCase() : inputChar.toLowerCase();
+      const target = (expectedChar && expectedChar !== ' ') ? expectedChar.toLowerCase() : (inputChar ? inputChar.toLowerCase() : '');
       if (target) {
         errorChars[target] = (errorChars[target] || 0) + 1;
       }
