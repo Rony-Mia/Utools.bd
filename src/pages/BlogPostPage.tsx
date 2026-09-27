@@ -355,7 +355,7 @@ const SLUG_REDIRECTS: Record<string, string> = {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
               {/* Table of Contents - Mobile Accordion */}
               {tocItems.length > 0 && (
-                <div className="lg:hidden col-span-12">
+                <div className="lg:hidden">
                   <div className="border border-[#D5E4DB] rounded-2xl p-4 bg-[#F8FAF9]">
                     <button
                       type="button"
@@ -389,7 +389,7 @@ const SLUG_REDIRECTS: Record<string, string> = {
               )}
 
               {/* Markdown Body */}
-              <div className={`${tocItems.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'} prose max-w-none`}>
+              <div className={`min-w-0 ${tocItems.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'} prose max-w-none`}>
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
