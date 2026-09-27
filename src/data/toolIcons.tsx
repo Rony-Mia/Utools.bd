@@ -9,6 +9,7 @@ import {
   Grid,
   GraduationCap,
   Images,
+  Keyboard,
   LandPlot,
   Layers,
   QrCode,
@@ -24,6 +25,7 @@ export type ToolIconComponent = React.ComponentType<{ className?: string }>;
 /** One icon per tool id (all 16 tools). */
 const ICONS: Record<string, ToolIconComponent> = {
   'bijoy-converter': ArrowLeftRight,
+  'typing-test': Keyboard,
   'photo-resizer': Crop,
   'bulk-photo-resizer': Images,
   'heic-converter': Smartphone,

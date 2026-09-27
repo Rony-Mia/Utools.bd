@@ -13,6 +13,17 @@ export const TOOLS: ToolItem[] = [
     link: '/converter'
   },
   {
+    id: 'typing-test',
+    refCode: 'TXT-TYPE-02',
+    title: 'টাইপিং স্পিড টেস্ট (Typing Speed Test)',
+    description: 'বাংলা ও ইংরেজিতে আপনার টাইপিং গতি (WPM), নির্ভুলতা ও কীবোর্ড ভুল লাইভ পরীক্ষা করুন। কাস্টম প্যারাগ্রাফ ও সার্টিফিকেট শেয়ার।',
+    feature: 'বাংলা ও English • WPM গ্রাফ • কীবোর্ড হিটম্যাপ • অফলাইন হিস্ট্রি',
+    category: 'text',
+    status: 'active',
+    version: 'v1.0',
+    link: '/typing-test'
+  },
+  {
     id: 'photo-resizer',
     refCode: 'IMG-GOV-02',
     title: 'সরকারি ও পাসপোর্ট ছবি রিসাইজার',

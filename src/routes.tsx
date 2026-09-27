@@ -19,6 +19,7 @@ const BulkPhotoResizerPage = lazy(() => import('./pages/BulkPhotoResizerPage.tsx
 const HeicConverterPage = lazy(() => import('./pages/HeicConverterPage.tsx').then((m) => ({ default: m.HeicConverterPage })));
 const QrGeneratorPage = lazy(() => import('./pages/QrGeneratorPage.tsx').then((m) => ({ default: m.QrGeneratorPage })));
 const BanglaDateConverterPage = lazy(() => import('./pages/BanglaDateConverterPage.tsx').then((m) => ({ default: m.BanglaDateConverterPage })));
+const TypingTestPage = lazy(() => import('./pages/TypingTestPage.tsx').then((m) => ({ default: m.TypingTestPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage.tsx').then((m) => ({ default: m.AboutPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage.tsx').then((m) => ({ default: m.ContactPage })));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage.tsx').then((m) => ({ default: m.PrivacyPolicyPage })));
@@ -51,6 +52,7 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/HeicConverterPage.tsx'),
   () => import('./pages/QrGeneratorPage.tsx'),
   () => import('./pages/BanglaDateConverterPage.tsx'),
+  () => import('./pages/TypingTestPage.tsx'),
   () => import('./pages/AboutPage.tsx'),
   () => import('./pages/ContactPage.tsx'),
   () => import('./pages/PrivacyPolicyPage.tsx'),
@@ -80,6 +82,7 @@ export const STATIC_PRERENDER_ROUTES = [
   '/age-calculator',
   '/amount-in-words',
   '/bangla-date-converter',
+  '/typing-test',
   '/cv-builder',
   '/gpa-calculator',
   '/land-converter',
@@ -142,6 +145,7 @@ export function AppRoutes({
         <Route path="/age-calculator" element={<AgeCalculatorPage />} />
         <Route path="/amount-in-words" element={<AmountInWordsPage />} />
         <Route path="/bangla-date-converter" element={<BanglaDateConverterPage />} />
+        <Route path="/typing-test" element={<TypingTestPage />} />
         <Route path="/cv-builder" element={<CvBuilderPage />} />
         <Route path="/gpa-calculator" element={<GpaCalculatorPage />} />
         <Route path="/land-converter" element={<LandConverterPage />} />

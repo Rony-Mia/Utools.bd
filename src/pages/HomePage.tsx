@@ -60,7 +60,7 @@ const CATEGORY_GRADIENT: Record<string, string> = {
 };
 
 /** Tools added most recently — shown with a "নতুন" badge. */
-const NEW_TOOL_IDS = new Set(['land-converter', 'heic-converter', 'bulk-photo-resizer', 'qr-generator']);
+const NEW_TOOL_IDS = new Set(['typing-test', 'land-converter', 'heic-converter', 'bulk-photo-resizer', 'qr-generator']);
 
 /** Featured tools in the bento section (first one gets the large card). */
 const FEATURED_IDS = [
@@ -74,6 +74,7 @@ const FEATURED_IDS = [
 
 const FEATURED_SHORT: Record<string, string> = {
   'bijoy-converter': 'বিজয় ANSI লেখা ইউনিকোডে, ইউনিকোড বিজয়ে',
+  'typing-test': 'বাংলা ও ইংরেজি লাইভ WPM স্পিড টেস্ট',
   'cv-builder': '৫টি টেমপ্লেটে বাংলা ও ইংরেজি সিভি',
   'pdf-merger': 'একাধিক PDF এক ফাইলে জোড়া লাগান',
   'gpa-calculator': 'SSC/HSC ও ভার্সিটি CGPA হিসাব',
