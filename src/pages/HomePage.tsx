@@ -18,7 +18,6 @@ import {
   Upload,
   User,
   UserX,
-  WifiOff,
   Zap,
 } from 'lucide-react';
 import { TOOLS } from '../data/tools.ts';
@@ -90,7 +89,7 @@ const STEPS = [
 const PRIVACY_POINTS = [
   { icon: Zap, title: 'ক্লায়েন্ট-সাইড প্রসেসিং', desc: 'সব কাজ আপনার ব্রাউজারে হয়, সার্ভারে কিছু যায় না' },
   { icon: UserX, title: 'কোনো সাইনআপ নেই', desc: 'অ্যাকাউন্ট বা ইমেইল ছাড়াই ব্যবহার করুন' },
-  { icon: WifiOff, title: 'অফলাইনে কাজ করে', desc: 'একবার পেজ লোড হলে অধিকাংশ টুল ইন্টারনেট ছাড়াও চলে' },
+  { icon: Lock, title: '১০০% গোপনীয়তা ও নিরাপত্তা', desc: 'আপনার কোনো ফাইল বা তথ্য ক্লাউড বা সার্ভারে জমা হয় না' },
   { icon: Gift, title: 'সম্পূর্ণ বিনামূল্যে', desc: 'কোনো প্রিমিয়াম প্ল্যান নেই, সব টুল ফ্রি' },
 ];
 

@@ -457,7 +457,7 @@ export const PdfMergerPage: React.FC = () => {
                 ✓ কোনো ওয়াটারমার্ক নেই
               </span>
               <span className="bg-[#FFFFFF] border border-[#D5E4DB] px-2.5 py-1">
-                ✓ ১০০% গোপনীয় ও অফলাইন প্রস্তুত
+                ✓ ১০০% গোপনীয় ও নিরাপদ
               </span>
             </div>
           </div>
@@ -696,7 +696,7 @@ export const PdfMergerPage: React.FC = () => {
               <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-3 rounded-2xl">
                 <span className="block text-[11px] font-medium text-[#4A5A52]">প্রসেসিং মোড</span>
                 <span className="font-semibold text-xs text-[#0B5D3B] mt-1 block">
-                  ১০০% অফলাইন
+                  ১০০% ক্লায়েন্ট-সাইড
                 </span>
               </div>
             </div>

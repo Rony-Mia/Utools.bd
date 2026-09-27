@@ -672,7 +672,7 @@ export const HeicConverterPage: React.FC = () => {
             </span>
             <span className="inline-flex items-center space-x-1 text-[11px] bg-[#F8FAF9] border border-[#D5E4DB] px-2.5 py-1 text-[#34443B]">
               <ShieldCheck className="w-3 h-3 text-[#0B5D3B]" />
-              <span>১০০% প্রাইভেট ও অফলাইন</span>
+              <span>১০০% প্রাইভেট ও নিরাপদ</span>
             </span>
           </div>
 

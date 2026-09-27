@@ -43,7 +43,7 @@ export const PdfFileDropzone: React.FC<PdfFileDropzoneProps> = ({
     : 'পিডিএফ ফাইল নির্বাচন করুন বা এখানে ড্রপ করুন',
   subtitle = multiple
     ? 'একসাথে একাধিক .pdf ফাইল নির্বাচন করতে পারেন'
-    : 'শুধুমাত্র .pdf ফাইল সমর্থিত • ১০০% অফলাইন ও নিরাপদ',
+    : 'শুধুমাত্র .pdf ফাইল সমর্থিত • ১০০% ক্লায়েন্ট-সাইড ও নিরাপদ',
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);

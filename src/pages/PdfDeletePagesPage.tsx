@@ -427,7 +427,7 @@ export const PdfDeletePagesPage: React.FC = () => {
             loadingText="পিডিএফ লোড ও পেজ বিশ্লেষণ হচ্ছে..."
             errorMessage={errorMessage}
             title="যে পিডিএফ থেকে পেজ মুছতে চান তা নির্বাচন করুন"
-            subtitle="শুধুমাত্র .pdf ফাইল সমর্থিত • ১০০% অফলাইন ও নিরাপদ"
+            subtitle="শুধুমাত্র .pdf ফাইল সমর্থিত • ১০০% ক্লায়েন্ট-সাইড ও নিরাপদ"
           />
         ) : (
           <div className="space-y-6">

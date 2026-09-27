@@ -281,7 +281,7 @@ export const BanglaDateConverterPage: React.FC = () => {
     },
     {
       q: 'এই টুলের জন্য কোনো ইন্টারনেট সংযোগ বা ডেটা পাঠানো লাগে কি?',
-      a: 'না, মূল তারিখ রূপান্তর এবং কার্ড জেনারেশন সম্পূর্ণ ১০০% আপনার ব্রাউজারে ক্লায়েন্ট-সাইডে সম্পন্ন হয়। কোনো ডেটা আমাদের সার্ভারে সংরক্ষণ বা প্রেরণ করা হয় না। শুধুমাত্র "এই দিনে ইতিহাসে" ফিচারের জন্য উইকিপিডিয়া থেকে তথ্য লোড করতে ইন্টারনেটের প্রয়োজন হয়, যা অফলাইনে থাকলে স্বয়ংক্রিয়ভাবে নিরাপদ অফলাইন মোডে থাকে।',
+      a: 'না, মূল তারিখ রূপান্তর এবং কার্ড জেনারেশন সম্পূর্ণ ১০০% আপনার ব্রাউজারে ক্লায়েন্ট-সাইডে সম্পন্ন হয়। কোনো ডেটা আমাদের সার্ভারে সংরক্ষণ বা প্রেরণ করা হয় না। এটি সম্পূর্ণ নিরাপদ ও ব্রাউজার-ভিত্তিক।',
     },
     {
       q: 'বাংলা অধিবর্ষ (লিপ ইয়ার) কীভাবে নির্ধারিত হয়?',
@@ -639,7 +639,7 @@ export const BanglaDateConverterPage: React.FC = () => {
               </a>
             </div>
 
-            {/* Events List / Loading / Offline Fallback */}
+            {/* Events List / Loading / Fallback */}
             {isHistoryLoading ? (
               // Skeleton cards
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -655,12 +655,12 @@ export const BanglaDateConverterPage: React.FC = () => {
                 ))}
               </div>
             ) : historyError ? (
-              // Offline State
+              // Network Error / Fallback State
               <div className="p-6 text-center bg-[#F8FAF9] border border-dashed border-[#D5E4DB] rounded-xl space-y-2">
                 <WifiOff className="w-8 h-8 text-[#4A5A52] mx-auto opacity-60" />
                 <p className="text-xs text-[#4A5A52] font-medium">{historyError}</p>
                 <p className="text-[11px] text-[#4A5A52]/80">
-                  তারিখ রূপান্তর ও অন্যান্য সব ফিচার সম্পূর্ণ অফলাইনে সক্রিয় রয়েছে।
+                  তারিখ রূপান্তর ও অন্যান্য সব ফিচার ব্রাউজারে স্বাভাবিকভাবে সক্রিয় রয়েছে।
                 </p>
               </div>
             ) : historyEvents.length > 0 ? (

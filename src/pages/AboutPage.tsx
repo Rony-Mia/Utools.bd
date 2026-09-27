@@ -61,13 +61,13 @@ export const AboutPage: React.FC = () => {
         <title>আমাদের সম্পর্কে — Utools.bd | নিরাপদ বাংলা ইউটিলিটি</title>
         <meta
           name="description"
-          content="Utools.bd হলো চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, অফলাইন-রেডি ও নিরাপদ বাংলা ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
+          content="Utools.bd হলো চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, ক্লায়েন্ট-সাইড ও নিরাপদ বাংলা ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
         />
         <link rel="canonical" href="https://utools.bd/about" />
         <meta property="og:title" content="আমাদের সম্পর্কে — Utools.bd" />
         <meta
           property="og:description"
-          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, অফলাইন-রেডি ও ব্রাউজার-ভিত্তিক ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
+          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি ও ব্রাউজার-ভিত্তিক নিরাপদ ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
         />
         <meta property="og:url" content="https://utools.bd/about" />
         <meta property="og:type" content="article" />
@@ -76,7 +76,7 @@ export const AboutPage: React.FC = () => {
         <meta name="twitter:title" content="আমাদের সম্পর্কে — Utools.bd" />
         <meta
           name="twitter:description"
-          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, অফলাইন-রেডি ও ব্রাউজার-ভিত্তিক ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
+          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি ও ব্রাউজার-ভিত্তিক নিরাপদ ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
         />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
@@ -237,7 +237,7 @@ export const AboutPage: React.FC = () => {
             <div className="flex items-start space-x-2 border border-[#D5E4DB] bg-[#F0F4F2]/40 p-3 rounded-2xl">
               <CheckCircle2 className="w-4 h-4 text-[#0B5D3B] shrink-0 mt-0.5" />
               <span className="text-xs text-[#0F1F17]">
-                <strong>অফলাইন কার্যক্ষমতা:</strong> পেজটি একবার লোড হলে ইন্টারনেট সংযোগ বন্ধ করে দিলেও সব টুল কাজ করে।
+                <strong>তাৎক্ষণিক প্রসেসিং:</strong> কোনো সার্ভার ল্যাগ বা রিমোট ওয়েটিং টাইম ছাড়াই ব্রাউজারেই নিমেষে সব কাজ সম্পন্ন হয়।
               </span>
             </div>
 

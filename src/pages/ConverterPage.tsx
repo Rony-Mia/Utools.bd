@@ -123,13 +123,13 @@ export const ConverterPage: React.FC = () => {
         <title>বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode | Utools.bd</title>
         <meta
           name="description"
-          content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ অফলাইন ও নিরাপদ।"
+          content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ ক্লায়েন্ট-সাইড ও নিরাপদ।"
         />
         <link rel="canonical" href="https://utools.bd/converter" />
         <meta property="og:title" content="বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode | Utools.bd" />
         <meta
           property="og:description"
-          content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ অফলাইন ও নিরাপদ।"
+          content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ ক্লায়েন্ট-সাইড ও নিরাপদ।"
         />
         <meta property="og:url" content="https://utools.bd/converter" />
         <meta property="og:type" content="website" />

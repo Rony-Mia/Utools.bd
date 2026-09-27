@@ -310,7 +310,7 @@ export const PdfRotatePage: React.FC = () => {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <h3 className="font-bold text-[#084A2E] font-serif text-sm sm:text-base">
-              ১০০% অফলাইন প্রাইভেসি
+              ১০০% ক্লায়েন্ট-সাইড প্রাইভেসি
             </h3>
             <p className="text-xs text-[#34443B] leading-relaxed">
               আপনার ফাইল কোনো অবস্থাতেই ইন্টারনেট পেরিয়ে রিমোট সার্ভারে জমা হয় না। আপনার ডিভাইসেই কাজ সম্পন্ন হয়।
@@ -369,7 +369,7 @@ export const PdfRotatePage: React.FC = () => {
             loadingText="পিডিএফ লোড ও পেজ বিশ্লেষণ হচ্ছে..."
             errorMessage={errorMessage}
             title="যে পিডিএফ ফাইলের পেজ ঘোরাতে চান তা নির্বাচন করুন"
-            subtitle="শুধুমাত্র .pdf ফাইল সমর্থিত • ১০০% অফলাইন ও নিরাপদ"
+            subtitle="শুধুমাত্র .pdf ফাইল সমর্থিত • ১০০% ক্লায়েন্ট-সাইড ও নিরাপদ"
           />
         ) : (
           <div className="space-y-6">
@@ -613,7 +613,7 @@ export const PdfRotatePage: React.FC = () => {
                   <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-3 rounded-2xl">
                     <span className="block text-[11px] font-medium text-[#4A5A52]">প্রসেসিং মোড</span>
                     <span className="font-bold text-xs text-[#0B5D3B] mt-0.5 block">
-                      ১০০% অফলাইন
+                      ১০০% ক্লায়েন্ট-সাইড
                     </span>
                   </div>
                 </div>
