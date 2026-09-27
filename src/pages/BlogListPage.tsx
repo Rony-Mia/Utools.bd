@@ -119,19 +119,26 @@ export const BlogListPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>ব্লগ ও গাইড — Utools.bd | ডিজিটাল ইউটিলিটি ও টেক গাইডলাইন</title>
+        <title>ব্লগ ও গাইড — Utools.bd | ডিজিটাল ইউটিলিটি গাইডলাইন</title>
         <meta
           name="description"
-          content="চাকরির আবেদন, ছবি রিসাইজ, বাংলা টাইপিং, সরকারি সার্কুলার ও ডিজিটাল ইউটিলিটি সংক্রান্ত প্রয়োজনীয় আর্টিকেল ও গাইড।"
+          content="চাকরির আবেদন, ছবি রিসাইজ, বাংলা টাইপিং, সরকারি সার্কুলার, জমির পরিমাপ ও ডিজিটাল ইউটিলিটি সংক্রান্ত প্রয়োজনীয় তথ্যবহুল ব্লগ ও পূর্ণাঙ্গ গাইডলাইন।"
         />
-        <meta property="og:title" content="ব্লগ ও গাইড — Utools.bd" />
+        <meta property="og:title" content="ব্লগ ও গাইড — Utools.bd | ডিজিটাল ইউটিলিটি গাইডলাইন" />
         <meta
           property="og:description"
-          content="চাকরির আবেদন, ছবি রিসাইজ, বাংলা টাইপিং ও ডিজিটাল ইউটিলিটি সংক্রান্ত তথ্যবহুল গাইড ও টিপস।"
+          content="চাকরির আবেদন, ছবি রিসাইজ, বাংলা টাইপিং, সরকারি সার্কুলার, জমির পরিমাপ ও ডিজিটাল ইউটিলিটি সংক্রান্ত প্রয়োজনীয় তথ্যবহুল ব্লগ ও পূর্ণাঙ্গ গাইডলাইন।"
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://utools.bd/blog" />
         <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="ব্লগ ও গাইড — Utools.bd | ডিজিটাল ইউটিলিটি গাইডলাইন" />
+        <meta
+          name="twitter:description"
+          content="চাকরির আবেদন, ছবি রিসাইজ, বাংলা টাইপিং, সরকারি সার্কুলার, জমির পরিমাপ ও ডিজিটাল ইউটিলিটি সংক্রান্ত প্রয়োজনীয় তথ্যবহুল ব্লগ ও পূর্ণাঙ্গ গাইডলাইন।"
+        />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
         <link rel="canonical" href="https://utools.bd/blog" />
         <link rel="alternate" type="application/rss+xml" title="Utools.bd ব্লগ" href="https://utools.bd/rss.xml" />
         <script type="application/ld+json">{JSON.stringify(collectionSchema)}</script>

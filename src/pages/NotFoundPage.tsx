@@ -20,7 +20,7 @@ export const NotFoundPage: React.FC = () => (
       <title>৪০৪ — পেজটি খুঁজে পাওয়া যায়নি | Utools.bd</title>
       <meta
         name="description"
-        content="আপনি যে পেজটি খুঁজছেন সেটি পাওয়া যায়নি। Utools.bd-এর জনপ্রিয় টুলগুলো এখান থেকে ব্যবহার করুন।"
+        content="আপনি যে পেজটি খুঁজছেন সেটি খুঁজে পাওয়া যায়নি। Utools.bd-এর জনপ্রিয় কনভার্টার, ছবি রিসাইজার, বয়স ক্যালকুলেটর ও অন্যান্য টুলস ব্যবহার করুন।"
       />
       <meta name="robots" content="noindex, follow" />
     </Helmet>

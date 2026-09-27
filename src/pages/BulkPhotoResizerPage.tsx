@@ -412,6 +412,7 @@ export const BulkPhotoResizerPage: React.FC = () => {
           name="description"
           content={pageContent.metaDescription}
         />
+        <link rel="canonical" href="https://utools.bd/bulk-photo-resizer" />
         <meta
           property="og:title"
           content={pageContent.metaTitle}
@@ -422,12 +423,14 @@ export const BulkPhotoResizerPage: React.FC = () => {
         />
         <meta property="og:url" content="https://utools.bd/bulk-photo-resizer" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageContent.metaTitle} />
         <meta
           name="twitter:description"
           content={pageContent.metaDescription}
         />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 

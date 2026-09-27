@@ -76,18 +76,19 @@ export const AmountInWordsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <Helmet>
-        <title>টাকা কথায় রূপান্তর — Number & Taka to Words Converter | Utools.bd</title>
+        <title>টাকা কথায় রূপান্তর — Taka to Words Converter | Utools.bd</title>
         <meta
           name="description"
-          content="যেকোনো সংখ্যা বা টাকার পরিমাণ তাৎক্ষণিক শুদ্ধ বাংলা ও ইংরেজিতে কথায় লিখুন। চেক, রসিদ ও দাপ্তরিক ভাউচারের জন্য আদর্শ।"
+          content="যেকোনো সংখ্যা বা টাকার পরিমাণ তাৎক্ষণিক শুদ্ধ বাংলা ও ইংরেজিতে কথায় লিখুন। ব্যাংক চেক, রসিদ ও দাপ্তরিক ভাউচারের জন্য সেরা টুল।"
         />
+        <link rel="canonical" href="https://utools.bd/amount-in-words" />
         <meta
           property="og:title"
-          content="টাকা কথায় রূপান্তর — Number & Taka to Words Converter | Utools.bd"
+          content="টাকা কথায় রূপান্তর — Taka to Words Converter | Utools.bd"
         />
         <meta
           property="og:description"
-          content="যেকোনো সংখ্যা বা টাকার পরিমাণ তাৎক্ষণিক শুদ্ধ বাংলা ও ইংরেজিতে কথায় লিখুন। চেক, রসিদ ও দাপ্তরিক ভাউচারের জন্য আদর্শ।"
+          content="যেকোনো সংখ্যা বা টাকার পরিমাণ তাৎক্ষণিক শুদ্ধ বাংলা ও ইংরেজিতে কথায় লিখুন। ব্যাংক চেক, রসিদ ও দাপ্তরিক ভাউচারের জন্য সেরা টুল।"
         />
         <meta property="og:url" content="https://utools.bd/amount-in-words" />
         <meta property="og:type" content="website" />

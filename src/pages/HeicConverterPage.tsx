@@ -431,6 +431,7 @@ export const HeicConverterPage: React.FC = () => {
           name="description"
           content={pageContent.metaDescription}
         />
+        <link rel="canonical" href="https://utools.bd/heic-converter" />
         <meta
           property="og:title"
           content={pageContent.metaTitle}
@@ -439,6 +440,13 @@ export const HeicConverterPage: React.FC = () => {
           property="og:description"
           content={pageContent.metaOgDescription}
         />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://utools.bd/heic-converter" />
+        <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaOgDescription} />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 

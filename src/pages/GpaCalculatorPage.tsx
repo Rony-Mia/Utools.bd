@@ -318,6 +318,7 @@ export const GpaCalculatorPage: React.FC = () => {
       <Helmet>
         <title>{pageContent.metaTitle}</title>
         <meta name="description" content={pageContent.metaDescription} />
+        <link rel="canonical" href="https://utools.bd/gpa-calculator" />
         <meta property="og:title" content={pageContent.metaTitle} />
         <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/gpa-calculator" />

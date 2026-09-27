@@ -386,12 +386,14 @@ export const ImageMergerPage: React.FC = () => {
         />
         <meta property="og:url" content="https://utools.bd/image-merger" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageContent.metaTitle} />
         <meta
           name="twitter:description"
           content={pageContent.metaDescription}
         />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 

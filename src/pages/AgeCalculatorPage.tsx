@@ -363,6 +363,7 @@ export const AgeCalculatorPage: React.FC = () => {
           name="description"
           content={pageContent.metaDescription}
         />
+        <link rel="canonical" href="https://utools.bd/age-calculator" />
         <meta
           property="og:title"
           content={pageContent.metaTitle}

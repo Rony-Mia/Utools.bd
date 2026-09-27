@@ -232,7 +232,7 @@ export const BanglaDateConverterPage: React.FC = () => {
     if (!cardBanglaDate) return;
     const nameStr = cardName ? `${cardName} এর ` : 'আমার ';
     const text = `🎉 ${nameStr}বাংলা জন্মদিন: ${cardBanglaDate.dayWithSuffix} ${cardBanglaDate.monthName}, ${cardBanglaDate.yearBn} বঙ্গাব্দ (${cardBanglaDate.seasonName})! \n\nআপনার বাংলা জন্মদিন জানুন Utools.bd থেকে: https://utools.bd/bangla-date-converter`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   // Certificate / Snapshot Card ref for main converter
@@ -305,18 +305,27 @@ export const BanglaDateConverterPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>বাংলা তারিখ কনভার্টার — ইংরেজি ↔ বাংলা ↔ হিজরি ক্যালেন্ডার | Utools.bd</title>
+        <title>বাংলা তারিখ কনভার্টার — ইংরেজি বাংলা ও হিজরি | Utools.bd</title>
         <meta
           name="description"
-          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির ২০১৯ সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু, সরকারি ছুটি ও ইতিহাসের ঘটনা।"
+          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু ও সরকারি ছুটির হিসাব।"
         />
-        <meta property="og:title" content="বাংলা তারিখ কনভার্টার — ইংরেজি ↔ বাংলা ↔ হিজরি ক্যালেন্ডার" />
+        <link rel="canonical" href="https://utools.bd/bangla-date-converter" />
+        <meta property="og:title" content="বাংলা তারিখ কনভার্টার — ইংরেজি বাংলা ও হিজরি | Utools.bd" />
         <meta
           property="og:description"
-          content="ইংরেজি থেকে বাংলা তারিখ ও হিজরি সন রূপান্তর করুন সম্পূর্ণ বিনামূল্যে ও অফলাইনে।"
+          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু ও সরকারি ছুটির হিসাব।"
         />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://utools.bd/bangla-date-converter" />
+        <meta property="og:url" content="https://utools.bd/bangla-date-converter" />
+        <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="বাংলা তারিখ কনভার্টার — ইংরেজি বাংলা ও হিজরি | Utools.bd" />
+        <meta
+          name="twitter:description"
+          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু ও সরকারি ছুটির হিসাব।"
+        />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 
@@ -690,7 +699,7 @@ export const BanglaDateConverterPage: React.FC = () => {
                         <a
                           href={evt.wikiUrl}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noopener noreferrer nofollow"
                           className="inline-flex items-center gap-1 text-[11px] text-[#0B5D3B] hover:underline font-semibold"
                         >
                           <span>আরো পড়ুন</span>

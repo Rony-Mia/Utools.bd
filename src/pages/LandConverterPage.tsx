@@ -192,14 +192,15 @@ export const LandConverterPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <Helmet>
-        <title>জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা, কানি ও একর রূপান্তর | Utools.bd</title>
+        <title>জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা ও একর | Utools.bd</title>
         <meta
           name="description"
           content="শতক, বিঘা, কাঠা, কানি, একর, হেক্টর ও বর্গফুটের তাৎক্ষণিক রূপান্তর। কানি ও বিঘার আঞ্চলিক সংজ্ঞার বিকল্প এবং দলিল ও খতিয়ানের জন্য মিশ্র রূপ।"
         />
+        <link rel="canonical" href="https://utools.bd/land-converter" />
         <meta
           property="og:title"
-          content="জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা, কানি ও একর রূপান্তর | Utools.bd"
+          content="জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা ও একর | Utools.bd"
         />
         <meta
           property="og:description"

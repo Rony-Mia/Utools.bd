@@ -341,14 +341,15 @@ export const QrGeneratorPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <Helmet>
-        <title>কাস্টম QR কোড জেনারেটর — লোগো ও হাই-রেজোলিউশন ডাউনলোড | Utools.bd</title>
+        <title>কাস্টম QR কোড জেনারেটর — কাস্টম ডিজাইন ও লোগো | Utools.bd</title>
         <meta
           name="description"
           content="ফ্রি কাস্টম কিউআর কোড জেনারেটর। ওয়েবসাইট লিংক, টেক্সট, ফোন নম্বর, ওয়াইফাই ও ইমেইলের জন্য লোগো ও পছন্দের রঙসহ QR কোড তৈরি করুন। আনলিমিটেড ও আজীবন মেয়াদ।"
         />
+        <link rel="canonical" href="https://utools.bd/qr-generator" />
         <meta
           property="og:title"
-          content="কাস্টম QR কোড জেনারেটর — লোগো ও হাই-রেজোলিউশন ডাউনলোড | Utools.bd"
+          content="কাস্টম QR কোড জেনারেটর — কাস্টম ডিজাইন ও লোগো | Utools.bd"
         />
         <meta
           property="og:description"
@@ -356,12 +357,14 @@ export const QrGeneratorPage: React.FC = () => {
         />
         <meta property="og:url" content="https://utools.bd/qr-generator" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="কাস্টম QR কোড জেনারেটর | Utools.bd" />
         <meta
           name="twitter:description"
           content="ওয়েবসাইট, ওয়াইফাই, টেক্সট বা ফোন নম্বরের জন্য লোগোসহ কাস্টম QR কোড তৈরি করুন।"
         />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 

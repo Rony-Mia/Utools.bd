@@ -109,7 +109,7 @@ const SLUG_REDIRECTS: Record<string, string> = {
 
   const handleWhatsAppShare = () => {
     const text = `📌 ${post.title}\n\n${post.excerpt}\n\nপড়ুন: ${postUrl}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const handleFacebookShare = () => {
@@ -394,9 +394,9 @@ const SLUG_REDIRECTS: Record<string, string> = {
                   remarkPlugins={[remarkGfm]}
                   components={{
                     h1: ({ node, children, ...props }) => (
-                      <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F1F17] mt-8 mb-4 tracking-tight" {...props}>
+                      <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F1F17] mt-8 mb-4 tracking-tight" {...props}>
                         {children}
-                      </h1>
+                      </h2>
                     ),
                     h2: ({ node, children, ...props }) => {
                       renderedH2Count += 1;
@@ -487,7 +487,7 @@ const SLUG_REDIRECTS: Record<string, string> = {
                         <a
                           href={href}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noopener noreferrer nofollow"
                           className="font-semibold text-[#0B5D3B] hover:text-[#084A2E] underline decoration-[#0B5D3B]/40 hover:decoration-[#084A2E] transition-colors inline-flex items-center gap-1"
                           {...props}
                         >

@@ -863,7 +863,7 @@ export const CvBuilderPage: React.FC = () => {
         <title>ফ্রি সিভি মেকার — বাংলা ও ইংরেজি CV Builder | Utools.bd</title>
         <meta
           name="description"
-          content="বাংলাদেশি সরকারি চাকরি ও বেসরকারি পদের জন্য ১০০% ক্লায়েন্ট-সাইড ফ্রি জীবনবৃত্তান্ত (CV/Resume) মেকার। ৫টি প্রফেশনাল টেমপ্লেট, বাংলা ও ইংরেজি সাপোর্ট, ওয়ার্ডের মতো মাল্টি-পেজ ফিজিক্যাল প্রিভিউ, ইনস্ট্যান্ট A4 PDF প্রিন্ট ও ডাউনলোড।"
+          content="সরকারি ও বেসরকারি চাকরির জন্য ফ্রি জীবনবৃত্তান্ত (CV/Resume) মেকার। ৫টি প্রফেশনাল টেমপ্লেট, বাংলা ও ইংরেজি সাপোর্ট এবং ইনস্ট্যান্ট A4 PDF প্রিন্ট।"
         />
         <link rel="canonical" href="https://utools.bd/cv-builder" />
         <meta property="og:title" content="ফ্রি সিভি মেকার — বাংলা ও ইংরেজি CV Builder | Utools.bd" />

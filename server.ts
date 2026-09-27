@@ -146,6 +146,26 @@ async function startServer() {
     next();
   });
 
+  // 301 Permanent Redirects for historical / renamed slugs
+  const REDIRECT_MAP: Record<string, string> = {
+    '/blog/bijoy-to-unicode-conversion-tips': '/blog/bijoy-to-unicode-converter',
+    '/blog/teletalk-photo-signature-resize-guide': '/blog',
+  };
+
+  // Canonical URL enforcement (strip trailing slashes & apply 301 redirects)
+  app.use((req, res, next) => {
+    const clean = req.path.replace(/\/+$/, '');
+    if (REDIRECT_MAP[clean]) {
+      return res.redirect(301, REDIRECT_MAP[clean]);
+    }
+    // Don't strip trailing slash for /admin/
+    if (req.path.length > 1 && req.path.endsWith('/') && !req.path.startsWith('/admin')) {
+      const query = req.url.slice(req.path.length);
+      return res.redirect(301, clean + query);
+    }
+    next();
+  });
+
   // 2. Vite middleware in Development OR Static Serving in Production
   if (process.env.NODE_ENV !== 'production') {
     console.log('[server] Running in development mode with Vite middleware...');

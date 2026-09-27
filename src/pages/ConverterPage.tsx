@@ -120,12 +120,13 @@ export const ConverterPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       <Helmet>
-        <title>বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode Bengali Converter | Utools.bd</title>
+        <title>বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode | Utools.bd</title>
         <meta
           name="description"
           content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ অফলাইন ও নিরাপদ।"
         />
-        <meta property="og:title" content="বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode Converter | Utools.bd" />
+        <link rel="canonical" href="https://utools.bd/converter" />
+        <meta property="og:title" content="বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode | Utools.bd" />
         <meta
           property="og:description"
           content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ অফলাইন ও নিরাপদ।"

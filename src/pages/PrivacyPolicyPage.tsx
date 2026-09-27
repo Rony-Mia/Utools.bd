@@ -33,10 +33,10 @@ export const PrivacyPolicyPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
       <Helmet>
-        <title>গোপনীয়তা নীতি (Privacy Policy) — Utools.bd | ১০০% ক্লায়েন্ট-সাইড নিরাপত্তা</title>
+        <title>গোপনীয়তা নীতি (Privacy Policy) — Utools.bd</title>
         <meta
           name="description"
-          content="Utools.bd-এর গোপনীয়তা নীতি জানুন। আমাদের কোনো সার্ভার ডেটাবেজ নেই; আপনার সমস্ত ছবি, টেক্সট, বয়স ও জীবনবৃত্তান্ত সরাসরি আপনার নিজস্ব ব্রাউজারে নিরাপদ থাকে।"
+          content="Utools.bd-এর গোপনীয়তা নীতি জানুন। কোনো সার্ভার ডেটাবেজ নেই; আপনার ছবি, টেক্সট, বয়স ও ডেটা সরাসরি নিজস্ব ডিভাইসের ব্রাউজারে নিরাপদ থাকে।"
         />
         <link rel="canonical" href="https://utools.bd/privacy-policy" />
         <meta property="og:title" content="গোপনীয়তা নীতি (Privacy Policy) — Utools.bd" />

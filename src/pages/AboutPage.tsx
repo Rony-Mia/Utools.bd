@@ -58,10 +58,10 @@ export const AboutPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
       <Helmet>
-        <title>আমাদের সম্পর্কে — Utools.bd | নিরাপদ বাংলা ডিজিটাল ইউটিলিটি হাব</title>
+        <title>আমাদের সম্পর্কে — Utools.bd | নিরাপদ বাংলা ইউটিলিটি</title>
         <meta
           name="description"
-          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, অফলাইন-রেডি ও ব্রাউজার-ভিত্তিক ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম। জানুন আমাদের লক্ষ্য ও নিরাপত্তা ব্যবস্থা।"
+          content="Utools.bd হলো চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, অফলাইন-রেডি ও নিরাপদ বাংলা ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
         />
         <link rel="canonical" href="https://utools.bd/about" />
         <meta property="og:title" content="আমাদের সম্পর্কে — Utools.bd" />

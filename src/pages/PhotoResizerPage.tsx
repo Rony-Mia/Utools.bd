@@ -462,6 +462,7 @@ export const PhotoResizerPage: React.FC = () => {
           name="description"
           content={pageContent.metaDescription}
         />
+        <link rel="canonical" href="https://utools.bd/photo-resizer" />
         <meta
           property="og:title"
           content={pageContent.metaTitle}

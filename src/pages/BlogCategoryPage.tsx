@@ -33,7 +33,7 @@ export const BlogCategoryPage: React.FC = () => {
   const posts = getPostsByCategory(categoryName);
   const canonicalUrl = `https://utools.bd/blog/category/${categorySlug}`;
   const metaTitle = `${categoryName} বিষয়ক ব্লগ ও গাইড — Utools.bd`;
-  const metaDescription = `${categoryName} সম্পর্কিত সব প্রয়োজনীয় তথ্য, নির্দেশিকা ও ডিজিটাল ইউটিলিটি গাইডলাইন এক পাতায়।`;
+  const metaDescription = `${categoryName} সম্পর্কিত সব প্রয়োজনীয় নির্দেশিকা, নিয়মাবলী ও ডিজিটাল ইউটিলিটি ব্যবহারের সহজ কার্যকরী সমাধান এক ঠিকানায় সম্পূর্ণ বিনামূল্যে।`;
 
   const categorySchema = {
     '@context': 'https://schema.org',
@@ -88,6 +88,10 @@ export const BlogCategoryPage: React.FC = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
         <link rel="alternate" type="application/rss+xml" title="Utools.bd ব্লগ" href="https://utools.bd/rss.xml" />
         <script type="application/ld+json">{JSON.stringify(categorySchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>

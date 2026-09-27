@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import Critters from 'critters';
 import { PRERENDER_ROUTES, NOT_FOUND_ROUTE } from './src/routes.tsx';
 import { generateRssFeed } from './scripts/generate-rss.ts';
+import { submitIndexNow } from './scripts/submit-indexnow.ts';
 
 function getDynamicBlogRoutes(): string[] {
   const blogDir = path.resolve(process.cwd(), 'content/blog');
@@ -237,6 +238,9 @@ async function prerender() {
   const rssXml = generateRssFeed();
   fs.writeFileSync(path.join(distDir, 'rss.xml'), rssXml, 'utf-8');
   console.log(`[prerender] Wrote: ${path.join(distDir, 'rss.xml')}`);
+
+  // 8. Auto-submit changed URLs to IndexNow
+  await submitIndexNow();
 
   console.log('[prerender] All routes successfully prerendered!');
 }
