@@ -24,6 +24,7 @@ import {
 } from '../amountToWords.ts';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import pageContent from '../../content/pages/amount-in-words.json';
 
 interface PresetItem {
   label: string;
@@ -76,29 +77,17 @@ export const AmountInWordsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <Helmet>
-        <title>টাকা কথায় রূপান্তর — Taka to Words Converter | Utools.bd</title>
-        <meta
-          name="description"
-          content="যেকোনো সংখ্যা বা টাকার পরিমাণ তাৎক্ষণিক শুদ্ধ বাংলা ও ইংরেজিতে কথায় লিখুন। ব্যাংক চেক, রসিদ ও দাপ্তরিক ভাউচারের জন্য সেরা টুল।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/amount-in-words" />
-        <meta
-          property="og:title"
-          content="টাকা কথায় রূপান্তর — Taka to Words Converter | Utools.bd"
-        />
-        <meta
-          property="og:description"
-          content="যেকোনো সংখ্যা বা টাকার পরিমাণ তাৎক্ষণিক শুদ্ধ বাংলা ও ইংরেজিতে কথায় লিখুন। ব্যাংক চেক, রসিদ ও দাপ্তরিক ভাউচারের জন্য সেরা টুল।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/amount-in-words" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="টাকা কথায় রূপান্তর | Utools.bd" />
-        <meta
-          name="twitter:description"
-          content="যেকোনো সংখ্যা বা টাকার পরিমাণ শুদ্ধ বাংলা ও ইংরেজিতে কথায় লেখার অনলাইন টুল।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
       </Helmet>
 
@@ -124,11 +113,10 @@ export const AmountInWordsPage: React.FC = () => {
       {/* Page Title & Description */}
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#084A2E] font-serif tracking-tight">
-          টাকা → কথায় কনভার্টার (Amount to Bengali Words)
+          {pageContent.title}
         </h1>
         <p className="text-sm text-[#34443B] max-w-3xl leading-relaxed">
-          ব্যাংক চেক, জমির দলিল, স্ট্যাম্প পেপার, ভাউচার ও মানি রিসিটে লেখার জন্য যেকোনো টাকার পরিমাণ
-          (হাজার, লক্ষ, কোটি ও পয়সাসহ) <strong>নির্ভুল বাংলা কথায় রূপান্তর</strong> করুন। ইংরেজি বা বাংলা যেকোনো সংখ্যায় টাইপ করা মাত্রই স্বয়ংক্রিয় রেজাল্ট তৈরি হয়।
+          {pageContent.subtitle}
         </p>
       </div>
 
@@ -389,54 +377,23 @@ export const AmountInWordsPage: React.FC = () => {
         <div className="flex items-center space-x-2 pb-3 border-b border-[#D5E4DB]">
           <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
           <h3 className="text-sm font-bold text-[#084A2E] font-serif uppercase tracking-wider">
-            টাকা কথায় লেখার প্রয়োজনীয়তা ও ব্যবহারের ক্ষেত্র (Why Amount in Words is Required)
+            {pageContent.featuresHeading}
           </h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-xs text-[#34443B] leading-relaxed">
-          {/* Card 1: Cheques */}
-          <div className="bg-[#F0F4F2]/30 border border-[#D5E4DB] p-4 space-y-2 rounded-2xl">
-            <div className="w-8 h-8 bg-[#0B5D3B]/10 border border-[#0B5D3B]/30 flex items-center justify-center text-[#0B5D3B] rounded-lg">
-              <CreditCard className="w-4 h-4" />
+          {pageContent.features.map((item, idx) => (
+            <div key={idx} className="bg-[#F0F4F2]/30 border border-[#D5E4DB] p-4 space-y-2 rounded-2xl">
+              <div className="w-8 h-8 bg-[#0B5D3B]/10 border border-[#0B5D3B]/30 flex items-center justify-center text-[#0B5D3B] rounded-lg">
+                {idx === 0 && <CreditCard className="w-4 h-4" />}
+                {idx === 1 && <FileText className="w-4 h-4" />}
+                {idx === 2 && <FileCheck className="w-4 h-4" />}
+                {idx === 3 && <Receipt className="w-4 h-4" />}
+              </div>
+              <h4 className="font-bold text-[#084A2E] text-sm font-serif">{item.title}</h4>
+              <p>{item.desc}</p>
             </div>
-            <h4 className="font-bold text-[#084A2E] text-sm font-serif">১. ব্যাংক চেক লিখন</h4>
-            <p>
-              ব্যাংক চেকে সংখ্যায় লেখার পাশাপাশি কথায় লেখা বাধ্যতামূলক। সংখ্যা ও কথায় অমিল হলে চেক বাতিল হয়ে যায়। এই কনভার্টারে বানান ও অর্থের শতভাগ শুদ্ধতা নিশ্চিত হয়।
-            </p>
-          </div>
-
-          {/* Card 2: Deeds and Stamp Papers */}
-          <div className="bg-[#F0F4F2]/30 border border-[#D5E4DB] p-4 space-y-2 rounded-2xl">
-            <div className="w-8 h-8 bg-[#0B5D3B]/10 border border-[#0B5D3B]/30 flex items-center justify-center text-[#0B5D3B] rounded-lg">
-              <FileText className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-[#084A2E] text-sm font-serif">২. দলিল ও স্ট্যাম্প পেপার</h4>
-            <p>
-              জমি-জমা ক্রয়-বিক্রয়, ফ্ল্যাটের বায়নাপত্র, হেবা দলিল বা স্ট্যাম্প চুক্তিতে মূল্যের পরিমাণ অঙ্কে ও কথায় নিখুঁতভাবে লেখা আইনি সুরক্ষার অপরিহার্য শর্ত।
-            </p>
-          </div>
-
-          {/* Card 3: Vouchers */}
-          <div className="bg-[#F0F4F2]/30 border border-[#D5E4DB] p-4 space-y-2 rounded-2xl">
-            <div className="w-8 h-8 bg-[#0B5D3B]/10 border border-[#0B5D3B]/30 flex items-center justify-center text-[#0B5D3B] rounded-lg">
-              <FileCheck className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-[#084A2E] text-sm font-serif">৩. অফিসিয়াল ভাউচার ও বিল</h4>
-            <p>
-              সরকারি দপ্তর, বহুজাতিক প্রতিষ্ঠান ও যেকোনো ব্যবসার ক্যাশ ও ব্যাংক ভাউচারে অডিট স্বচ্ছতা বজায় রাখতে সর্বদা অংক কথায় লিপিবদ্ধ করতে হয়।
-            </p>
-          </div>
-
-          {/* Card 4: Money Receipts */}
-          <div className="bg-[#F0F4F2]/30 border border-[#D5E4DB] p-4 space-y-2 rounded-2xl">
-            <div className="w-8 h-8 bg-[#0B5D3B]/10 border border-[#0B5D3B]/30 flex items-center justify-center text-[#0B5D3B] rounded-lg">
-              <Receipt className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-[#084A2E] text-sm font-serif">৪. মানি রিসিট ও ক্যাশ মেমো</h4>
-            <p>
-              দোকান বা ব্যবসা প্রতিষ্ঠানের ইনভয়েস ও রসিদে &quot;টাকা বুঝে পেলাম&quot; সেকশনে কথায় লেখা থাকলে কোনো পক্ষ পরবর্তীতে টাকার অংক পরিবর্তন বা জাল করার সুযোগ পায় না।
-            </p>
-          </div>
+          ))}
         </div>
       </div>
 

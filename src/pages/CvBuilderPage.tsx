@@ -38,6 +38,7 @@ import { GovtStandardTemplate } from '../components/cv-templates/GovtStandardTem
 import { CreativeTemplate } from '../components/cv-templates/CreativeTemplate.tsx';
 import { EducationItemEditor } from '../components/cv/EducationItemEditor.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import pageContent from '../../content/pages/cv-builder.json';
 
 type TemplateId = 'classic' | 'modern' | 'compact' | 'govt' | 'creative';
 
@@ -857,84 +858,35 @@ export const CvBuilderPage: React.FC = () => {
     }
   };
 
+  const faqs = pageContent.faqs || [];
+
   return (
     <>
       <Helmet>
-        <title>ফ্রি সিভি মেকার — বাংলা ও ইংরেজি CV Builder | Utools.bd</title>
-        <meta
-          name="description"
-          content="সরকারি ও বেসরকারি চাকরির জন্য ফ্রি জীবনবৃত্তান্ত (CV/Resume) মেকার। ৫টি প্রফেশনাল টেমপ্লেট, বাংলা ও ইংরেজি সাপোর্ট এবং ইনস্ট্যান্ট A4 PDF প্রিন্ট।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/cv-builder" />
-        <meta property="og:title" content="ফ্রি সিভি মেকার — বাংলা ও ইংরেজি CV Builder | Utools.bd" />
-        <meta
-          property="og:description"
-          content="বাংলাদেশি সরকারি চাকরি ও বেসরকারি পদের জন্য ১০০% ক্লায়েন্ট-সাইড ফ্রি জীবনবৃত্তান্ত (CV/Resume) মেকার।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/cv-builder" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="ফ্রি সিভি মেকার | Utools.bd" />
-        <meta
-          name="twitter:description"
-          content="বাংলাদেশি সরকারি চাকরি ও বেসরকারি পদের জন্য ১০০% ক্লায়েন্ট-সাইড ফ্রি জীবনবৃত্তান্ত মেকার।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-      <script type="application/ld+json">
+        <script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
-            mainEntity: [
-              {
-                '@type': 'Question',
-                name: 'সরকারি ও বেসরকারি চাকরির সিভির মধ্যে পার্থক্য কী?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'সরকারি চাকরির আবেদনে সাধারণত নির্দিষ্ট ক্রমিক নং অনুযায়ী ছক আকারে ব্যক্তিগত তথ্য, শিক্ষাগত যোগ্যতা ও অভিজ্ঞতা দিতে হয় (জীবন বৃত্তান্ত ফরম্যাট), যেখানে বেসরকারি বা কর্পোরেট চাকরির সিভি তুলনামূলক আধুনিক, সংক্ষিপ্ত এবং ডিজাইন-নির্ভর হয়।',
-                },
+            mainEntity: faqs.map((f) => ({
+              '@type': 'Question',
+              name: f.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: f.answer,
               },
-              {
-                '@type': 'Question',
-                name: 'সিভিতে ছবি ও স্বাক্ষরের সঠিক নিয়ম কী?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'সাধারণত পাসপোর্ট সাইজের সাম্প্রতিক ছবি (আনুষ্ঠানিক পোশাকে, স্পষ্ট ব্যাকগ্রাউন্ডে) ব্যবহার করা উচিত। সরকারি আবেদনে নির্ধারিত সাইজ ও ব্যাকগ্রাউন্ড কালার সার্কুলারে উল্লেখ থাকে, সেটা মেনে চলা জরুরি। স্বাক্ষরের জায়গা ফাঁকা রেখে প্রিন্ট করার পর নিজে কলমে স্বাক্ষর করাই ভালো।',
-                },
-              },
-              {
-                '@type': 'Question',
-                name: 'Fresher-দের জন্য কোন টেমপ্লেট ভালো?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'অভিজ্ঞতা কম থাকলে কমপ্যাক্ট (১ পাতা) টেমপ্লেট সবচেয়ে ভালো — এটা শিক্ষাগত যোগ্যতা, দক্ষতা ও যেকোনো প্রজেক্ট/ইন্টার্নশিপকে গুরুত্ব দিয়ে সাজায়, ফাঁকা জায়গা কম রেখে একটা পূর্ণ পাতা তৈরি করে।',
-                },
-              },
-              {
-                '@type': 'Question',
-                name: 'PDF ডাউনলোড করলে ফন্ট বা লেআউট ঠিক থাকবে তো?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'হ্যাঁ। PDF সরাসরি আপনার ব্রাউজারে A4 সাইজে জেনারেট হয়, তাই বাংলা ফন্ট, লেআউট ও কলাম বিন্যাস অবিকল প্রিভিউর মতোই থাকে — আলাদা করে কোনো ফন্ট ইনস্টল করার দরকার নেই।',
-                },
-              },
-              {
-                '@type': 'Question',
-                name: 'আমার সিভির তথ্য (NID, ছবি ইত্যাদি) কি কোথাও সংরক্ষিত থাকে?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'না। এই টুলটি সম্পূর্ণ ক্লায়েন্ট-সাইডে কাজ করে — আপনার ছবি, জন্মতারিখ, এনআইডি নম্বর বা অন্য কোনো তথ্য কখনো সার্ভারে পাঠানো হয় না, সবকিছু আপনার ব্রাউজারেই প্রক্রিয়াজাত হয়।',
-                },
-              },
-              {
-                '@type': 'Question',
-                name: 'সিভি বাংলায় নাকি ইংরেজিতে লেখা উচিত?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'বেশিরভাগ সরকারি ও বেসরকারি প্রতিষ্ঠান ইংরেজি সিভি প্রত্যাশা করে, বিশেষ করে কর্পোরেট ও আইটি খাতে। তবে কিছু সরকারি সার্কুলারে বাংলায় জীবনবৃত্তান্ত চাওয়া হয় — সার্কুলারের নির্দেশনা অনুযায়ী ভাষা বেছে নেওয়াই নিরাপদ। এই টুলে দুই ভাষাতেই সিভি বানানো যায়।',
-                },
-              },
-            ],
+            })),
           })}
         </script>
       </Helmet>
@@ -2267,46 +2219,16 @@ export const CvBuilderPage: React.FC = () => {
           <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
             <Info className="w-4 h-4 text-[#0B5D3B]" />
             <h2 className="text-base sm:text-lg font-bold text-[#084A2E] font-serif">
-              প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)
+              {pageContent.faqHeading || 'প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)'}
             </h2>
           </div>
           <div className="space-y-5 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">সরকারি ও বেসরকারি চাকরির সিভির মধ্যে পার্থক্য কী?</h3>
-              <p className="text-[#34443B]">
-                সরকারি চাকরির আবেদনে সাধারণত নির্দিষ্ট ক্রমিক নং অনুযায়ী ছক আকারে ব্যক্তিগত তথ্য, শিক্ষাগত যোগ্যতা ও অভিজ্ঞতা দিতে হয় (জীবন বৃত্তান্ত ফরম্যাট), যেখানে বেসরকারি বা কর্পোরেট চাকরির সিভি তুলনামূলক আধুনিক, সংক্ষিপ্ত এবং ডিজাইন-নির্ভর হয়।
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">সিভিতে ছবি ও স্বাক্ষরের সঠিক নিয়ম কী?</h3>
-              <p className="text-[#34443B]">
-                সাধারণত পাসপোর্ট সাইজের সাম্প্রতিক ছবি (আনুষ্ঠানিক পোশাকে, স্পষ্ট ব্যাকগ্রাউন্ডে) ব্যবহার করা উচিত। সরকারি আবেদনে নির্ধারিত সাইজ ও ব্যাকগ্রাউন্ড কালার সার্কুলারে উল্লেখ থাকে, সেটা মেনে চলা জরুরি। স্বাক্ষরের জায়গা ফাঁকা রেখে প্রিন্ট করার পর নিজে কলমে স্বাক্ষর করাই ভালো।
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">Fresher-দের জন্য কোন টেমপ্লেট ভালো?</h3>
-              <p className="text-[#34443B]">
-                অভিজ্ঞতা কম থাকলে কমপ্যাক্ট (১ পাতা) টেমপ্লেট সবচেয়ে ভালো — এটা শিক্ষাগত যোগ্যতা, দক্ষতা ও যেকোনো প্রজেক্ট/ইন্টার্নশিপকে গুরুত্ব দিয়ে সাজায়, ফাঁকা জায়গা কম রেখে একটা পূর্ণ পাতা তৈরি করে।
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">PDF ডাউনলোড করলে ফন্ট বা লেআউট ঠিক থাকবে তো?</h3>
-              <p className="text-[#34443B]">
-                হ্যাঁ। PDF সরাসরি আপনার ব্রাউজারে A4 সাইজে জেনারেট হয়, তাই বাংলা ফন্ট, লেআউট ও কলাম বিন্যাস অবিকল প্রিভিউর মতোই থাকে — আলাদা করে কোনো ফন্ট ইনস্টল করার দরকার নেই।
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">আমার সিভির তথ্য (NID, ছবি ইত্যাদি) কি কোথাও সংরক্ষিত থাকে?</h3>
-              <p className="text-[#34443B]">
-                না। এই টুলটি সম্পূর্ণ ক্লায়েন্ট-সাইডে কাজ করে — আপনার ছবি, জন্মতারিখ, এনআইডি নম্বর বা অন্য কোনো তথ্য কখনো সার্ভারে পাঠানো হয় না, সবকিছু আপনার ব্রাউজারেই প্রক্রিয়াজাত হয়।
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">সিভি বাংলায় নাকি ইংরেজিতে লেখা উচিত?</h3>
-              <p className="text-[#34443B]">
-                বেশিরভাগ সরকারি ও বেসরকারি প্রতিষ্ঠান ইংরেজি সিভি প্রত্যাশা করে, বিশেষ করে কর্পোরেট ও আইটি খাতে। তবে কিছু সরকারি সার্কুলারে বাংলায় জীবনবৃত্তান্ত চাওয়া হয় — সার্কুলারের নির্দেশনা অনুযায়ী ভাষা বেছে নেওয়াই নিরাপদ। এই টুলে দুই ভাষাতেই সিভি বানানো যায়।
-              </p>
-            </div>
+            {faqs.map((f, idx) => (
+              <div key={idx} className="space-y-1.5">
+                <h3 className="font-bold text-[#084A2E]">{f.question}</h3>
+                <p className="text-[#34443B]">{f.answer}</p>
+              </div>
+            ))}
           </div>
         </section>
 

@@ -14,6 +14,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
+import pageContent from '../../content/pages/contact.json';
 
 export const ContactPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -29,7 +30,7 @@ export const ContactPage: React.FC = () => {
   const { copied, copy } = useCopyToClipboard();
 
   const handleCopyEmail = () => {
-    void copy('contact@utools.bd');
+    void copy(pageContent.emailAddress || 'contact@utools.bd');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,7 +53,7 @@ export const ContactPage: React.FC = () => {
     } catch (err: any) {
       setSubmitError(
         err?.message ||
-          'বার্তা পাঠাতে সমস্যা হয়েছে। সরাসরি contact@utools.bd-এ ইমেইল করুন।'
+          `বার্তা পাঠাতে সমস্যা হয়েছে। সরাসরি ${pageContent.emailAddress || 'contact@utools.bd'}-এ ইমেইল করুন।`
       );
     } finally {
       setSubmitting(false);
@@ -79,32 +80,32 @@ export const ContactPage: React.FC = () => {
       '@type': 'Organization',
       name: 'Utools.bd',
       url: 'https://utools.bd',
-      email: 'contact@utools.bd'
+      email: pageContent.emailAddress || 'contact@utools.bd'
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
       <Helmet>
-        <title>যোগাযোগ ও মতামত — Utools.bd | আমাদের সাথে যোগাযোগ করুন</title>
+        <title>{pageContent.metaTitle}</title>
         <meta
           name="description"
-          content="Utools.bd সম্পর্কে যেকোনো প্রশ্ন, বাগ রিপোর্ট, মতামত বা নতুন টুলের প্রস্তাবনার জন্য আমাদের সাথে সরাসরি যোগাযোগ করুন। অফিসিয়াল ইমেইল: contact@utools.bd।"
+          content={pageContent.metaDescription}
         />
         <link rel="canonical" href="https://utools.bd/contact" />
-        <meta property="og:title" content="যোগাযোগ ও মতামত — Utools.bd" />
+        <meta property="og:title" content={pageContent.metaTitle} />
         <meta
           property="og:description"
-          content="Utools.bd সম্পর্কে যেকোনো প্রশ্ন, মতামত বা নতুন টুলের প্রস্তাবনার জন্য যোগাযোগ করুন।"
+          content={pageContent.metaDescription}
         />
         <meta property="og:url" content="https://utools.bd/contact" />
         <meta property="og:type" content="article" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="যোগাযোগ ও মতামত — Utools.bd" />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
         <meta
           name="twitter:description"
-          content="Utools.bd সম্পর্কে যেকোনো প্রশ্ন, মতামত বা নতুন টুলের প্রস্তাবনার জন্য যোগাযোগ করুন।"
+          content={pageContent.metaDescription}
         />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(contactSchema)}</script>
@@ -114,13 +115,13 @@ export const ContactPage: React.FC = () => {
       <section className="space-y-3 border-b border-[#D5E4DB] pb-6">
         <div className="inline-flex items-center gap-2 bg-[#FFFFFF] border border-[#D5E4DB] px-3 py-1 text-xs text-[#084A2E] font-medium rounded-lg">
           <MessageSquare className="w-3.5 h-3.5 text-[#0B5D3B]" />
-          <span>সরাসরি যোগাযোগ ও প্রতিক্রিয়া</span>
+          <span>{pageContent.badge}</span>
         </div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#084A2E] font-serif tracking-tight">
-          আমাদের সাথে যোগাযোগ করুন
+          {pageContent.title}
         </h1>
         <p className="text-sm sm:text-base text-[#4A5A52] max-w-2xl leading-relaxed">
-          Utools.bd প্ল্যাটফর্মটিকে আরও সমৃদ্ধ ও নির্ভুল করতে আপনার যেকোনো পরামর্শ, ত্রুটি রিপোর্ট বা নতুন টুলের প্রস্তাবনা আমাদের জানান।
+          {pageContent.subtitle}
         </p>
       </section>
 
@@ -132,11 +133,16 @@ export const ContactPage: React.FC = () => {
           </div>
           <div>
             <span className="text-xs text-[#4A5A52] block font-medium">
-              অফিসিয়াল যোগাযোগ ইমেইল:
+              {pageContent.emailLabel || 'অফিসিয়াল যোগাযোগ ইমেইল:'}
             </span>
             <span className="font-mono text-base font-bold text-[#084A2E]">
-              contact@utools.bd
+              {pageContent.emailAddress || 'contact@utools.bd'}
             </span>
+            {pageContent.responseNote && (
+              <span className="text-[11px] text-[#4A5A52] block mt-0.5">
+                {pageContent.responseNote}
+              </span>
+            )}
           </div>
         </div>
 

@@ -10,7 +10,7 @@ public_folder: "/uploads"
 
 collections:
   - name: "global"
-    label: "গ্লোবাল কনটেন্ট"
+    label: "গ্লোবাল ও সাইট কনটেন্ট"
     files:
       - name: "navbar"
         label: "নেভিগেশন বার (Navbar)"
@@ -32,12 +32,8 @@ collections:
           - { name: "pdfDocumentHeading", label: "পিডিএফ হেডিং", widget: "string" }
           - { name: "textCalcHeading", label: "ক্যালকুলেটর হেডিং", widget: "string" }
           - { name: "importantLinksHeading", label: "জরুরি লিংক হেডিং", widget: "string" }
-
-  - name: "pages"
-    label: "ওয়েব পেজসমূহ"
-    files:
       - name: "home"
-        label: "হোমপেজ কনটেন্ট"
+        label: "হোমপেজ লেআউট ও ব্যানার"
         file: "content/pages/home.json"
         fields:
           - name: "metaTitle"
@@ -55,16 +51,22 @@ collections:
           - { name: "heroTitleHighlight", label: "হিরো টাইটেল হাইলাইট", widget: "string" }
           - { name: "heroTitleSuffix", label: "হিরো টাইটেল সাফিক্স", widget: "string" }
           - { name: "heroSubtitle", label: "হিরো সাবটাইটেল", widget: "text" }
+          - label: "হিরো বুলেট পয়েন্টস"
+            name: "heroPoints"
+            widget: "list"
+            required: false
+            field: { name: "point", label: "পয়েন্ট", widget: "string" }
           - label: "ব্লগ সেকশন হেডিং"
             name: "blogHeading"
             widget: "object"
+            required: false
             fields:
               - { name: "badge", label: "ব্যাজ", widget: "string" }
               - { name: "title", label: "শিরোনাম (H2)", widget: "string" }
               - { name: "subtitle", label: "সাবটাইটেল", widget: "string" }
       - name: "home-faq"
         label: "হোমপেজ এফএকিউ (FAQ)"
-        file: "content/pages/home-faq.json"
+        file: "content/global/home-faq.json"
         fields:
           - label: "প্রশ্নোত্তর তালিকা"
             name: "faqs"
@@ -72,364 +74,128 @@ collections:
             fields:
               - { name: "question", label: "প্রশ্ন", widget: "string" }
               - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "photo-resizer"
-        label: "ফটো ও স্বাক্ষর রিসাইজার"
-        file: "content/pages/photo-resizer.json"
+
+  - name: "pages"
+    label: "সকল পেজ ও টুলসমূহ (Pages & Tools)"
+    folder: "content/pages"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{slug}}"
+    identifier_field: "title"
+    summary: "{{title}} ({{slug}})"
+    fields:
+      - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
+      - { name: "slug", label: "স্লাগ / ফাইল নাম (URL Slug)", widget: "string", required: false, hint: "ফাইল ও ইউআরএল স্লাগ (যেমন: age-calculator, photo-resizer)" }
+      - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text", required: false }
+      - name: "metaTitle"
+        label: "এসইও টাইটেল (SEO Title)"
+        widget: "string"
+        required: false
+        hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
+        pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
+      - name: "metaDescription"
+        label: "এসইও মেটা বিবরণ (Meta Description)"
+        widget: "text"
+        required: false
+        hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
+        pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
+      - name: "metaOgDescription"
+        label: "সোশ্যাল শেয়ার বিবরণ (OG Description)"
+        widget: "text"
+        required: false
+        hint: "Facebook/Twitter শেয়ার বিবরণ"
+        pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
+      - { name: "badge", label: "ব্যাজ টেক্সট", widget: "string", required: false }
+      - { name: "badgeText", label: "বিকল্প ব্যাজ টেক্সট", widget: "string", required: false }
+      - { name: "introText", label: "ভূমিকা টেক্সট", widget: "text", required: false }
+      - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string", required: false, default: "প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী (FAQ)" }
+      - label: "প্রশ্নোত্তর তালিকা (FAQ)"
+        name: "faqs"
+        widget: "list"
+        required: false
         fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text" }
-          - { name: "presetStepTitle", label: "প্রিসেট সেকশন শিরোনাম", widget: "string" }
-          - { name: "guidelinesHeading", label: "অফিশিয়াল নির্দেশিকা হেডিং", widget: "string" }
-          - { name: "photoRulesTitle", label: "ছবির নিয়মাবলী টাইটেল", widget: "string" }
-          - { name: "photoRules", label: "ছবির নিয়মাবলী পয়েন্ট", widget: "list" }
-          - { name: "signatureRulesTitle", label: "স্বাক্ষরের নিয়মাবলী টাইটেল", widget: "string" }
-          - { name: "signatureRules", label: "স্বাক্ষরের নিয়মাবলী পয়েন্ট", widget: "list" }
-          - { name: "tableTitle", label: "রেফারেন্স টেবিল শিরোনাম", widget: "string" }
-          - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "bulk-photo-resizer"
-        label: "বাল্ক ফটো রিসাইজার"
-        file: "content/pages/bulk-photo-resizer.json"
+          - { name: "question", label: "প্রশ্ন", widget: "string" }
+          - { name: "answer", label: "উত্তর", widget: "text" }
+      - { name: "featuresHeading", label: "ফিচার হেডিং", widget: "string", required: false }
+      - label: "ফিচার তালিকা (Features)"
+        name: "features"
+        widget: "list"
+        required: false
         fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaOgDescription"
-            label: "সোশ্যাল শেয়ার বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text" }
-          - { name: "sellingPointTitle", label: "হাইলাইট টাইটেল", widget: "string" }
-          - { name: "sellingPointDesc", label: "হাইলাইট বিবরণ", widget: "text" }
-          - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "heic-converter"
-        label: "HEIC কনভার্টার"
-        file: "content/pages/heic-converter.json"
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
+      - { name: "stepsHeading", label: "ধাপসমূহের হেডিং", widget: "string", required: false }
+      - label: "ধাপসমূহ (Steps)"
+        name: "steps"
+        widget: "list"
+        required: false
         fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaOgDescription"
-            label: "সোশ্যাল শেয়ার বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text" }
-          - label: "সুবিধাসমূহ (Features)"
-            name: "features"
-            widget: "list"
-            fields:
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "image-merger"
-        label: "ইমেজ মার্জার ও কোলাজ"
-        file: "content/pages/image-merger.json"
+          - { name: "step", label: "ধাপ নং", widget: "string", required: false }
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
+      - label: "হাউ-টু নির্দেশিকা ধাপসমূহ (How-To Steps)"
+        name: "howToSteps"
+        widget: "list"
+        required: false
         fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaOgDescription"
-            label: "সোশ্যাল শেয়ার বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text" }
-          - { name: "stepsHeading", label: "ধাপসমূহের হেডিং", widget: "string" }
-          - label: "ব্যবহারের ধাপসমূহ (Steps)"
-            name: "steps"
-            widget: "list"
-            fields:
-              - { name: "step", label: "ধাপ নং", widget: "string" }
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "pdf-merger"
-        label: "পিডিএফ মার্জার"
-        file: "content/pages/pdf-merger.json"
+          - { name: "stepNum", label: "ধাপ নং", widget: "string", required: false }
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
+      - { name: "guidelinesHeading", label: "অফিশিয়াল নির্দেশিকা হেডিং", widget: "string", required: false }
+      - label: "নির্দেশিকা তালিকা (Guidelines)"
+        name: "guidelines"
+        widget: "list"
+        required: false
         fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text" }
-          - { name: "stepsHeading", label: "ধাপসমূহের হেডিং", widget: "string" }
-          - label: "ব্যবহারের ধাপসমূহ (Steps)"
-            name: "steps"
-            widget: "list"
-            fields:
-              - { name: "step", label: "ধাপ নং", widget: "string" }
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "pdf-split"
-        label: "পিডিএফ স্প্লিটার"
-        file: "content/pages/pdf-split.json"
-        fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "introText", label: "ভূমিকা বিবরণ", widget: "text" }
-          - { name: "deepDiveTitle", label: "বিস্তারিত সেকশন শিরোনাম", widget: "string" }
-          - { name: "deepDiveParagraphs", label: "বিস্তারিত অনুচ্ছেদসমূহ", widget: "list" }
-          - { name: "featuresTitle", label: "ফিচার সেকশন শিরোনাম", widget: "string" }
-          - label: "সুবিধাসমূহ (Features)"
-            name: "features"
-            widget: "list"
-            fields:
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "ব্যবহারের ধাপসমূহ (How To Steps)"
-            name: "howToSteps"
-            widget: "list"
-            fields:
-              - { name: "stepNum", label: "ধাপ নং", widget: "string" }
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "pdf-rotate"
-        label: "পিডিএফ রোটেট"
-        file: "content/pages/pdf-rotate.json"
-        fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "introText", label: "ভূমিকা বিবরণ", widget: "text" }
-          - { name: "deepDiveTitle", label: "বিস্তারিত সেকশন শিরোনাম", widget: "string" }
-          - { name: "deepDiveParagraphs", label: "বিস্তারিত অনুচ্ছেদসমূহ", widget: "list" }
-          - { name: "featuresTitle", label: "ফিচার সেকশন শিরোনাম", widget: "string" }
-          - label: "সুবিধাসমূহ (Features)"
-            name: "features"
-            widget: "list"
-            fields:
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "ব্যবহারের ধাপসমূহ (How To Steps)"
-            name: "howToSteps"
-            widget: "list"
-            fields:
-              - { name: "stepNum", label: "ধাপ নং", widget: "string" }
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "pdf-watermark"
-        label: "পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর"
-        file: "content/pages/pdf-watermark.json"
-        fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "introText", label: "ভূমিকা বিবরণ", widget: "text" }
-          - { name: "deepDiveTitle", label: "বিস্তারিত সেকশন শিরোনাম", widget: "string" }
-          - { name: "deepDiveParagraphs", label: "বিস্তারিত অনুচ্ছেদসমূহ", widget: "list" }
-          - label: "সুবিধাসমূহ (Features)"
-            name: "features"
-            widget: "list"
-            fields:
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "ব্যবহারের ধাপসমূহ (How To Steps)"
-            name: "howToSteps"
-            widget: "list"
-            fields:
-              - { name: "stepNum", label: "ধাপ নং", widget: "string" }
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "pdf-delete-pages"
-        label: "পিডিএফ পেজ ডিলিট"
-        file: "content/pages/pdf-delete-pages.json"
-        fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "introText", label: "ভূমিকা বিবরণ", widget: "text" }
-          - { name: "deepDiveTitle", label: "বিস্তারিত সেকশন শিরোনাম", widget: "string" }
-          - { name: "deepDiveParagraphs", label: "বিস্তারিত অনুচ্ছেদসমূহ", widget: "list" }
-          - { name: "featuresTitle", label: "ফিচার সেকশন শিরোনাম", widget: "string" }
-          - label: "সুবিধাসমূহ (Features)"
-            name: "features"
-            widget: "list"
-            fields:
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "ব্যবহারের ধাপসমূহ (How To Steps)"
-            name: "howToSteps"
-            widget: "list"
-            fields:
-              - { name: "stepNum", label: "ধাপ নং", widget: "string" }
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
-      - name: "age-calculator"
-        label: "বয়স ক্যালকুলেটর"
-        file: "content/pages/age-calculator.json"
-        fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "introText", label: "ভূমিকা বিবরণ", widget: "text" }
-          - { name: "guidelinesHeading", label: "নির্দেশিকা হেডিং", widget: "string" }
-          - label: "সরকারি বিধিমালা (Guidelines)"
-            name: "guidelines"
-            widget: "list"
-            fields:
-              - { name: "title", label: "শিরোনাম", widget: "string" }
-              - { name: "desc", label: "বিবরণ", widget: "text" }
-      - name: "gpa-calculator"
-        label: "জিপিএ ও সিজিপিএ ক্যালকুলেটর"
-        file: "content/pages/gpa-calculator.json"
-        fields:
-          - name: "metaTitle"
-            label: "এসইও টাইটেল"
-            widget: "string"
-            hint: "Google-এ ৫৫-৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — ছোট রাখুন"
-            pattern: ['^.{1,65}$', "টাইটেল ৬৫ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - name: "metaDescription"
-            label: "মেটা বিবরণ"
-            widget: "text"
-            hint: "Google-এ ১৫৫-১৬০ ক্যারেক্টারের বেশি হলে কেটে যায় — সংক্ষেপে লিখুন"
-            pattern: ['^.{1,160}$', "মেটা ডেসক্রিপশন ১৬০ ক্যারেক্টারের বেশি না রাখাই ভালো"]
-          - { name: "title", label: "পেজ টাইটেল (H1)", widget: "string" }
-          - { name: "subtitle", label: "সাবটাইটেল / বিবরণ", widget: "text" }
-          - { name: "faqHeading", label: "এফএকিউ হেডিং", widget: "string" }
-          - label: "প্রশ্নোত্তর তালিকা (FAQ)"
-            name: "faqs"
-            widget: "list"
-            fields:
-              - { name: "question", label: "প্রশ্ন", widget: "string" }
-              - { name: "answer", label: "উত্তর", widget: "text" }
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
+      - { name: "deepDiveTitle", label: "বিস্তারিত গাইড হেডিং", widget: "string", required: false }
+      - label: "বিস্তারিত গাইড অনুচ্ছেদসমূহ (Deep Dive Paragraphs)"
+        name: "deepDiveParagraphs"
+        widget: "list"
+        required: false
+        field: { name: "para", label: "অনুচ্ছেদ", widget: "text" }
+      - { name: "guideHeading", label: "গাইড হেডিং", widget: "string", required: false }
+      - label: "গাইড অনুচ্ছেদসমূহ"
+        name: "guideParagraphs"
+        widget: "list"
+        required: false
+        field: { name: "para", label: "অনুচ্ছেদ", widget: "text" }
+      - { name: "originTitle", label: "পটভূমি ও ইতিহাস শিরোনাম", widget: "string", required: false }
+      - label: "পটভূমি অনুচ্ছেদসমূহ"
+        name: "originParagraphs"
+        widget: "list"
+        required: false
+        field: { name: "para", label: "অনুচ্ছেদ", widget: "text" }
+      - { name: "sellingPointTitle", label: "হাইলাইট টাইটেল", widget: "string", required: false }
+      - { name: "sellingPointDesc", label: "হাইলাইট বিবরণ", widget: "text", required: false }
+      - { name: "presetStepTitle", label: "প্রিসেট সেকশন শিরোনাম", widget: "string", required: false }
+      - { name: "photoRulesTitle", label: "ছবির নিয়মাবলী টাইটেল", widget: "string", required: false }
+      - label: "ছবির নিয়মাবলী পয়েন্ট"
+        name: "photoRules"
+        widget: "list"
+        required: false
+        field: { name: "rule", label: "পয়েন্ট", widget: "string" }
+      - { name: "signatureRulesTitle", label: "স্বাক্ষরের নিয়মাবলী টাইটেল", widget: "string", required: false }
+      - label: "স্বাক্ষরের নিয়মাবলী পয়েন্ট"
+        name: "signatureRules"
+        widget: "list"
+        required: false
+        field: { name: "rule", label: "পয়েন্ট", widget: "string" }
+      - { name: "tableTitle", label: "রেফারেন্স টেবিল শিরোনাম", widget: "string", required: false }
+      - { name: "uploadTitle", label: "আপলোড সেকশন শিরোনাম", widget: "string", required: false }
+      - { name: "useCasesHeading", label: "ব্যবহারের ক্ষেত্র শিরোনাম", widget: "string", required: false }
+      - { name: "emailLabel", label: "ইমেইল লেবেল", widget: "string", required: false }
+      - { name: "emailAddress", label: "অফিসিয়াল ইমেইল এড্রেস", widget: "string", required: false }
+      - { name: "responseNote", label: "রেসপন্স নোট", widget: "text", required: false }
+      - { name: "lastUpdated", label: "সর্বশেষ পরিমার্জন তারিখ", widget: "string", required: false }
+      - { name: "heroBadge", label: "হিরো ব্যাজ (হোমপেজ)", widget: "string", required: false }
+      - { name: "heroTitlePrefix", label: "হিরো প্রিফিক্স", widget: "string", required: false }
+      - { name: "heroTitleHighlight", label: "হিরো হাইলাইট", widget: "string", required: false }
+      - { name: "heroTitleSuffix", label: "হিরো সাফিক্স", widget: "string", required: false }
+      - { name: "heroSubtitle", label: "হিরো সাবটাইটেল", widget: "text", required: false }
+      - { name: "content", label: "মূল কনটেন্ট (Markdown - যদি থাকে)", widget: "markdown", required: false }
 
   - name: "blog"
     label: "ব্লগ ও গাইড (Blog Posts)"

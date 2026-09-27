@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   ArrowRight
 } from 'lucide-react';
+import pageContent from '../../content/pages/privacy-policy.json';
 
 export const PrivacyPolicyPage: React.FC = () => {
   const policySchema = {
@@ -33,25 +34,25 @@ export const PrivacyPolicyPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
       <Helmet>
-        <title>গোপনীয়তা নীতি (Privacy Policy) — Utools.bd</title>
+        <title>{pageContent.metaTitle}</title>
         <meta
           name="description"
-          content="Utools.bd-এর গোপনীয়তা নীতি জানুন। কোনো সার্ভার ডেটাবেজ নেই; আপনার ছবি, টেক্সট, বয়স ও ডেটা সরাসরি নিজস্ব ডিভাইসের ব্রাউজারে নিরাপদ থাকে।"
+          content={pageContent.metaDescription}
         />
         <link rel="canonical" href="https://utools.bd/privacy-policy" />
-        <meta property="og:title" content="গোপনীয়তা নীতি (Privacy Policy) — Utools.bd" />
+        <meta property="og:title" content={pageContent.metaTitle} />
         <meta
           property="og:description"
-          content="Utools.bd-এর গোপনীয়তা নীতি জানুন। ১০০% ব্রাউজার-ভিত্তিক ক্লায়েন্ট-সাইড নিরাপত্তা।"
+          content={pageContent.metaDescription}
         />
         <meta property="og:url" content="https://utools.bd/privacy-policy" />
         <meta property="og:type" content="article" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="গোপনীয়তা নীতি (Privacy Policy) — Utools.bd" />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
         <meta
           name="twitter:description"
-          content="Utools.bd-এর গোপনীয়তা নীতি জানুন। ১০০% ব্রাউজার-ভিত্তিক ক্লায়েন্ট-সাইড নিরাপত্তা।"
+          content={pageContent.metaDescription}
         />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(policySchema)}</script>
@@ -61,13 +62,18 @@ export const PrivacyPolicyPage: React.FC = () => {
       <section className="space-y-3 border-b border-[#D5E4DB] pb-6">
         <div className="inline-flex items-center gap-2 bg-[#FFFFFF] border border-[#D5E4DB] px-3 py-1 text-xs text-[#084A2E] font-medium rounded-lg">
           <Shield className="w-3.5 h-3.5 text-[#0B5D3B]" />
-          <span>ডেটা সুরক্ষা ও গোপনীয়তা অঙ্গীকার</span>
+          <span>{pageContent.badge || 'ডেটা সুরক্ষা ও গোপনীয়তা অঙ্গীকার'}</span>
         </div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#084A2E] font-serif tracking-tight">
-          গোপনীয়তা নীতি (Privacy Policy)
+          {pageContent.title}
         </h1>
+        {pageContent.subtitle && (
+          <p className="text-sm text-[#4A5A52] max-w-2xl leading-relaxed">
+            {pageContent.subtitle}
+          </p>
+        )}
         <div className="flex flex-wrap items-center gap-3 text-xs text-[#4A5A52]">
-          <span>সর্বশেষ হালনাগাদ: মার্চ ২০২৫</span>
+          <span>{pageContent.lastUpdated || 'সর্বশেষ পরিমার্জন: সেপ্টেম্বর ২০২৬'}</span>
           <span>•</span>
           <span className="text-[#0B5D3B] font-semibold">কার্যকর: সার্বজনীন সংস্করণ</span>
         </div>

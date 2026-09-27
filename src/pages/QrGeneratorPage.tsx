@@ -24,6 +24,7 @@ import {
   Palette
 } from 'lucide-react';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import pageContent from '../../content/pages/qr-generator.json';
 
 type InputCategory = 'url' | 'text' | 'phone' | 'email' | 'wifi';
 type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H';
@@ -298,72 +299,35 @@ export const QrGeneratorPage: React.FC = () => {
     { label: 'ওয়ার্ম ক্রিম', fg: '#083f2a', bg: '#f4efe4' }
   ];
 
+  const faqs = pageContent.faqs || [];
   // Schema.org FAQ structured data
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'এই QR কোডের কি কোনো মেয়াদ (Expiry Date) আছে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, এটি একটি সম্পূর্ণ স্ট্যাটিক (Static) QR কোড। এর কোনো মেয়াদ নেই, এটি আজীবন সক্রিয় থাকবে এবং স্ক্যান করার জন্য কোনো সাবস্ক্রিপশন বা সার্ভার লিংকের প্রয়োজন নেই।',
-        },
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
       },
-      {
-        '@type': 'Question',
-        name: 'মাঝখানে লোগো বা ছবি বসালে স্ক্যান করতে কোনো সমস্যা হয় কি?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, কারণ আমরা হাই এরর কারেকশন (Level H) ব্যবহার করি, যা কিউআর কোডের ৩০% পর্যন্ত অংশ ঢেকে গেলেও নির্ভুল ও দ্রুত স্ক্যানিং নিশ্চিত করে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'এই QR কোড কি যেকোনো প্রিন্টিং বা বাণিজ্যিক কাজে ব্যবহার করা যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ! আপনি হাই-রেজোলিউশন (১০০০px বা ২০০০px) PNG অথবা ভেক্টর SVG ফরম্যাটে ডাউনলোড করে ব্যানার, বিলবোর্ড, লিফলেট, ভিজিটিং কার্ড, রেস্তোরাঁর মেনু বা পণ্যের প্যাকেজিংয়ে প্রিন্ট করতে পারবেন।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'ওয়াইফাই (WiFi) QR কোড কীভাবে কাজ করে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'ওয়াইফাই কিউআর কোডটিতে আপনার নেটওয়ার্কের নাম ও পাসওয়ার্ড এনকোড করা থাকে। যে কেউ তাদের ফোনের ক্যামেরা দিয়ে স্ক্যান করলেই কোনো পাসওয়ার্ড টাইপ করা ছাড়াই ওয়াইফাইতে অটো কানেক্ট হতে পারবে।',
-        },
-      },
-    ],
+    })),
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <Helmet>
-        <title>কাস্টম QR কোড জেনারেটর — কাস্টম ডিজাইন ও লোগো | Utools.bd</title>
-        <meta
-          name="description"
-          content="ফ্রি কাস্টম কিউআর কোড জেনারেটর। ওয়েবসাইট লিংক, টেক্সট, ফোন নম্বর, ওয়াইফাই ও ইমেইলের জন্য লোগো ও পছন্দের রঙসহ QR কোড তৈরি করুন। আনলিমিটেড ও আজীবন মেয়াদ।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/qr-generator" />
-        <meta
-          property="og:title"
-          content="কাস্টম QR কোড জেনারেটর — কাস্টম ডিজাইন ও লোগো | Utools.bd"
-        />
-        <meta
-          property="og:description"
-          content="লোগো, রঙ ও বিভিন্ন সাইজের কাস্টম QR কোড তৈরি করুন সরাসরি ব্রাউজারে। কোনো সাইন-আপ নেই, আজীবন মেয়াদ ও ১০০% প্রাইভেট।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/qr-generator" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="কাস্টম QR কোড জেনারেটর | Utools.bd" />
-        <meta
-          name="twitter:description"
-          content="ওয়েবসাইট, ওয়াইফাই, টেক্সট বা ফোন নম্বরের জন্য লোগোসহ কাস্টম QR কোড তৈরি করুন।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
@@ -395,10 +359,10 @@ export const QrGeneratorPage: React.FC = () => {
           <span className="text-xs text-[#4A5A52]">PNG ও ভেক্টর SVG ডাউনলোড</span>
         </div>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#084A2E] font-serif tracking-tight">
-          কাস্টম QR কোড জেনারেটর (Custom QR Code Generator)
+          {pageContent.title}
         </h1>
         <p className="text-xs sm:text-sm text-[#4A5A52] max-w-3xl leading-relaxed">
-          ওয়েবসাইট লিংক, প্লেইন টেক্সট, ফোন নম্বর, ইমেইল বা ওয়াইফাই (WiFi) কানেকশনের জন্য কাস্টম রঙের ও মাঝখানে লোগোসহ হাই-কোয়ালিটি কিউআর কোড তৈরি করুন। কোনো লিমিট বা মেয়াদ নেই—সরাসরি ব্রাউজারে নিরাপদে তৈরি হয়।
+          {pageContent.subtitle}
         </p>
       </div>
 
@@ -928,46 +892,17 @@ export const QrGeneratorPage: React.FC = () => {
         <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
           <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
           <h2 className="text-base font-bold text-[#084A2E] font-serif">
-            সাধারণ জিজ্ঞাসা (FAQ)
+            {pageContent.faqHeading}
           </h2>
         </div>
 
         <div className="divide-y divide-[#D5E4DB] text-xs sm:text-sm text-[#34443B]">
-          <div className="py-3 space-y-1">
-            <h3 className="font-semibold text-[#084A2E]">
-              এই QR কোডের কি কোনো মেয়াদ (Expiry Date) আছে?
-            </h3>
-            <p className="text-[#4A5A52] leading-relaxed">
-              না, এটি একটি সম্পূর্ণ স্ট্যাটিক (Static) QR কোড। এর কোনো মেয়াদ নেই, এটি আজীবন সক্রিয় থাকবে এবং স্ক্যান করার জন্য কোনো সাবস্ক্রিপশন বা সার্ভার লিংকের প্রয়োজন নেই।
-            </p>
-          </div>
-
-          <div className="py-3 space-y-1">
-            <h3 className="font-semibold text-[#084A2E]">
-              মাঝখানে লোগো বা ছবি বসালে স্ক্যান করতে কোনো সমস্যা হয় কি?
-            </h3>
-            <p className="text-[#4A5A52] leading-relaxed">
-              না, কারণ আমরা হাই এরর কারেকশন (Level H) ব্যবহার করি, যা কিউআর কোডের ৩০% পর্যন্ত অংশ ঢেকে গেলেও নির্ভুল ও দ্রুত স্ক্যানিং নিশ্চিত করে।
-            </p>
-          </div>
-
-          <div className="py-3 space-y-1">
-            <h3 className="font-semibold text-[#084A2E]">
-              এই QR কোড কি যেকোনো প্রিন্টিং বা বাণিজ্যিক কাজে ব্যবহার করা যাবে?
-            </h3>
-            <p className="text-[#4A5A52] leading-relaxed">
-              হ্যাঁ! আপনি হাই-রেজোলিউশন (১০০০px বা ২০০০px) PNG অথবা ভেক্টর SVG ফরম্যাটে ডাউনলোড করে ব্যানার, বিলবোর্ড, লিফলেট, ভিজিটিং কার্ড, রেস্তোরাঁর মেনু বা পণ্যের প্যাকেজিংয়ে প্রিন্ট করতে পারবেন।
-            </p>
-          </div>
-
-          <div className="py-3 space-y-1">
-            <h3 className="font-semibold text-[#084A2E]">
-              ওয়াইফাই (WiFi) QR কোড কীভাবে কাজ করে?
-            </h3>
-            <p className="text-[#4A5A52] leading-relaxed">
-              ওয়াইফাই কিউআর কোডটিতে আপনার নেটওয়ার্কের নাম ও পাসওয়ার্ড এনকোড করা থাকে। যে কেউ তাদের ফোনের ক্যামেরা দিয়ে স্ক্যান করলেই কোনো পাসওয়ার্ড টাইপ করা ছাড়াই ওয়াইফাইতে অটো কানেক্ট হতে পারবে।
-            </p>
-          </div>
+          {faqs.map((f, idx) => (
+            <div key={idx} className="py-3 space-y-1">
+              <h3 className="font-semibold text-[#084A2E]">{f.question}</h3>
+              <p className="text-[#4A5A52] leading-relaxed">{f.answer}</p>
+            </div>
+          ))}
         </div>
       </div>
 

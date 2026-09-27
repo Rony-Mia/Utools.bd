@@ -26,6 +26,7 @@ import {
 } from '../bijoyConverter.ts';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import pageContent from '../../content/pages/converter.json';
 
 export const ConverterPage: React.FC = () => {
   const [mode, setMode] = useState<ConversionMode>('bijoy_to_unicode');
@@ -117,30 +118,36 @@ export const ConverterPage: React.FC = () => {
     return list.filter(m => m.bijoy.toLowerCase().includes(q) || m.unicode.includes(q));
   }, [searchMap]);
 
+  const faqs = pageContent.faqs || [];
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       <Helmet>
-        <title>বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode | Utools.bd</title>
-        <meta
-          name="description"
-          content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ ক্লায়েন্ট-সাইড ও নিরাপদ।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/converter" />
-        <meta property="og:title" content="বিজয় ↔ ইউনিকোড কনভার্টার — Bijoy to Unicode | Utools.bd" />
-        <meta
-          property="og:description"
-          content="সুতন্বীএমজে (Bijoy ANSI) এবং ইউনিকোড (Avro/Unicode) ফন্টের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা রূপান্তরকারী। শতভাগ ক্লায়েন্ট-সাইড ও নিরাপদ।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/converter" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="বিজয় ↔ ইউনিকোড কনভার্টার | Utools.bd" />
-        <meta
-          name="twitter:description"
-          content="সুতন্বীএমজে এবং ইউনিকোডের মধ্যে দ্রুত ও নির্ভুল দ্বিমুখী বাংলা টেক্সট রূপান্তর।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 
       {/* Breadcrumb */}
@@ -157,10 +164,10 @@ export const ConverterPage: React.FC = () => {
       {/* Page Header */}
       <section className="space-y-2">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#084A2E] font-serif">
-          বিজয় (ANSI) ↔ ইউনিকোড কনভার্টার
+          {pageContent.title}
         </h1>
         <p className="text-sm sm:text-base text-[#4A5A52] max-w-3xl leading-relaxed">
-          পুরনো সুতন্বীএমজে (SutonnyMJ) ডকুমেন্টের লেখা এবং আধুনিক ইউনিকোডের মধ্যে তাৎক্ষণিক দ্বিমুখী রূপান্তর। নির্ভুল যুক্তাক্ষর ও কার-চিহ্ন বিন্যাস।
+          {pageContent.subtitle}
         </p>
       </section>
 
@@ -503,38 +510,17 @@ export const ConverterPage: React.FC = () => {
         <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
           <Info className="w-4 h-4 text-[#0B5D3B]" />
           <h2 className="text-base sm:text-lg font-bold text-[#084A2E] font-serif">
-            প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)
+            {pageContent.faqHeading}
           </h2>
         </div>
 
         <div className="space-y-5 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">বিজয় (ANSI) আর ইউনিকোডের পার্থক্য কী?</h3>
-            <p className="text-[#34443B]">
-              বিজয় (সুতন্বীএমজে, বৈশাখী ইত্যাদি) একটা পুরনো <strong>ANSI-ভিত্তিক এনকোডিং</strong>, যেখানে প্রতিটা বাংলা অক্ষরকে একটা নির্দিষ্ট ইংরেজি key-এর সাথে ম্যাপ করা হয় — সেই ফন্ট ইনস্টল করা না থাকলে লেখা ভাঙা/অপাঠ্য দেখায়। ইউনিকোড হলো আন্তর্জাতিক স্ট্যান্ডার্ড এনকোডিং যেখানে প্রতিটা বাংলা অক্ষরের একটা নির্দিষ্ট, ফন্ট-নিরপেক্ষ কোড থাকে — তাই যেকোনো ডিভাইস, ব্রাউজার বা সোশ্যাল মিডিয়ায় ঠিকভাবে দেখা যায়।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">কখন কোনটা দরকার হয়?</h3>
-            <p className="text-[#34443B]">
-              পুরনো সংবাদপত্র অফিস, প্রেস বা সরকারি দপ্তরের আর্কাইভ করা ডকুমেন্ট প্রায়ই বিজয়/সুতন্বীএমজে ফরম্যাটে থাকে — সেগুলো ওয়েবসাইট, ফেসবুক বা মোবাইলে ব্যবহার করতে হলে <strong>ইউনিকোডে রূপান্তর</strong> করতে হয়। উল্টোদিকে, কিছু পুরনো প্রিন্টিং প্রেস বা সফটওয়্যার এখনো শুধু বিজয় এনকোডিং নেয় — তখন ইউনিকোড থেকে <strong>বিজয়ে রূপান্তর</strong> দরকার হয়।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">কপি করার পর ফন্ট ভেঙে/উল্টাপাল্টা দেখাচ্ছে কেন?</h3>
-            <p className="text-[#34443B]">
-              এটা সবচেয়ে কমন সমস্যা। ইউনিকোডে রূপান্তরিত টেক্সট কোনো <strong>বিজয়-ফন্ট সিলেক্ট করা</strong> জায়গায় (যেমন MS Word-এ SutonnyMJ ফন্ট সিলেক্ট করা থাকলে) পেস্ট করলে অক্ষর ভাঙা দেখাবে — কারণ ফন্ট আর এনকোডিং মিলছে না। সমাধান: পেস্ট করার আগে সেই জায়গায় ফন্ট বদলে <strong>Kalpurush, SolaimanLipi, Nikosh</strong> এর মতো ইউনিকোড বাংলা ফন্ট সিলেক্ট করে নিন। উল্টোদিকে বিজয়ে কনভার্ট করা টেক্সট পেস্ট করার সময় অবশ্যই SutonnyMJ/বিজয় ফন্ট সিলেক্ট থাকতে হবে, নাহলে সেটাও ভাঙা দেখাবে।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">আমার ডেটা কি কোথাও জমা থাকে?</h3>
-            <p className="text-[#34443B]">
-              না। পুরো রূপান্তর প্রক্রিয়াটা আপনার ব্রাউজারেই (JavaScript দিয়ে) হয় — কোনো সার্ভারে আপলোড হয় না, তাই সংবেদনশীল বা ব্যক্তিগত ডকুমেন্টও নিরাপদে রূপান্তর করা যায়।
-            </p>
-          </div>
+          {faqs.map((f, idx) => (
+            <div key={idx} className="space-y-1.5">
+              <h3 className="font-bold text-[#084A2E]">{f.question}</h3>
+              <p className="text-[#34443B]">{f.answer}</p>
+            </div>
+          ))}
         </div>
       </section>
 

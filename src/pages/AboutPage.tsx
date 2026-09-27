@@ -19,6 +19,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { TOOLS } from '../data/tools.ts';
+import pageContent from '../../content/pages/about.json';
 
 export const AboutPage: React.FC = () => {
   const breadcrumbSchema = {
@@ -58,25 +59,25 @@ export const AboutPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
       <Helmet>
-        <title>আমাদের সম্পর্কে — Utools.bd | নিরাপদ বাংলা ইউটিলিটি</title>
+        <title>{pageContent.metaTitle}</title>
         <meta
           name="description"
-          content="Utools.bd হলো চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি, ক্লায়েন্ট-সাইড ও নিরাপদ বাংলা ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
+          content={pageContent.metaDescription}
         />
         <link rel="canonical" href="https://utools.bd/about" />
-        <meta property="og:title" content="আমাদের সম্পর্কে — Utools.bd" />
+        <meta property="og:title" content={pageContent.metaTitle} />
         <meta
           property="og:description"
-          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি ও ব্রাউজার-ভিত্তিক নিরাপদ ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
+          content={pageContent.metaDescription}
         />
         <meta property="og:url" content="https://utools.bd/about" />
         <meta property="og:type" content="article" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="আমাদের সম্পর্কে — Utools.bd" />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
         <meta
           name="twitter:description"
-          content="Utools.bd হলো বাংলাদেশি চাকরিপ্রার্থী, শিক্ষার্থী ও পেশাজীবীদের জন্য নির্মিত ১০০% ফ্রি ও ব্রাউজার-ভিত্তিক নিরাপদ ডিজিটাল ইউটিলিটি প্ল্যাটফর্ম।"
+          content={pageContent.metaDescription}
         />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
@@ -87,13 +88,13 @@ export const AboutPage: React.FC = () => {
       <section className="space-y-3 border-b border-[#D5E4DB] pb-6">
         <div className="inline-flex items-center gap-2 bg-[#FFFFFF] border border-[#D5E4DB] px-3 py-1 text-xs text-[#084A2E] font-medium rounded-lg">
           <Globe2 className="w-3.5 h-3.5 text-[#0B5D3B]" />
-          <span>আমাদের পরিচিতি ও লক্ষ্য</span>
+          <span>{pageContent.badge}</span>
         </div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#084A2E] font-serif tracking-tight">
-          Utools.bd — আপনার নির্ভরযোগ্য বাংলা ডিজিটাল সঙ্গী
+          {pageContent.title}
         </h1>
         <p className="text-sm sm:text-base text-[#4A5A52] max-w-3xl leading-relaxed">
-          প্রতিদিনের ডিজিটাল কাজের ঝামেলা দূর করে দ্রুত, নিরাপদ ও সম্পূর্ণ বিনামূল্যে প্রয়োজনীয় টুলস সবার কাছে পৌঁছে দেওয়াই ইউটুলস-এর মূল লক্ষ্য।
+          {pageContent.subtitle}
         </p>
       </section>
 
@@ -101,17 +102,11 @@ export const AboutPage: React.FC = () => {
       <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-8 space-y-6 rounded-2xl">
         <div className="space-y-4 text-sm sm:text-base text-[#0F1F17] leading-relaxed">
           <h2 className="text-xl sm:text-2xl font-bold text-[#084A2E] font-serif">
-            কেন তৈরি হয়েছে Utools.bd?
+            {pageContent.originTitle}
           </h2>
-          <p>
-            বাংলাদেশে প্রতিদিন হাজার হাজার শিক্ষার্থী, চাকরিপ্রার্থী ও সাধারণ পেশাজীবী বিভিন্ন অনলাইন সেবা ও আবেদনের জন্য নানা ধরণের বিড়ম্বনায় পড়েন। যেমন— সরকারি চাকরির টেলিটক পোর্টালে (Teletalk/BPSC) আবেদন করতে গিয়ে নির্দিষ্ট ৩০০×৩০০ পিক্সেল ছবি ও ৩০০×৮০ পিক্সেল স্বাক্ষর তৈরি করা, পুরোনো সুতন্বীএমজে (SutonnyMJ) বিজয় ফন্ট থেকে ইউনিকোডে লেখা রূপান্তর করা, সার্কুলারের নির্দিষ্ট তারিখে বয়স নির্ধারণ ও কোটা যাচাই করা, কিংবা ব্যাংক চেকের জন্য টাকার সঠিক কথায় রূপান্তর লেখা।
-          </p>
-          <p>
-            অধিকাংশ সময় এসব সাধারণ কাজের জন্য বিভিন্ন অস্বচ্ছ ওয়েবসাইটে গিয়ে ব্যক্তিগত ছবি ও গোপনীয় তথ্য আপলোড করতে হয়, যাতে তথ্য ফাঁসের ঝুঁকি থাকে। অনেক ওয়েবসাইটে আবার অতিরিক্ত বিজ্ঞাপন, পেইড সাবস্ক্রিপশন বা অ্যাকাউন্ট খোলার বাধ্যবাধকতা থাকে।
-          </p>
-          <p>
-            এই বাস্তবতা থেকেই <strong>Utools.bd</strong>-এর জন্ম। আমরা এমন একটি সর্বজনীন প্ল্যাটফর্ম গড়ে তুলেছি, যা ব্যবহার করার জন্য কোনো রেজিস্ট্রেশন লাগবে না, কোনো ডেটা কোনো সার্ভারে যাবে না এবং প্রতিটি টুল সেকেন্ডের মধ্যে সরাসরি আপনার ব্রাউজারেই কার্যকর হবে।
-          </p>
+          {pageContent.originParagraphs.map((para, idx) => (
+            <p key={idx}>{para}</p>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-[#D5E4DB]">

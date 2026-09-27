@@ -35,6 +35,7 @@ import {
 import { toBanglaDigits } from '../amountToWords.ts';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import pageContent from '../../content/pages/land-converter.json';
 
 interface PresetOption {
   label: string;
@@ -141,80 +142,35 @@ export const LandConverterPage: React.FC = () => {
     'general',
   ];
 
+  const faqs = pageContent.faqs || [];
   // FAQ Schema JSON-LD
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: '১ একর কত শতক ও কত বিঘা?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '১ একর সমান ঠিক ১০০ শতক (বা ডেসিমেল)। আদর্শ প্রমিত হিসেবে (১ বিঘা = ১৪,৪০০ বর্গফুট) ১ একর সমান ৩.০২৫ বিঘা (বা ৩ বিঘা ৮ ছটাক / ৬০.৫ কাঠা)। ৩৩ শতকের বিঘার হিসাবে ১ একর সমান প্রায় ৩.০৩ বিঘা।',
-        },
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
       },
-      {
-        '@type': 'Question',
-        name: '১ বিঘা কত কাঠা ও কত বর্গফুট?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'সরকারি ও আদর্শ প্রমিত মানদণ্ড অনুযায়ী ১ বিঘা সমান ২০ কাঠা এবং ১৪,৪০০ বর্গফুট (১৬০০ বর্গগজ বা ১৩৩৭.৮০ বর্গমিটার)। ১ কাঠা সমান ৭২০ বর্গফুট বা ১৬ ছটাক। তবে কিছু স্থানীয় অঞ্চলে ৩৩ শতকে (১৪,৩৭৪.৮ বর্গফুট) এক বিঘা গণ্য করা হয়।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'কানির দুই রকম মাপ কেন, কোনটা বেছে নেব?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'চট্টগ্রাম, নোয়াখালী ও কুমিল্লা অঞ্চলে কানিতে জমি পরিমাপের প্রচলন রয়েছে। প্রচলিত প্রমিত নিয়মে ৮ হাত নল ধরে ১ কানি = ১৭,২৮০ বর্গফুট (৩৯.৬৭ শতক)। আবার বৃহত্তর ময়মনসিংহ বা কিছু অঞ্চলে সরাসরি ৪০ শতকে ১ কানি ধরা হয় (১৭,৪২৪ বর্গফুট)। আপনার এলাকার রেজিস্ট্রি দলিলের শর্তানুযায়ী ৮ হাত নল বা ৪০ শতক অপশনটি নির্বাচন করুন।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'বিঘা-কাঠার মাপ কি সব অঞ্চলে একই?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'সারাদেশে সরকারি খতিয়ান ও আধুনিক দলিলে ১৪,৪০০ বর্গফুটের বিঘা (২০ কাঠা) সবচেয়ে বেশি প্রচলিত ও প্রমিত। তবে রাজশাহী বা উত্তরবঙ্গের কিছু অঞ্চলে ৩৩ শতকের বিঘা এবং ঢাকার নিকটবর্তী অঞ্চলে কাঠার মাপের সামান্য পার্থক্য দেখা যায়। তাই ক্রয়-বিক্রয়ের পূর্বে সংশ্লিষ্ট মৌজার দলিল ও খতিয়ান মিলিয়ে নেওয়া আবশ্যক।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমার দেওয়া তথ্য কি সার্ভারে যায়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, এটি সম্পূর্ণ ক্লায়েন্ট-সাইড টুল। সমস্ত রূপান্তর ও হিসাব সরাসরি আপনার ব্রাউজারের ভেতর মেমোরিতে সম্পন্ন হয়। আপনার কোনো ইনপুট বা তথ্য কোনো সার্ভার কিংবা লোকাল স্টোরেজে সংরক্ষণ করা হয় না।',
-        },
-      },
-    ],
+    })),
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <Helmet>
-        <title>জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা ও একর | Utools.bd</title>
-        <meta
-          name="description"
-          content="শতক, বিঘা, কাঠা, কানি, একর, হেক্টর ও বর্গফুটের তাৎক্ষণিক রূপান্তর। কানি ও বিঘার আঞ্চলিক সংজ্ঞার বিকল্প এবং দলিল ও খতিয়ানের জন্য মিশ্র রূপ।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/land-converter" />
-        <meta
-          property="og:title"
-          content="জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা ও একর | Utools.bd"
-        />
-        <meta
-          property="og:description"
-          content="শতক, বিঘা, কাঠা, কানি, একর, হেক্টর ও বর্গফুটের তাৎক্ষণিক রূপান্তর। কানি ও বিঘার আঞ্চলিক সংজ্ঞার বিকল্প এবং দলিল ও খতিয়ানের জন্য মিশ্র রূপ।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/land-converter" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="জমির মাপ কনভার্টার | Utools.bd" />
-        <meta
-          name="twitter:description"
-          content="শতক, বিঘা, কাঠা, কানি, একর, হেক্টর ও বর্গফুটের নিখুঁত ক্লায়েন্ট-সাইড রূপান্তর।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
@@ -242,12 +198,10 @@ export const LandConverterPage: React.FC = () => {
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#084A2E] font-serif tracking-tight flex items-center gap-2.5">
           <LandPlot className="w-7 h-7 text-[#0B5D3B]" />
-          <span>জমির মাপ কনভার্টার — শতক, বিঘা, কাঠা, কানি ও একর রূপান্তর</span>
+          <span>{pageContent.title}</span>
         </h1>
         <p className="text-sm text-[#34443B] max-w-3xl leading-relaxed">
-          শতক, বিঘা, কাঠা, কানি, একর, হেক্টর ও বর্গফুটের তাৎক্ষণিক রূপান্তর। কানি ও বিঘার
-          আঞ্চলিক সংজ্ঞার বিকল্প এবং দলিল ও খতিয়ানের জন্য মিশ্র রূপ। ২৬টি এককের মধ্যে
-          ১০০% নির্ভুল ও রিয়েলটাইম গণনা।
+          {pageContent.subtitle}
         </p>
       </div>
 
@@ -770,57 +724,17 @@ export const LandConverterPage: React.FC = () => {
         <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
           <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
           <h2 className="text-base sm:text-lg font-bold text-[#084A2E] font-serif">
-            প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ — জমির মাপ ও রূপান্তর)
+            {pageContent.faqHeading}
           </h2>
         </div>
 
         <div className="space-y-5 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">১ একর কত শতক ও কত বিঘা?</h3>
-            <p className="text-[#34443B]">
-              ১ একর সমান ঠিক ১০০ শতক (বা ডেসিমেল)। আদর্শ প্রমিত হিসেবে (১ বিঘা = ১৪,৪০০ বর্গফুট)
-              ১ একর সমান ৩.০২৫ বিঘা (বা ৩ বিঘা ৮ ছটাক / ৬০.৫ কাঠা)। ৩৩ শতকের বিঘার হিসাবে ১ একর
-              সমান প্রায় ৩.০৩ বিঘা।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">১ বিঘা কত কাঠা ও কত বর্গফুট?</h3>
-            <p className="text-[#34443B]">
-              সরকারি ও আদর্শ প্রমিত মানদণ্ড অনুযায়ী ১ বিঘা সমান ২০ কাঠা এবং ১৪,৪০০ বর্গফুট (১৬০০
-              বর্গগজ বা ১৩৩৭.৮০ বর্গমিটার)। ১ কাঠা সমান ৭২০ বর্গফুট বা ১৬ ছটাক। তবে কিছু স্থানীয়
-              অঞ্চলে ৩৩ শতকে (১৪,৩৭৪.৮ বর্গফুট) এক বিঘা গণ্য করা হয়।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">কানির দুই রকম মাপ কেন, কোনটা বেছে নেব?</h3>
-            <p className="text-[#34443B]">
-              চট্টগ্রাম, নোয়াখালী ও কুমিল্লা অঞ্চলে কানিতে জমি পরিমাপের প্রচলন রয়েছে। প্রচলিত
-              প্রমিত নিয়মে ৮ হাত নল ধরে ১ কানি = ১৭,২৮০ বর্গফুট (৩৯.৬৭ শতক)। আবার বৃহত্তর
-              ময়মনসিংহ বা কিছু অঞ্চলে সরাসরি ৪০ শতকে ১ কানি ধরা হয় (১৭,৪২৪ বর্গফুট)। আপনার এলাকার
-              রেজিস্ট্রি দলিলের শর্তানুযায়ী ৮ হাত নল বা ৪০ শতক অপশনটি নির্বাচন করুন।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">বিঘা-কাঠার মাপ কি সব অঞ্চলে একই?</h3>
-            <p className="text-[#34443B]">
-              সারাদেশে সরকারি খতিয়ান ও আধুনিক দলিলে ১৪,৪০০ বর্গফুটের বিঘা (২০ কাঠা) সবচেয়ে বেশি
-              প্রচলিত ও প্রমিত। তবে রাজশাহী বা উত্তরবঙ্গের কিছু অঞ্চলে ৩৩ শতকের বিঘা এবং ঢাকার
-              নিকটবর্তী অঞ্চলে কাঠার মাপের সামান্য পার্থক্য দেখা যায়। তাই ক্রয়-বিক্রয়ের পূর্বে
-              সংশ্লিষ্ট মৌজার দলিল ও খতিয়ান মিলিয়ে নেওয়া আবশ্যক।
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <h3 className="font-bold text-[#084A2E]">আমার দেওয়া তথ্য কি সার্ভারে যায়?</h3>
-            <p className="text-[#34443B]">
-              না, এটি সম্পূর্ণ ক্লায়েন্ট-সাইড টুল। সমস্ত রূপান্তর ও হিসাব সরাসরি আপনার ব্রাউজারের
-              ভেতর মেমোরিতে সম্পন্ন হয়। আপনার কোনো ইনপুট বা তথ্য কোনো সার্ভার কিংবা লোকাল স্টোরেজে
-              সংরক্ষণ করা হয় না।
-            </p>
-          </div>
+          {faqs.map((f, idx) => (
+            <div key={idx} className="space-y-1.5">
+              <h3 className="font-bold text-[#084A2E]">{f.question}</h3>
+              <p className="text-[#34443B]">{f.answer}</p>
+            </div>
+          ))}
         </div>
       </section>
 

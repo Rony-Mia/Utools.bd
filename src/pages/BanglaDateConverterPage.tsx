@@ -39,6 +39,7 @@ import {
 } from '../utils/banglaDateConverter.ts';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import html2canvas from 'html2canvas-pro';
+import pageContent from '../../content/pages/bangla-date-converter.json';
 
 interface WikiHistoryEvent {
   year: number;
@@ -266,65 +267,34 @@ export const BanglaDateConverterPage: React.FC = () => {
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
-  const FAQS = [
-    {
-      q: 'বঙ্গাব্দ বা বাংলা সাল কীভাবে গণনা করা হয়?',
-      a: 'বাংলাদেশে বাংলা একাডেমির ২০১৯ সালের সর্বশেষ সংশোধিত জাতীয় বর্ষপঞ্জি অনুসারে বঙ্গাব্দ গণনা করা হয়। এই নিয়মে বৈশাখ থেকে আশ্বিন পর্যন্ত প্রথম ৬টি মাস ৩১ দিনের হয়, কার্তিক থেকে ফাল্গুন পর্যন্ত ৫টি মাস ৩০ দিনের এবং চৈত্র মাস ২৯ দিনের (অধিবর্ষ বা লিপ ইয়ারে ৩০ দিন) হয়। প্রতি বছর ১৪ই এপ্রিল পহেলা বৈশাখ হিসেবে নির্দিষ্ট।',
-    },
-    {
-      q: 'হিজরি তারিখ কীভাবে হিসাব করা হয় এবং এটি কতটা নির্ভুল?',
-      a: 'এই টুলে হিজরি তারিখ আন্তর্জাতিক মানদণ্ড (সৌদি আরবের উম্মুল কুরা ইসলামিক ক্যালেন্ডার) ও জ্যোতির্বৈজ্ঞানিক গাণিতিক ফর্মুলার মাধ্যমে নিখুঁতভাবে নির্ধারিত হয়। তবে ইসলামিক মাস চাঁদ দেখার ওপর নির্ভরশীল হওয়ায় জাতীয় চাঁদ দেখা কমিটির ঘোষণার সাথে স্থানীয়ভাবে ১ দিন আগে বা পরে হতে পারে। ধর্মীয় ইবাদতের জন্য সরকারি ঘোষণাই চূড়ান্ত।',
-    },
-    {
-      q: 'ইংরেজি থেকে বাংলা তারিখ রূপান্তর কি শতভাগ নির্ভুল?',
-      a: 'হ্যাঁ, গণপ্রজাতন্ত্রী বাংলাদেশ সরকারের সরকারি প্রজ্ঞাপন এবং বাংলা একাডেমির প্রমিত বর্ষপঞ্জি বিধিমালা অনুযায়ী এটি শতভাগ নির্ভুল। ঐতিহাসিক গুরুত্বপূর্ণ দিন যেমন—২১শে ফেব্রুয়ারি = ৮ই ফাল্গুন, ২৬শে মার্চ = ১২ই চৈত্র এবং ১৬ই ডিসেম্বর = ১লা পৌষ হুবহু মিলে যায়।',
-    },
-    {
-      q: 'এই টুলের জন্য কোনো ইন্টারনেট সংযোগ বা ডেটা পাঠানো লাগে কি?',
-      a: 'না, মূল তারিখ রূপান্তর এবং কার্ড জেনারেশন সম্পূর্ণ ১০০% আপনার ব্রাউজারে ক্লায়েন্ট-সাইডে সম্পন্ন হয়। কোনো ডেটা আমাদের সার্ভারে সংরক্ষণ বা প্রেরণ করা হয় না। এটি সম্পূর্ণ নিরাপদ ও ব্রাউজার-ভিত্তিক।',
-    },
-    {
-      q: 'বাংলা অধিবর্ষ (লিপ ইয়ার) কীভাবে নির্ধারিত হয়?',
-      a: 'যে গ্রেগরিয়ান (ইংরেজি) বছরে বাংলা চৈত্র মাস পড়ে, সেই ইংরেজি বছরটি যদি অধিবর্ষ (লিপ ইয়ার) হয়, তবে সেই বাংলা বছরের চৈত্র মাস ২৯ দিনের পরিবর্তে ৩০ দিনের হয়। ফলে বাংলা বর্ষপঞ্জি গ্রেগরিয়ান ক্যালেন্ডারের সাথে যুগপৎ সামঞ্জস্য রক্ষা করে।',
-    },
-  ];
-
+  const faqs = pageContent.faqs || [];
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: FAQS.map((faq) => ({
+    mainEntity: faqs.map((faq) => ({
       '@type': 'Question',
-      name: faq.q,
+      name: faq.question,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq.a
-      }
-    }))
+        text: faq.answer,
+      },
+    })),
   };
 
   return (
     <>
       <Helmet>
-        <title>বাংলা তারিখ কনভার্টার — ইংরেজি বাংলা ও হিজরি | Utools.bd</title>
-        <meta
-          name="description"
-          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু ও সরকারি ছুটির হিসাব।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/bangla-date-converter" />
-        <meta property="og:title" content="বাংলা তারিখ কনভার্টার — ইংরেজি বাংলা ও হিজরি | Utools.bd" />
-        <meta
-          property="og:description"
-          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু ও সরকারি ছুটির হিসাব।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://utools.bd/bangla-date-converter" />
         <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="বাংলা তারিখ কনভার্টার — ইংরেজি বাংলা ও হিজরি | Utools.bd" />
-        <meta
-          name="twitter:description"
-          content="ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তরক। বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি অনুযায়ী ১০০% নির্ভুল বাংলা তারিখ, ঋতু ও সরকারি ছুটির হিসাব।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
@@ -337,20 +307,20 @@ export const BanglaDateConverterPage: React.FC = () => {
               হোম
             </Link>
             <span>/</span>
-            <span className="text-[#0B5D3B] font-medium">বাংলা তারিখ কনভার্টার</span>
+            <span className="text-[#0B5D3B] font-medium">{pageContent.title}</span>
           </nav>
 
           {/* 1. Header / Hero Section */}
           <section className="text-center space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF3D0] text-[#B45309] text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-[#F5A524]" />
-              <span>বাংলা একাডেমির সংশোধিত প্রমিত বর্ষপঞ্জি</span>
+              <span>{pageContent.badgeText}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold text-[#0F1F17] tracking-tight">
-              বাংলা তারিখ কনভার্টার
+              {pageContent.title}
             </h1>
             <p className="text-sm sm:text-base text-[#4A5A52] max-w-2xl mx-auto">
-              ইংরেজি ↔ বাংলা ↔ হিজরি তারিখ, ১০০% ব্রাউজার-ভিত্তিক, কোনো ডেটা সার্ভারে যায় না
+              {pageContent.subtitle}
             </p>
           </section>
 
@@ -845,7 +815,7 @@ export const BanglaDateConverterPage: React.FC = () => {
             <div className="border-b border-[#D5E4DB] pb-3">
               <div className="flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-[#0B5D3B]" />
-                <h2 className="text-lg font-bold text-[#0F1F17]">সচরাচর জিজ্ঞাসিত প্রশ্নাবলী (FAQ)</h2>
+                <h2 className="text-lg font-bold text-[#0F1F17]">{pageContent.faqHeading}</h2>
               </div>
               <p className="text-xs text-[#4A5A52] mt-1">
                 বাংলা ও হিজরি বর্ষপঞ্জি সম্পর্কিত প্রয়োজনীয় তথ্য ও নিয়মাবলী
@@ -853,7 +823,7 @@ export const BanglaDateConverterPage: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              {FAQS.map((faq, idx) => (
+              {faqs.map((faq, idx) => (
                 <div
                   key={idx}
                   className="border border-[#D5E4DB] rounded-xl overflow-hidden transition-all bg-[#F8FAF9]"
@@ -863,7 +833,7 @@ export const BanglaDateConverterPage: React.FC = () => {
                     onClick={() => toggleFaq(idx)}
                     className="w-full px-4 py-3.5 text-left font-semibold text-xs sm:text-sm text-[#0F1F17] hover:text-[#0B5D3B] flex items-center justify-between gap-3 cursor-pointer"
                   >
-                    <span>{faq.q}</span>
+                    <span>{faq.question}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-[#4A5A52] transition-transform shrink-0 ${
                         openFaq === idx ? 'rotate-180 text-[#0B5D3B]' : ''
@@ -872,7 +842,7 @@ export const BanglaDateConverterPage: React.FC = () => {
                   </button>
                   {openFaq === idx && (
                     <div className="px-4 pb-4 text-xs sm:text-sm text-[#4A5A52] leading-relaxed border-t border-[#D5E4DB]/60 bg-white pt-3">
-                      {faq.a}
+                      {faq.answer}
                     </div>
                   )}
                 </div>

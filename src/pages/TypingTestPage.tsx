@@ -29,6 +29,7 @@ import { TypingResult } from '../components/typing/TypingResult.tsx';
 import { TypingHistorySection } from '../components/typing/TypingHistorySection.tsx';
 import { TypingFaq, TYPING_FAQS } from '../components/typing/TypingFaq.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import pageContent from '../../content/pages/typing-test.json';
 
 export const TypingTestPage: React.FC = () => {
   // ── Configuration State ───────────────────────────────────────────────────
@@ -305,36 +306,21 @@ export const TypingTestPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       {/* ── SEO Helmet ───────────────────────────────────────────────────── */}
       <Helmet>
-        <title>টাইপিং স্পিড টেস্ট — বাংলা ও ইংরেজি WPM | Utools.bd</title>
-        <meta
-          name="description"
-          content="বাংলা ও ইংরেজিতে আপনার টাইপিং স্পিড, WPM এবং নির্ভুলতা পরীক্ষা করুন। লাইভ WPM গ্রাফ, কীবোর্ড হিটম্যাপ ও ফ্রি সার্টিফিকেট ডাউনলোড। ১০০% ক্লায়েন্ট-সাইড।"
-        />
+        <title>{pageContent.metaTitle}</title>
+        <meta name="description" content={pageContent.metaDescription} />
         <link rel="canonical" href="https://utools.bd/typing-test" />
 
         {/* OpenGraph */}
-        <meta
-          property="og:title"
-          content="টাইপিং স্পিড টেস্ট — বাংলা ও ইংরেজি WPM | Utools.bd"
-        />
-        <meta
-          property="og:description"
-          content="বাংলা ও ইংরেজিতে আপনার টাইপিং স্পিড, WPM এবং নির্ভুলতা পরীক্ষা করুন। লাইভ WPM গ্রাফ, কীবোর্ড হিটম্যাপ ও ফ্রি রেজাল্ট ডাউনলোড।"
-        />
+        <meta property="og:title" content={pageContent.metaTitle} />
+        <meta property="og:description" content={pageContent.metaDescription} />
         <meta property="og:url" content="https://utools.bd/typing-test" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://utools.bd/og-image.png" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="টাইপিং স্পিড টেস্ট — Utools.bd"
-        />
-        <meta
-          name="twitter:description"
-          content="বাংলা ও ইংরেজিতে লাইভ টাইপিং স্পিড ও নির্ভুলতা পরিমাপক।"
-        />
+        <meta name="twitter:title" content={pageContent.metaTitle} />
+        <meta name="twitter:description" content={pageContent.metaDescription} />
         <meta name="twitter:image" content="https://utools.bd/og-image.png" />
 
         {/* JSON-LD Schemas */}
