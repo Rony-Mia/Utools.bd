@@ -583,7 +583,7 @@ export const BanglaDateConverterPage: React.FC = () => {
           </section>
 
           {/* 4. "এই দিনে ইতিহাসে" সেকশন (Wikipedia On This Day) */}
-          <section className="bg-white border border-[#D5E4DB] rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+          <section data-nosnippet className="bg-white border border-[#D5E4DB] rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D5E4DB] pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-[#E6F4EC] text-[#0B5D3B] flex items-center justify-center">
