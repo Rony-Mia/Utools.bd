@@ -29,6 +29,7 @@ import {
   LoadedPdfInfo
 } from '../lib/pdfUtils.ts';
 import { toBanglaNum } from './AgeCalculatorPage.tsx';
+import pageContent from '../../content/pages/pdf-split.json';
 
 interface SplitPartOutput {
   id: string;
@@ -286,11 +287,12 @@ export const PdfSplitPage: React.FC = () => {
       ogDescription="অনলাইনে PDF ফাইল ভাগ করুন ও নির্দিষ্ট পেজ আলাদা করুন সম্পূর্ণ ফ্রিতে। কোনো পেজ সীমা নেই, ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে নিরাপদ প্রসেসিং ও ZIP ডাউনলোড।"
       refCode="DOC-PDF-02"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পিডিএফ স্প্লিটার"
-      h1="পিডিএফ স্প্লিটার — PDF ফাইল ভাগ ও পেজ আলাদা করুন"
-      introText="বড় পিডিএফ বই, সরকারি রেজাল্ট শিট বা চাকরির গেজেট থেকে প্রয়োজনীয় পৃষ্ঠাসমূহ আলাদা করুন সহজে ও নিখুঁতভাবে। নির্দিষ্ট রেঞ্জ (যেমন ১-৪, ৭, ১০-১৫) অথবা প্রতিটি পৃষ্ঠাকে একক ফাইলে রূপান্তর করে এক ক্লিকে জিপ (ZIP) ডাউনলোড করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"
+      h1={pageContent?.title || "পিডিএফ স্প্লিটার — PDF ফাইল ভাগ ও পেজ আলাদা করুন"}
+      introText={pageContent?.introText || "বড় পিডিএফ বই, সরকারি রেজাল্ট শিট বা চাকরির গেজেট থেকে প্রয়োজনীয় পৃষ্ঠাসমূহ আলাদা করুন সহজে ও নিখুঁতভাবে। নির্দিষ্ট রেঞ্জ (যেমন ১-৪, ৭, ১০-১৫) অথবা প্রতিটি পৃষ্ঠাকে একক ফাইলে রূপান্তর করে এক ক্লিকে জিপ (ZIP) ডাউনলোড করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"}
       schemas={[faqSchema]}
       howToSteps={howToSteps}
       currentToolId="pdf-split"
+      cmsContent={pageContent}
       deepDiveTitle="কেন Utools.bd-এর পিডিএফ স্প্লিটার অনন্য ও নির্ভরযোগ্য?"
       deepDiveContent={
         <>

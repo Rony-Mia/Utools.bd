@@ -20,6 +20,7 @@ import {
 import { PresetProfile } from '../types.ts';
 import { GOVERNMENT_PRESET_PROFILES } from '../constants/presets.ts';
 import { resizeImage } from '../utils/imageResize.ts';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import pageContent from '../../content/pages/photo-resizer.json';
 
@@ -1005,39 +1006,14 @@ export const PhotoResizerPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Official Government Sizing Guidelines Reference Box */}
-      <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 space-y-4 rounded-2xl">
-        <h3 className="text-sm font-bold text-[#084A2E] font-serif uppercase tracking-wider flex items-center space-x-2">
-          <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <span>{pageContent.guidelinesHeading}</span>
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#34443B] leading-relaxed">
-          <div className="space-y-2">
-            <h4 className="font-bold text-[#084A2E]">{pageContent.photoRulesTitle}</h4>
-            <ul className="list-disc pl-4 space-y-1.5">
-              {pageContent.photoRules.map((rule, idx) => (
-                <li key={idx}>{rule}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <h4 className="font-bold text-[#084A2E]">{pageContent.signatureRulesTitle}</h4>
-            <ul className="list-disc pl-4 space-y-1.5">
-              {pageContent.signatureRules.map((rule, idx) => (
-                <li key={idx}>{rule}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+      {/* Dynamic CMS Rules, Guidelines, & Sections */}
+      <CmsDynamicContent content={pageContent} excludeSections={['faq']} />
 
       {/* Org-wise Size Reference Table */}
       <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-6 space-y-4 rounded-2xl">
         <h3 className="text-sm font-bold text-[#084A2E] font-serif uppercase tracking-wider flex items-center space-x-2">
           <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <span>{pageContent.tableTitle}</span>
+          <span>{pageContent.tableTitle || 'বিভিন্ন প্রতিষ্ঠানের নির্ধারিত মাপের রেফারেন্স টেবিল'}</span>
         </h3>
 
         <div className="overflow-x-auto border border-[#D5E4DB]">
@@ -1069,22 +1045,11 @@ export const PhotoResizerPage: React.FC = () => {
         </div>
       </div>
 
-      {/* FAQ / Common Mistakes Section */}
-      <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-6 space-y-5 rounded-2xl">
-        <h3 className="text-sm font-bold text-[#084A2E] font-serif uppercase tracking-wider flex items-center space-x-2">
-          <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <span>{pageContent.faqHeading}</span>
-        </h3>
-
-        <div className="space-y-4 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-          {pageContent.faqs.map((faq, idx) => (
-            <div key={idx} className="space-y-1">
-              <h4 className="font-bold text-[#084A2E]">{faq.question}</h4>
-              <p className="text-[#34443B]">{faq.answer}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Dynamic CMS FAQs & More */}
+      <CmsDynamicContent
+        content={pageContent}
+        excludeSections={['rules', 'guidelines', 'sellingPoint', 'features', 'steps', 'howToSteps', 'deepDive', 'guide', 'origin', 'contact', 'markdown', 'lastUpdated']}
+      />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="photo-resizer" />

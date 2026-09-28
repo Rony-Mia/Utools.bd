@@ -19,6 +19,7 @@ import {
   Sliders,
   Award
 } from 'lucide-react';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import pageContent from '../../content/pages/age-calculator.json';
 
@@ -823,22 +824,8 @@ export const AgeCalculatorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Official Government Rules & FAQ Guidance Box */}
-      <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 space-y-4 rounded-2xl">
-        <h3 className="text-sm font-bold text-[#084A2E] font-serif uppercase tracking-wider flex items-center space-x-2">
-          <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <span>{pageContent.guidelinesHeading}</span>
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#34443B] leading-relaxed">
-          {pageContent.guidelines.map((item, idx) => (
-            <div key={idx} className="space-y-2">
-              <h4 className="font-bold text-[#084A2E]">{item.title}</h4>
-              <p>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Dynamic CMS Sections (Guidelines, Rules, FAQs, Features, Markdown, etc.) */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="age-calculator" />

@@ -19,6 +19,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { TOOLS } from '../data/tools.ts';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/about.json';
 
 export const AboutPage: React.FC = () => {
@@ -258,6 +259,9 @@ export const AboutPage: React.FC = () => {
           </Link>
         </div>
       </section>
+
+      {/* Dynamic CMS Content (Markdown, FAQs, Guidelines, Features, etc.) */}
+      <CmsDynamicContent content={pageContent} excludeSections={['origin']} />
 
       {/* Call to Action */}
       <section className="bg-[#084A2E] text-[#FFFFFF] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">

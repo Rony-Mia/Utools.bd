@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import {
   Shield,
   Lock,
@@ -172,6 +173,9 @@ export const PrivacyPolicyPage: React.FC = () => {
             </p>
           </div>
         </section>
+
+        {/* Dynamic CMS Sections (Markdown Content, FAQs, Guidelines, etc.) */}
+        <CmsDynamicContent content={pageContent} excludeSections={['lastUpdated']} />
       </div>
 
       {/* Footer Navigation */}

@@ -24,9 +24,30 @@ function getDynamicBlogRoutes(): string[] {
   return routes;
 }
 
-// Single source of truth: static routes from src/routes.tsx + dynamic blog posts from content/blog/
+function getDynamicCustomPageRoutes(): string[] {
+  const pagesDir = path.resolve(process.cwd(), 'content/pages');
+  if (!fs.existsSync(pagesDir)) return [];
+  const files = fs.readdirSync(pagesDir).filter((f) => f.endsWith('.json'));
+  const routes: string[] = [];
+  for (const f of files) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(path.join(pagesDir, f), 'utf-8'));
+      const slug = raw.slug || f.replace(/\.json$/, '');
+      const pathRoute = `/${slug}`;
+      if (slug && slug !== 'home' && !(PRERENDER_ROUTES as readonly string[]).includes(pathRoute)) {
+        routes.push(pathRoute);
+      }
+    } catch (err) {
+      console.warn(`[prerender] Skipping invalid page file: ${f}`, err);
+    }
+  }
+  return routes;
+}
+
+// Single source of truth: static routes + dynamic custom pages + dynamic blog posts
 const DYNAMIC_BLOG_ROUTES = getDynamicBlogRoutes();
-const ROUTES: readonly string[] = [...PRERENDER_ROUTES, ...DYNAMIC_BLOG_ROUTES];
+const DYNAMIC_PAGE_ROUTES = getDynamicCustomPageRoutes();
+const ROUTES: readonly string[] = [...PRERENDER_ROUTES, ...DYNAMIC_PAGE_ROUTES, ...DYNAMIC_BLOG_ROUTES];
 // Rendered in the same two passes as every other route, but written to
 // dist/404.html instead of a routeClean folder, and left out of the sitemap.
 const ALL_RENDER_ROUTES: readonly string[] = [...ROUTES, NOT_FOUND_ROUTE];

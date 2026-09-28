@@ -24,6 +24,7 @@ import {
   Palette
 } from 'lucide-react';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/qr-generator.json';
 
 type InputCategory = 'url' | 'text' | 'phone' | 'email' | 'wifi';
@@ -887,24 +888,8 @@ export const QrGeneratorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* FAQ Information Section */}
-      <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 space-y-4 rounded-2xl">
-        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-          <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <h2 className="text-base font-bold text-[#084A2E] font-serif">
-            {pageContent.faqHeading}
-          </h2>
-        </div>
-
-        <div className="divide-y divide-[#D5E4DB] text-xs sm:text-sm text-[#34443B]">
-          {faqs.map((f, idx) => (
-            <div key={idx} className="py-3 space-y-1">
-              <h3 className="font-semibold text-[#084A2E]">{f.question}</h3>
-              <p className="text-[#4A5A52] leading-relaxed">{f.answer}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Dynamic CMS Sections (FAQs, Features, Steps, Guidelines, Markdown, etc.) */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="qr-generator" />

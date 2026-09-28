@@ -23,6 +23,7 @@ import {
   formatBangladeshiCurrency
 } from '../amountToWords.ts';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import pageContent from '../../content/pages/amount-in-words.json';
 
@@ -396,6 +397,9 @@ export const AmountInWordsPage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Dynamic CMS Sections (FAQs, Steps, Guidelines, Markdown, etc.) */}
+      <CmsDynamicContent content={pageContent} excludeSections={['features']} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="amount-in-words" />

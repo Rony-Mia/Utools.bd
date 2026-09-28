@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { GOVERNMENT_PRESET_PROFILES } from '../constants/presets.ts';
 import { resizeImage, loadImage, dataUrlToBlob, ResizeResult } from '../utils/imageResize.ts';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import pageContent from '../../content/pages/bulk-photo-resizer.json';
 
@@ -1002,28 +1003,8 @@ export const BulkPhotoResizerPage: React.FC = () => {
         </div>
       )}
 
-      {/* FAQ Accordion / Information Section */}
-      <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 space-y-4 rounded-2xl">
-        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-          <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <h2 className="text-base font-bold text-[#084A2E] font-serif">
-            {pageContent.faqHeading}
-          </h2>
-        </div>
-
-        <div className="divide-y divide-[#D5E4DB] text-xs sm:text-sm text-[#34443B]">
-          {pageContent.faqs.map((faq, idx) => (
-            <div key={idx} className="py-3 space-y-1">
-              <h3 className="font-semibold text-[#084A2E]">
-                {faq.question}
-              </h3>
-              <p className="text-[#4A5A52] leading-relaxed">
-                {faq.answer}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Dynamic CMS Sections (Highlight Banner, FAQs, Features, etc.) */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="bulk-photo-resizer" />

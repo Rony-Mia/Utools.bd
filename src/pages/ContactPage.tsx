@@ -14,6 +14,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/contact.json';
 
 export const ContactPage: React.FC = () => {
@@ -358,6 +359,9 @@ export const ContactPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Dynamic CMS Sections (FAQs, Markdown Content, Guidelines, etc.) */}
+      <CmsDynamicContent content={pageContent} excludeSections={['contact']} />
     </div>
   );
 };

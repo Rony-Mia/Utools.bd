@@ -25,6 +25,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/image-merger.json';
 import {
   PageSize,
@@ -1055,46 +1056,8 @@ export const ImageMergerPage: React.FC = () => {
           </ul>
         </div>
 
-        {/* Step-by-Step Guide */}
-        <div className="space-y-4 pt-4 border-t border-[#D5E4DB]">
-          <h3 className="text-lg font-serif font-bold text-[#084A2E]">
-            {pageContent.stepsHeading}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {pageContent.steps.map((item, idx) => (
-              <div key={idx} className="border border-[#D5E4DB] bg-[#F0F4F2]/30 p-4 space-y-1 rounded-2xl">
-                <span className="text-xs font-mono font-bold text-[#0B5D3B]">{item.step}</span>
-                <h4 className="font-bold text-sm text-[#084A2E]">{item.title}</h4>
-                <p className="text-xs text-[#34443B]">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* FAQs Section */}
-        <div className="space-y-4 pt-6 border-t border-[#D5E4DB]">
-          <h3 className="text-lg font-serif font-bold text-[#084A2E] flex items-center space-x-2">
-            <HelpCircle className="w-5 h-5 text-[#0B5D3B]" />
-            <span>{pageContent.faqHeading}</span>
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {faqSchema.mainEntity.map((faq, idx) => (
-              <div key={idx} className="border border-[#D5E4DB] bg-[#FFFFFF] p-4 space-y-2 rounded-2xl">
-                <h4 className="font-bold text-sm text-[#084A2E] flex items-start space-x-2">
-                  <span className="text-[#0B5D3B] font-mono font-bold shrink-0">Q.</span>
-                  <span>{faq.name}</span>
-                </h4>
-                <p className="text-xs sm:text-sm text-[#34443B] leading-relaxed pl-5">
-                  {faq.acceptedAnswer.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
+        {/* Dynamic CMS Sections (Steps, FAQs, Features, Guidelines, Markdown, etc.) */}
+        <CmsDynamicContent content={pageContent} />
       </div>
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}

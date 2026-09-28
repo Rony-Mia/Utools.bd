@@ -38,6 +38,7 @@ import { GovtStandardTemplate } from '../components/cv-templates/GovtStandardTem
 import { CreativeTemplate } from '../components/cv-templates/CreativeTemplate.tsx';
 import { EducationItemEditor } from '../components/cv/EducationItemEditor.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/cv-builder.json';
 
 type TemplateId = 'classic' | 'modern' | 'compact' | 'govt' | 'creative';
@@ -2193,44 +2194,8 @@ export const CvBuilderPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SEO Guide Section */}
-        <section className="mt-8 bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-6 space-y-4 rounded-2xl">
-          <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-            <Info className="w-4 h-4 text-[#0B5D3B]" />
-            <h2 className="text-base sm:text-lg font-bold text-[#084A2E] font-serif">
-              কীভাবে একটি ভালো জীবনবৃত্তান্ত লিখবেন?
-            </h2>
-          </div>
-          <div className="space-y-3 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-            <p className="text-[#34443B]">
-              সঠিক টেমপ্লেট বাছাই দিয়েই শুরু করুন — সরকারি চাকরির আবেদনের জন্য <strong>"সরকারি জীবনবৃত্তান্ত"</strong> বা <strong>"ক্লাসিক"</strong> টেমপ্লেট, বেসরকারি কর্পোরেট বা আইটি প্রতিষ্ঠানের জন্য <strong>"মডার্ন"</strong> বা <strong>"ক্রিয়েটিভ"</strong>, আর অভিজ্ঞতা কম থাকলে (fresher) <strong>"কমপ্যাক্ট"</strong> টেমপ্লেট বেছে নিন — এতে অল্প অভিজ্ঞতাতেও পাতা ফাঁকা মনে হবে না।
-            </p>
-            <p className="text-[#34443B]">
-              <strong>"ক্যারিয়ারের উদ্দেশ্য"</strong> সংক্ষিপ্ত (২-৩ বাক্যে) রাখুন — কোন পদে আবেদন করছেন এবং আপনার প্রধান দক্ষতা কী, সেটা স্পষ্টভাবে উল্লেখ করুন। প্রতিটা প্রতিষ্ঠানের জন্য একই সিভি না পাঠিয়ে, চাকরির বিবরণ অনুযায়ী সামান্য পরিবর্তন করে নেওয়া ভালো।
-            </p>
-            <p className="text-[#34443B]">
-              সাধারণ ভুলগুলো এড়িয়ে চলুন: বানান ভুল, পুরনো/অস্পষ্ট ছবি, ভুল বা অসম্পূর্ণ মোবাইল নম্বর/ইমেইল, এবং প্রয়োজনের চেয়ে বেশি লম্বা সিভি (fresher-দের জন্য ১ পাতাই যথেষ্ট)।
-            </p>
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="mt-6 bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-6 space-y-5 rounded-2xl">
-          <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-            <Info className="w-4 h-4 text-[#0B5D3B]" />
-            <h2 className="text-base sm:text-lg font-bold text-[#084A2E] font-serif">
-              {pageContent.faqHeading || 'প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)'}
-            </h2>
-          </div>
-          <div className="space-y-5 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-            {faqs.map((f, idx) => (
-              <div key={idx} className="space-y-1.5">
-                <h3 className="font-bold text-[#084A2E]">{f.question}</h3>
-                <p className="text-[#34443B]">{f.answer}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Dynamic CMS Sections (Guide Paragraphs, FAQs, Features, Guidelines, Markdown, etc.) */}
+        <CmsDynamicContent content={pageContent} className="mt-8" />
 
         {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
         <RelatedTools currentToolId="cv-builder" />

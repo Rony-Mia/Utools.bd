@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { toBanglaNum } from './AgeCalculatorPage.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/pdf-merger.json';
 
 interface PdfFileItem {
@@ -854,45 +855,8 @@ export const PdfMergerPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Step-by-Step Usage Guide */}
-      <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-7 space-y-5 rounded-2xl">
-        <h2 className="text-lg sm:text-xl font-bold text-[#084A2E] font-serif border-b border-[#D5E4DB] pb-3">
-          {pageContent.stepsHeading}
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs sm:text-sm text-[#0F1F17]">
-          {pageContent.steps.map((item, idx) => (
-            <div key={idx} className="border border-[#D5E4DB] p-4 bg-[#F0F4F2]/30 space-y-2 rounded-2xl">
-              <div className="text-xs font-mono font-bold text-[#0B5D3B] bg-[#FFFFFF] border border-[#D5E4DB] w-7 h-7 flex items-center justify-center rounded-lg">
-                {item.step}
-              </div>
-              <h3 className="font-bold text-[#084A2E]">{item.title}</h3>
-              <p className="text-xs text-[#34443B] leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-8 space-y-6 rounded-2xl">
-        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-          <HelpCircle className="w-5 h-5 text-[#0B5D3B]" />
-          <h2 className="text-base sm:text-xl font-bold text-[#084A2E] font-serif">
-            {pageContent.faqHeading}
-          </h2>
-        </div>
-
-        <div className="space-y-6 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-          {pageContent.faqs.map((faq, idx) => (
-            <div key={idx} className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E] text-sm sm:text-base">
-                {idx + 1}. {faq.question}
-              </h3>
-              <p className="text-[#34443B]">{faq.answer}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Dynamic CMS Sections (Steps, FAQs, Features, Guidelines, Markdown, etc.) */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="pdf-merger" />

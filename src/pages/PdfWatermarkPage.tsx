@@ -39,6 +39,7 @@ import {
   WatermarkPosition
 } from '../lib/pdfUtils.ts';
 import { toBanglaNum } from '../utils/bnDigits.ts';
+import pageContent from '../../content/pages/pdf-watermark.json';
 
 interface ProcessOutput {
   bytes: Uint8Array;
@@ -346,10 +347,11 @@ export const PdfWatermarkPage: React.FC = () => {
       canonicalUrl="https://utools.bd/pdf-watermark-page-number"
       refCode="DOC-PDF-05"
       badgeText="ডকুমেন্ট সিকিউরিটি ও স্ট্যাম্প"
-      h1="পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর (PDF Watermark & Page Number)"
-      introText="অফিসিয়াল ডকুমেন্ট, টেন্ডার পেপার, থিসিস বা আইনি ফাইলে কাস্টম ওয়াটারমার্ক স্ট্যাম্প এবং পেশাদার পেজ নম্বর বসিয়ে নথিকে অপব্যবহারমুক্ত রাখুন। সম্পূর্ণ ক্লায়েন্ট-সাইড প্রযুক্তি, ১০০% সুরক্ষিত ও নিরাপদ।"
+      h1={pageContent?.title || "পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর (PDF Watermark & Page Number)"}
+      introText={pageContent?.introText || "অফিসিয়াল ডকুমেন্ট, টেন্ডার পেপার, থিসিস বা আইনি ফাইলে কাস্টম ওয়াটারমার্ক স্ট্যাম্প এবং পেশাদার পেজ নম্বর বসিয়ে নথিকে অপব্যবহারমুক্ত রাখুন। সম্পূর্ণ ক্লায়েন্ট-সাইড প্রযুক্তি, ১০০% সুরক্ষিত ও নিরাপদ।"}
       currentToolId="pdf-watermark-page-number"
       schemas={[faqSchema]}
+      cmsContent={pageContent}
       howToSteps={[
         {
           stepNum: '০১',

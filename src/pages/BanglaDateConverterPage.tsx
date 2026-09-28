@@ -38,6 +38,7 @@ import {
   HijriDateResult,
 } from '../utils/banglaDateConverter.ts';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import html2canvas from 'html2canvas-pro';
 import pageContent from '../../content/pages/bangla-date-converter.json';
 
@@ -810,45 +811,8 @@ export const BanglaDateConverterPage: React.FC = () => {
             </div>
           </section>
 
-          {/* 6. FAQ Section (SEO Optimized Accordion) */}
-          <section className="bg-white border border-[#D5E4DB] rounded-2xl p-5 sm:p-6 lg:p-8 space-y-5 shadow-xs">
-            <div className="border-b border-[#D5E4DB] pb-3">
-              <div className="flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-[#0B5D3B]" />
-                <h2 className="text-lg font-bold text-[#0F1F17]">{pageContent.faqHeading}</h2>
-              </div>
-              <p className="text-xs text-[#4A5A52] mt-1">
-                বাংলা ও হিজরি বর্ষপঞ্জি সম্পর্কিত প্রয়োজনীয় তথ্য ও নিয়মাবলী
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {faqs.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className="border border-[#D5E4DB] rounded-xl overflow-hidden transition-all bg-[#F8FAF9]"
-                >
-                  <button
-                    type="button"
-                    onClick={() => toggleFaq(idx)}
-                    className="w-full px-4 py-3.5 text-left font-semibold text-xs sm:text-sm text-[#0F1F17] hover:text-[#0B5D3B] flex items-center justify-between gap-3 cursor-pointer"
-                  >
-                    <span>{faq.question}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-[#4A5A52] transition-transform shrink-0 ${
-                        openFaq === idx ? 'rotate-180 text-[#0B5D3B]' : ''
-                      }`}
-                    />
-                  </button>
-                  {openFaq === idx && (
-                    <div className="px-4 pb-4 text-xs sm:text-sm text-[#4A5A52] leading-relaxed border-t border-[#D5E4DB]/60 bg-white pt-3">
-                      {faq.answer}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
+          {/* Dynamic CMS Sections (FAQs, Features, Steps, Guidelines, Markdown, etc.) */}
+          <CmsDynamicContent content={pageContent} />
 
           {/* 7. Related Tools Component */}
           <RelatedTools currentToolId="bangla-date-converter" />

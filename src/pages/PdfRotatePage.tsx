@@ -25,6 +25,7 @@ import {
   LoadedPdfInfo
 } from '../lib/pdfUtils.ts';
 import { toBanglaNum } from './AgeCalculatorPage.tsx';
+import pageContent from '../../content/pages/pdf-rotate.json';
 
 interface RotateOutput {
   bytes: Uint8Array;
@@ -262,11 +263,12 @@ export const PdfRotatePage: React.FC = () => {
       ogDescription="অনলাইনে PDF ফাইল ও পেজ ঘোরান সহজে ও ফ্রিতে। উল্টো স্ক্যান করা পেজ ৯০°, ১৮০° বা ২৭০° ঘুরিয়ে সোজা করুন। ১০০% ক্লায়েন্ট-সাইড ব্রাউজারেই নিরাপদ প্রসেসিং।"
       refCode="DOC-PDF-04"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পিডিএফ রোটেটর"
-      h1="পিডিএফ রোটেট — উল্টো বা বাঁকা পেজ সোজা করুন"
-      introText="মোবাইল ক্যামেরা বা স্ক্যানার দিয়ে স্ক্যান করার সময় প্রায়ই নথিপত্রের পাতা উল্টো বা ল্যান্ডস্কেপ হয়ে যায়। একক পেজ বা সকল পেজকে ৯০° ডানে/বামে কিংবা ১৮০° উল্টিয়ে চোখের পলকে সঠিক ওরিয়েন্টেশনে সোজা করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"
+      h1={pageContent?.title || "পিডিএফ রোটেট — উল্টো বা বাঁকা পেজ সোজা করুন"}
+      introText={pageContent?.introText || "মোবাইল ক্যামেরা বা স্ক্যানার দিয়ে স্ক্যান করার সময় প্রায়ই নথিপত্রের পাতা উল্টো বা ল্যান্ডস্কেপ হয়ে যায়। একক পেজ বা সকল পেজকে ৯০° ডানে/বামে কিংবা ১৮০° উল্টিয়ে চোখের পলকে সঠিক ওরিয়েন্টেশনে সোজা করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"}
       schemas={[faqSchema]}
       howToSteps={howToSteps}
       currentToolId="pdf-rotate"
+      cmsContent={pageContent}
       deepDiveTitle="কেন পিডিএফ ডকুমেন্টের সঠিক ওরিয়েন্টেশন বজায় রাখা জরুরি?"
       deepDiveContent={
         <>

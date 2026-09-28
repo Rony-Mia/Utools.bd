@@ -24,6 +24,7 @@ import {
   Check
 } from 'lucide-react';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import pageContent from '../../content/pages/heic-converter.json';
 
 export type OutputFormat = 'jpeg' | 'png' | 'webp';
@@ -1010,67 +1011,8 @@ export const HeicConverterPage: React.FC = () => {
         </div>
       )}
 
-      {/* Instructions & Features Information */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 space-y-2 rounded-2xl">
-          <div className="flex items-center space-x-2 text-[#0B5D3B]">
-            <Smartphone className="w-5 h-5" />
-            <h3 className="font-bold text-xs sm:text-sm font-serif text-[#084A2E]">
-              {pageContent.features[0].title}
-            </h3>
-          </div>
-          <p className="text-xs text-[#4A5A52] leading-relaxed">
-            {pageContent.features[0].desc}
-          </p>
-        </div>
-
-        <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 space-y-2 rounded-2xl">
-          <div className="flex items-center space-x-2 text-[#0B5D3B]">
-            <FileArchive className="w-5 h-5" />
-            <h3 className="font-bold text-xs sm:text-sm font-serif text-[#084A2E]">
-              {pageContent.features[1].title}
-            </h3>
-          </div>
-          <p className="text-xs text-[#4A5A52] leading-relaxed">
-            {pageContent.features[1].desc}
-          </p>
-        </div>
-
-        <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 space-y-2 rounded-2xl">
-          <div className="flex items-center space-x-2 text-[#0B5D3B]">
-            <ShieldCheck className="w-5 h-5" />
-            <h3 className="font-bold text-xs sm:text-sm font-serif text-[#084A2E]">
-              {pageContent.features[2].title}
-            </h3>
-          </div>
-          <p className="text-xs text-[#4A5A52] leading-relaxed">
-            {pageContent.features[2].desc}
-          </p>
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 space-y-4 rounded-2xl">
-        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-          <HelpCircle className="w-4 h-4 text-[#0B5D3B]" />
-          <h2 className="text-base font-bold text-[#084A2E] font-serif">
-            {pageContent.faqHeading}
-          </h2>
-        </div>
-
-        <div className="divide-y divide-[#D5E4DB] text-xs sm:text-sm text-[#34443B]">
-          {pageContent.faqs.map((faq, idx) => (
-            <div key={idx} className="py-3.5 space-y-1">
-              <h3 className="font-semibold text-[#084A2E]">
-                {faq.question}
-              </h3>
-              <p className="text-[#4A5A52] leading-relaxed">
-                {faq.answer}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Dynamic CMS Sections (Features, FAQs, Guidelines, Markdown, etc.) */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="heic-converter" />

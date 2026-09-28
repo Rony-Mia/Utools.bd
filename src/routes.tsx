@@ -26,6 +26,7 @@ const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage.tsx').the
 const BlogListPage = lazy(() => import('./pages/BlogListPage.tsx').then((m) => ({ default: m.BlogListPage })));
 const BlogCategoryPage = lazy(() => import('./pages/BlogCategoryPage.tsx').then((m) => ({ default: m.BlogCategoryPage })));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage.tsx').then((m) => ({ default: m.BlogPostPage })));
+const CustomCmsPage = lazy(() => import('./pages/CustomCmsPage.tsx').then((m) => ({ default: m.CustomCmsPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage })));
 
 // Every lazy importer above, using the exact same specifiers as the lazy()
@@ -59,6 +60,7 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/BlogListPage.tsx'),
   () => import('./pages/BlogCategoryPage.tsx'),
   () => import('./pages/BlogPostPage.tsx'),
+  () => import('./pages/CustomCmsPage.tsx'),
   () => import('./pages/NotFoundPage.tsx'),
 ];
 
@@ -160,6 +162,7 @@ export function AppRoutes({
         <Route path="/blog" element={<BlogListPage />} />
         <Route path="/blog/category/:categorySlug" element={<BlogCategoryPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/:pageSlug" element={<CustomCmsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

@@ -27,7 +27,7 @@ import { TypingLiveStats } from '../components/typing/TypingLiveStats.tsx';
 import { TypingTextDisplay } from '../components/typing/TypingTextDisplay.tsx';
 import { TypingResult } from '../components/typing/TypingResult.tsx';
 import { TypingHistorySection } from '../components/typing/TypingHistorySection.tsx';
-import { TypingFaq, TYPING_FAQS } from '../components/typing/TypingFaq.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import pageContent from '../../content/pages/typing-test.json';
 
@@ -289,10 +289,12 @@ export const TypingTestPage: React.FC = () => {
     },
   };
 
+  const faqsList = (pageContent?.faqs && pageContent.faqs.length > 0) ? pageContent.faqs : [];
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: TYPING_FAQS.map((item) => ({
+    mainEntity: faqsList.map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: {
@@ -352,10 +354,10 @@ export const TypingTestPage: React.FC = () => {
       {/* ── Hero Section (Single H1) ─────────────────────────────────────── */}
       <div className="space-y-2 text-center sm:text-left">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#0F1F17] tracking-tight">
-          টাইপিং স্পিড টেস্ট (Typing Speed Test)
+          {pageContent?.title || 'টাইপিং স্পিড টেস্ট (Typing Speed Test)'}
         </h1>
         <p className="text-xs sm:text-sm text-[#4A5A52] max-w-3xl leading-relaxed">
-          বাংলা ও ইংরেজিতে আপনার টাইপিং গতি (Words Per Minute), নির্ভুলতা (Accuracy) ও কীবোর্ড ভুল পর্যবেক্ষণ করুন। বিসিএস, সরকারি চাকরি, ব্যাংক পরীক্ষা ও প্রফেশনাল ক্যারিয়ারের প্রস্তুতিতে ১০০% ক্লায়েন্ট-সাইড ও নিরাপদ।
+          {pageContent?.subtitle || 'বাংলা ও ইংরেজিতে আপনার টাইপিং গতি (Words Per Minute), নির্ভুলতা (Accuracy) ও কীবোর্ড ভুল পর্যবেক্ষণ করুন। বিসিএস, সরকারি চাকরি, ব্যাংক পরীক্ষা ও প্রফেশনাল ক্যারিয়ারের প্রস্তুতিতে ১০০% ক্লায়েন্ট-সাইড ও নিরাপদ।'}
         </p>
       </div>
 
@@ -455,8 +457,8 @@ export const TypingTestPage: React.FC = () => {
         }}
       />
 
-      {/* ── Helpful Guides & FAQ ─────────────────────────────────────────── */}
-      <TypingFaq />
+      {/* ── Dynamic CMS Content Sections (FAQs, Guides, Features, etc.) ─ */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* ── Cross-Linking Section ("আরও দরকারি টুলস") ───────────────────── */}
       <RelatedTools currentToolId="typing-test" />

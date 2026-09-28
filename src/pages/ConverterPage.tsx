@@ -25,6 +25,7 @@ import {
   CONVERSION_MAP
 } from '../bijoyConverter.ts';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import pageContent from '../../content/pages/converter.json';
 
@@ -505,24 +506,8 @@ export const ConverterPage: React.FC = () => {
         )}
       </section>
 
-      {/* FAQ Section */}
-      <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-6 space-y-5 rounded-2xl">
-        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
-          <Info className="w-4 h-4 text-[#0B5D3B]" />
-          <h2 className="text-base sm:text-lg font-bold text-[#084A2E] font-serif">
-            {pageContent.faqHeading}
-          </h2>
-        </div>
-
-        <div className="space-y-5 text-xs sm:text-sm text-[#0F1F17] leading-relaxed">
-          {faqs.map((f, idx) => (
-            <div key={idx} className="space-y-1.5">
-              <h3 className="font-bold text-[#084A2E]">{f.question}</h3>
-              <p className="text-[#34443B]">{f.answer}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Dynamic CMS Sections (FAQ, Features, Guides, Markdown, etc.) */}
+      <CmsDynamicContent content={pageContent} />
 
       {/* Cross-Linking Section ("আরও দরকারি টুলস") */}
       <RelatedTools currentToolId="converter" />

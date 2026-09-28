@@ -17,6 +17,7 @@ import {
   FileImage
 } from 'lucide-react';
 import { RelatedTools } from '../RelatedTools.tsx';
+import { CmsDynamicContent, CmsPageData } from '../CmsDynamicContent.tsx';
 
 export interface FaqItem {
   question: string;
@@ -49,6 +50,7 @@ export interface PdfToolLayoutProps {
   howToSteps?: Array<{ stepNum: string; title: string; desc: string }>;
   faqs?: FaqItem[];
   customFaqContent?: ReactNode;
+  cmsContent?: CmsPageData;
   currentToolId: 'pdf-merger' | 'pdf-split' | 'pdf-delete-pages' | 'pdf-rotate' | 'pdf-watermark-page-number' | 'image-to-pdf';
 }
 
@@ -71,6 +73,7 @@ export const PdfToolLayout: React.FC<PdfToolLayoutProps> = ({
   howToSteps,
   faqs,
   customFaqContent,
+  cmsContent,
   currentToolId,
 }) => {
   return (
@@ -206,6 +209,19 @@ export const PdfToolLayout: React.FC<PdfToolLayoutProps> = ({
           )}
         </section>
       ) : null}
+
+      {/* Dynamic CMS Content Sections (FAQs, Guides, Guidelines, Rules, Markdown, etc.) */}
+      {cmsContent && (
+        <CmsDynamicContent
+          content={cmsContent}
+          excludeSections={[
+            ...(deepDiveContent ? ['deepDive' as const] : []),
+            ...(featuresGrid ? ['features' as const] : []),
+            ...(howToSteps && howToSteps.length > 0 ? ['howToSteps' as const] : []),
+            ...((faqs && faqs.length > 0) || customFaqContent ? ['faq' as const] : []),
+          ]}
+        />
+      )}
 
       {/* Cross-Link Section: "আরও দরকারি টুলস" */}
       <RelatedTools currentToolId={currentToolId} />

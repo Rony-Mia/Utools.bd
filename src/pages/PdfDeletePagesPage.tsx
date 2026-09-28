@@ -27,6 +27,7 @@ import {
   LoadedPdfInfo
 } from '../lib/pdfUtils.ts';
 import { toBanglaNum } from './AgeCalculatorPage.tsx';
+import pageContent from '../../content/pages/pdf-delete-pages.json';
 
 interface DeleteOutput {
   bytes: Uint8Array;
@@ -320,11 +321,12 @@ export const PdfDeletePagesPage: React.FC = () => {
       ogDescription="অনলাইনে PDF ফাইল থেকে অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন সহজে ও ফ্রিতে। কোনো পেজ সীমা নেই, ১০০% ক্লায়েন্ট-সাইড ব্রাউজারেই নিরাপদ ও দ্রুত প্রসেসিং।"
       refCode="DOC-PDF-03"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পেজ রিমুভার"
-      h1="পিডিএফ পেজ ডিলিট — অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন"
-      introText="স্ক্যান করা নথির খালি পাতা, অতিরিক্ত কভার পেজ বা গোপনীয় তথ্য সংবলিত নির্দিষ্ট পৃষ্ঠা বাদ দিন এক ক্লিকে। ভিজ্যুয়াল পেজ সিলেক্টর ও রিয়েলটাইম প্রিভিউ সহ ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে সেকেন্ডেই ফ্রেশ ও পরিচ্ছন্ন পিডিএফ ফাইল তৈরি করুন।"
+      h1={pageContent?.title || "পিডিএফ পেজ ডিলিট — অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন"}
+      introText={pageContent?.introText || "স্ক্যান করা নথির খালি পাতা, অতিরিক্ত কভার পেজ বা গোপনীয় তথ্য সংবলিত নির্দিষ্ট পৃষ্ঠা বাদ দিন এক ক্লিকে। ভিজ্যুয়াল পেজ সিলেক্টর ও রিয়েলটাইম প্রিভিউ সহ ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে সেকেন্ডেই ফ্রেশ ও পরিচ্ছন্ন পিডিএফ ফাইল তৈরি করুন।"}
       schemas={[faqSchema]}
       howToSteps={howToSteps}
       currentToolId="pdf-delete-pages"
+      cmsContent={pageContent}
       deepDiveTitle="কেন পিডিএফ থেকে অপ্রয়োজনীয় পৃষ্ঠা ছাঁটাই করা গুরুত্বপূর্ণ?"
       deepDiveContent={
         <>
