@@ -179,6 +179,7 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
+    overflow-x: hidden;
   }
 
   /* Soft corners for form controls. Lives in the base layer, so any explicit
@@ -201,6 +202,7 @@ body {
   color: #0F1F17;
   font-family: var(--font-sans);
   min-height: 100vh;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
@@ -496,3 +498,45 @@ h1, h2, h3, h4, .font-heading {
   object-fit: contain !important;
   display: block !important;
 }
+
+/* ── Global Scrollbar Suppression (No scrollbars visible anywhere on the site, full scroll functionality retained) ── */
+html,
+body,
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Custom scrollbar hiding utilities */
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar-all,
+.no-scrollbar-all * {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.no-scrollbar-all::-webkit-scrollbar,
+.no-scrollbar-all *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
