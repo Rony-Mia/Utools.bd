@@ -22,6 +22,7 @@
   "textCalcTools": [
     { "to": "/converter", "label": "বিজয় ↔ ইউনিকোড কনভার্টার" },
     { "to": "/typing-test", "label": "টাইপিং স্পিড টেস্ট (WPM)" },
+    { "to": "/image-to-text", "label": "ছবি/PDF থেকে বাংলা টেক্সট (OCR)" },
     { "to": "/bangla-date-converter", "label": "বাংলা তারিখ কনভার্টার" },
     { "to": "/age-calculator", "label": "সরকারি চাকরির বয়স ক্যালকুলেটর" },
     { "to": "/amount-in-words", "label": "টাকা → কথায় কনভার্টার" },
