@@ -9,13 +9,13 @@ const AmountInWordsPage = lazy(() => import('./pages/AmountInWordsPage.tsx').the
 const CvBuilderPage = lazy(() => import('./pages/CvBuilderPage.tsx').then((m) => ({ default: m.CvBuilderPage })));
 const GpaCalculatorPage = lazy(() => import('./pages/GpaCalculatorPage.tsx').then((m) => ({ default: m.GpaCalculatorPage })));
 const LandConverterPage = lazy(() => import('./pages/LandConverterPage.tsx').then((m) => ({ default: m.LandConverterPage })));
+const GoldWeightConverterPage = lazy(() => import('./pages/GoldWeightConverterPage.tsx').then((m) => ({ default: m.GoldWeightConverterPage })));
 const PdfMergerPage = lazy(() => import('./pages/PdfMergerPage.tsx').then((m) => ({ default: m.PdfMergerPage })));
 const PdfSplitPage = lazy(() => import('./pages/PdfSplitPage.tsx').then((m) => ({ default: m.PdfSplitPage })));
 const PdfDeletePagesPage = lazy(() => import('./pages/PdfDeletePagesPage.tsx').then((m) => ({ default: m.PdfDeletePagesPage })));
 const PdfRotatePage = lazy(() => import('./pages/PdfRotatePage.tsx').then((m) => ({ default: m.PdfRotatePage })));
 const PdfWatermarkPage = lazy(() => import('./pages/PdfWatermarkPage.tsx').then((m) => ({ default: m.PdfWatermarkPage })));
 const ImageMergerPage = lazy(() => import('./pages/ImageMergerPage.tsx').then((m) => ({ default: m.ImageMergerPage })));
-const ImageToTextPage = lazy(() => import('./pages/ImageToTextPage.tsx').then((m) => ({ default: m.ImageToTextPage })));
 const BulkPhotoResizerPage = lazy(() => import('./pages/BulkPhotoResizerPage.tsx').then((m) => ({ default: m.BulkPhotoResizerPage })));
 const HeicConverterPage = lazy(() => import('./pages/HeicConverterPage.tsx').then((m) => ({ default: m.HeicConverterPage })));
 const QrGeneratorPage = lazy(() => import('./pages/QrGeneratorPage.tsx').then((m) => ({ default: m.QrGeneratorPage })));
@@ -27,7 +27,6 @@ const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage.tsx').the
 const BlogListPage = lazy(() => import('./pages/BlogListPage.tsx').then((m) => ({ default: m.BlogListPage })));
 const BlogCategoryPage = lazy(() => import('./pages/BlogCategoryPage.tsx').then((m) => ({ default: m.BlogCategoryPage })));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage.tsx').then((m) => ({ default: m.BlogPostPage })));
-const CustomCmsPage = lazy(() => import('./pages/CustomCmsPage.tsx').then((m) => ({ default: m.CustomCmsPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage })));
 
 // Every lazy importer above, using the exact same specifiers as the lazy()
@@ -44,13 +43,13 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/CvBuilderPage.tsx'),
   () => import('./pages/GpaCalculatorPage.tsx'),
   () => import('./pages/LandConverterPage.tsx'),
+  () => import('./pages/GoldWeightConverterPage.tsx'),
   () => import('./pages/PdfMergerPage.tsx'),
   () => import('./pages/PdfSplitPage.tsx'),
   () => import('./pages/PdfDeletePagesPage.tsx'),
   () => import('./pages/PdfRotatePage.tsx'),
   () => import('./pages/PdfWatermarkPage.tsx'),
   () => import('./pages/ImageMergerPage.tsx'),
-  () => import('./pages/ImageToTextPage.tsx'),
   () => import('./pages/BulkPhotoResizerPage.tsx'),
   () => import('./pages/HeicConverterPage.tsx'),
   () => import('./pages/QrGeneratorPage.tsx'),
@@ -62,7 +61,6 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/BlogListPage.tsx'),
   () => import('./pages/BlogCategoryPage.tsx'),
   () => import('./pages/BlogPostPage.tsx'),
-  () => import('./pages/CustomCmsPage.tsx'),
   () => import('./pages/NotFoundPage.tsx'),
 ];
 
@@ -82,7 +80,6 @@ export const STATIC_PRERENDER_ROUTES = [
   '/bulk-photo-resizer',
   '/heic-converter',
   '/image-merger',
-  '/image-to-text',
   '/qr-generator',
   '/age-calculator',
   '/amount-in-words',
@@ -91,6 +88,7 @@ export const STATIC_PRERENDER_ROUTES = [
   '/cv-builder',
   '/gpa-calculator',
   '/land-converter',
+  '/gold-weight-converter',
   '/pdf-merger',
   '/pdf-split',
   '/pdf-delete-pages',
@@ -146,7 +144,6 @@ export function AppRoutes({
         <Route path="/bulk-photo-resizer" element={<BulkPhotoResizerPage />} />
         <Route path="/heic-converter" element={<HeicConverterPage />} />
         <Route path="/image-merger" element={<ImageMergerPage />} />
-        <Route path="/image-to-text" element={<ImageToTextPage />} />
         <Route path="/qr-generator" element={<QrGeneratorPage />} />
         <Route path="/age-calculator" element={<AgeCalculatorPage />} />
         <Route path="/amount-in-words" element={<AmountInWordsPage />} />
@@ -155,6 +152,7 @@ export function AppRoutes({
         <Route path="/cv-builder" element={<CvBuilderPage />} />
         <Route path="/gpa-calculator" element={<GpaCalculatorPage />} />
         <Route path="/land-converter" element={<LandConverterPage />} />
+        <Route path="/gold-weight-converter" element={<GoldWeightConverterPage />} />
         <Route path="/pdf-merger" element={<PdfMergerPage />} />
         <Route path="/pdf-split" element={<PdfSplitPage />} />
         <Route path="/pdf-delete-pages" element={<PdfDeletePagesPage />} />
@@ -166,7 +164,6 @@ export function AppRoutes({
         <Route path="/blog" element={<BlogListPage />} />
         <Route path="/blog/category/:categorySlug" element={<BlogCategoryPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
-        <Route path="/:pageSlug" element={<CustomCmsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

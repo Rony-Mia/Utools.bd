@@ -53,6 +53,14 @@ export const ALL_RELATED_TOOLS: RelatedToolItem[] = [
     buttonText: 'জমির মাপ কনভার্টারে যান',
   },
   {
+    id: 'gold-weight-converter',
+    to: '/gold-weight-converter',
+    badge: 'ক্যালকুলেটর',
+    title: 'সোনার ওজন কনভার্টার (ভরি, আনা, রতি ও গ্রাম)',
+    description: '১ ভরি সোনা কত গ্রাম, আনা বা রতি? BAJUS মান অনুযায়ী তাৎক্ষণিক রূপান্তর ও স্বর্ণমূল্য হিসাব।',
+    buttonText: 'সোনার ওজন কনভার্টারে যান',
+  },
+  {
     id: 'photo-resizer',
     to: '/photo-resizer',
     badge: 'গ্রাফিক্স',

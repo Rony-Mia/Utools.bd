@@ -134,6 +134,17 @@ export const TOOLS: ToolItem[] = [
     link: '/land-converter'
   },
   {
+    id: 'gold-weight-converter',
+    refCode: 'CALC-GOLD-01',
+    title: 'সোনার ওজন কনভার্টার (ভরি, আনা, রতি ও গ্রাম হিসাব)',
+    description: '১ ভরি সোনা কত গ্রাম, আনা বা রতি? BAJUS নিয়ম অনুযায়ী ভরি, তোলা, আনা, রতি, পয়েন্ট, গ্রাম ও কেজির তাৎক্ষণিক বাইডাইরেকশনাল হিসাব ও ঐচ্ছিক মূল্য ক্যালকুলেটর।',
+    feature: 'ভরি ↔ আনা ↔ রতি ↔ গ্রাম • BAJUS প্রমিত মান • ঐচ্ছিক মূল্য ক্যালকুলেটর',
+    category: 'calculator',
+    status: 'active',
+    version: 'v1.0',
+    link: '/gold-weight-converter'
+  },
+  {
     id: 'cv-builder',
     refCode: 'DOC-CV-01',
     title: 'সিভি ও জীবনবৃত্তান্ত মেকার (CV Builder)',
@@ -198,16 +209,5 @@ export const TOOLS: ToolItem[] = [
     status: 'active',
     version: 'v1.0',
     link: '/pdf-watermark-page-number'
-  },
-  {
-    id: 'image-to-text',
-    refCode: 'TXT-OCR-01',
-    title: 'ছবি ও PDF থেকে বাংলা টেক্সট (OCR)',
-    description: 'প্রিন্ট করা বাংলা ও ইংরেজি ডকুমেন্টের ছবি অথবা স্ক্যান করা পিডিএফ থেকে দ্রুত টেক্সট এক্সট্রাক্ট ও কপি করুন। সম্পূর্ণ নিরাপদ ও ক্লায়েন্ট-সাইড।',
-    feature: 'বাংলা ও English OCR • স্ক্যানড PDF সাপোর্ট • লাইভ এডিট ও .txt ডাউনলোড',
-    category: 'text',
-    status: 'active',
-    version: 'v1.0',
-    link: '/image-to-text'
   }
 ];

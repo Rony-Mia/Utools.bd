@@ -30,7 +30,7 @@ import type { ToolItem } from '../types.ts';
 import { ParallaxLayer, ParallaxScene, ParallaxStage } from '../components/parallax/Parallax.tsx';
 import { Diamond, JAMDANI_PATTERN, Ring, SolidDiamond, Wave } from '../components/parallax/scenery.tsx';
 import homeContent from '../../content/pages/home.json';
-import homeFaqs from '../../content/global/home-faq.json';
+import homeFaqs from '../../content/pages/home-faq.json';
 
 interface HomePageProps {
   selectedCategory: string;
@@ -38,7 +38,9 @@ interface HomePageProps {
   onOpenTerms: () => void;
 }
 
-const FAQS = Array.isArray(homeFaqs) ? homeFaqs : ((homeFaqs as any).faqs || []);
+const FAQS: Array<{ question: string; answer: string }> = Array.isArray(homeFaqs)
+  ? homeFaqs
+  : ((homeFaqs as { faqs?: Array<{ question: string; answer: string }> })?.faqs ?? []);
 
 
 // ── Static content ───────────────────────────────────────────────────────────
