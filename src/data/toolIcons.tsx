@@ -15,6 +15,7 @@ import {
   QrCode,
   RotateCw,
   Scale,
+  ScanText,
   Scissors,
   Smartphone,
   Stamp,
@@ -44,6 +45,7 @@ const ICONS: Record<string, ToolIconComponent> = {
   'pdf-delete-pages': Trash2,
   'pdf-rotate': RotateCw,
   'pdf-watermark-page-number': Stamp,
+  'image-to-text': ScanText,
 };
 
 export function getToolIcon(toolId: string): ToolIconComponent {

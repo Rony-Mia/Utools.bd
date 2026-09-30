@@ -16,6 +16,7 @@ const PdfDeletePagesPage = lazy(() => import('./pages/PdfDeletePagesPage.tsx').t
 const PdfRotatePage = lazy(() => import('./pages/PdfRotatePage.tsx').then((m) => ({ default: m.PdfRotatePage })));
 const PdfWatermarkPage = lazy(() => import('./pages/PdfWatermarkPage.tsx').then((m) => ({ default: m.PdfWatermarkPage })));
 const ImageMergerPage = lazy(() => import('./pages/ImageMergerPage.tsx').then((m) => ({ default: m.ImageMergerPage })));
+const ImageToTextPage = lazy(() => import('./pages/ImageToTextPage.tsx').then((m) => ({ default: m.ImageToTextPage })));
 const BulkPhotoResizerPage = lazy(() => import('./pages/BulkPhotoResizerPage.tsx').then((m) => ({ default: m.BulkPhotoResizerPage })));
 const HeicConverterPage = lazy(() => import('./pages/HeicConverterPage.tsx').then((m) => ({ default: m.HeicConverterPage })));
 const QrGeneratorPage = lazy(() => import('./pages/QrGeneratorPage.tsx').then((m) => ({ default: m.QrGeneratorPage })));
@@ -50,6 +51,7 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/PdfRotatePage.tsx'),
   () => import('./pages/PdfWatermarkPage.tsx'),
   () => import('./pages/ImageMergerPage.tsx'),
+  () => import('./pages/ImageToTextPage.tsx'),
   () => import('./pages/BulkPhotoResizerPage.tsx'),
   () => import('./pages/HeicConverterPage.tsx'),
   () => import('./pages/QrGeneratorPage.tsx'),
@@ -80,6 +82,7 @@ export const STATIC_PRERENDER_ROUTES = [
   '/bulk-photo-resizer',
   '/heic-converter',
   '/image-merger',
+  '/image-to-text',
   '/qr-generator',
   '/age-calculator',
   '/amount-in-words',
@@ -144,6 +147,7 @@ export function AppRoutes({
         <Route path="/bulk-photo-resizer" element={<BulkPhotoResizerPage />} />
         <Route path="/heic-converter" element={<HeicConverterPage />} />
         <Route path="/image-merger" element={<ImageMergerPage />} />
+        <Route path="/image-to-text" element={<ImageToTextPage />} />
         <Route path="/qr-generator" element={<QrGeneratorPage />} />
         <Route path="/age-calculator" element={<AgeCalculatorPage />} />
         <Route path="/amount-in-words" element={<AmountInWordsPage />} />

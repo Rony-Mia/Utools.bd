@@ -61,6 +61,14 @@ export const ALL_RELATED_TOOLS: RelatedToolItem[] = [
     buttonText: 'সোনার ওজন কনভার্টারে যান',
   },
   {
+    id: 'image-to-text',
+    to: '/image-to-text',
+    badge: 'টেক্সট',
+    title: 'ছবি ও PDF থেকে বাংলা টেক্সট (OCR)',
+    description: 'প্রিন্ট করা বাংলা ও ইংরেজি ছবি বা স্ক্যানড পিডিএফ থেকে দ্রুত টেক্সট এক্সট্রাক্ট ও কপি করুন।',
+    buttonText: 'OCR টুলে যান',
+  },
+  {
     id: 'photo-resizer',
     to: '/photo-resizer',
     badge: 'গ্রাফিক্স',

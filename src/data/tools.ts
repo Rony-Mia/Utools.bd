@@ -209,5 +209,16 @@ export const TOOLS: ToolItem[] = [
     status: 'active',
     version: 'v1.0',
     link: '/pdf-watermark-page-number'
+  },
+  {
+    id: 'image-to-text',
+    refCode: 'TXT-OCR-01',
+    title: 'ছবি ও PDF থেকে বাংলা টেক্সট (OCR)',
+    description: 'প্রিন্ট করা বাংলা ও ইংরেজি ডকুমেন্টের ছবি অথবা স্ক্যান করা পিডিএফ থেকে দ্রুত টেক্সট এক্সট্রাক্ট ও কপি করুন। সম্পূর্ণ নিরাপদ ও ক্লায়েন্ট-সাইড।',
+    feature: 'বাংলা ও English OCR • স্ক্যানড PDF সাপোর্ট • লাইভ এডিট ও .txt ডাউনলোড',
+    category: 'text',
+    status: 'active',
+    version: 'v1.0',
+    link: '/image-to-text'
   }
 ];
