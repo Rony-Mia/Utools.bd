@@ -27,8 +27,7 @@
     { "to": "/age-calculator", "label": "সরকারি চাকরির বয়স ক্যালকুলেটর" },
     { "to": "/amount-in-words", "label": "টাকা → কথায় কনভার্টার" },
     { "to": "/gpa-calculator", "label": "জিপিএ ও সিজিপিএ ক্যালকুলেটর" },
-    { "to": "/land-converter", "label": "জমির মাপ কনভার্টার" },
-    { "to": "/gold-weight-converter", "label": "সোনার ওজন কনভার্টার" }
+    { "to": "/land-converter", "label": "জমির মাপ কনভার্টার" }
   ],
   "importantLinksHeading": "গুরুত্বপূর্ণ লিংক",
   "importantLinks": [

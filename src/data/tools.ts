@@ -134,17 +134,6 @@ export const TOOLS: ToolItem[] = [
     link: '/land-converter'
   },
   {
-    id: 'gold-weight-converter',
-    refCode: 'CALC-GOLD-01',
-    title: 'সোনার ওজন কনভার্টার (ভরি, আনা, রতি ও গ্রাম হিসাব)',
-    description: '১ ভরি সোনা কত গ্রাম, আনা বা রতি? BAJUS নিয়ম অনুযায়ী ভরি, তোলা, আনা, রতি, পয়েন্ট, গ্রাম ও কেজির তাৎক্ষণিক বাইডাইরেকশনাল হিসাব ও ঐচ্ছিক মূল্য ক্যালকুলেটর।',
-    feature: 'ভরি ↔ আনা ↔ রতি ↔ গ্রাম • BAJUS প্রমিত মান • ঐচ্ছিক মূল্য ক্যালকুলেটর',
-    category: 'calculator',
-    status: 'active',
-    version: 'v1.0',
-    link: '/gold-weight-converter'
-  },
-  {
     id: 'cv-builder',
     refCode: 'DOC-CV-01',
     title: 'সিভি ও জীবনবৃত্তান্ত মেকার (CV Builder)',

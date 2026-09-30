@@ -85,11 +85,6 @@
           "to": "/land-converter",
           "label": "জমির মাপ কনভার্টার",
           "description": "শতক, বিঘা, কাঠা, কানি ও একর রূপান্তর"
-        },
-        {
-          "to": "/gold-weight-converter",
-          "label": "সোনার ওজন কনভার্টার",
-          "description": "ভরি, তোলা, আনা, রতি ও গ্রাম হিসাব"
         }
       ]
     },
