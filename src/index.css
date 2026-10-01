@@ -11,7 +11,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/noto-sans-bengali-400.woff2') format('woff2');
+  src: local('Noto Sans Bengali'), url('/fonts/noto-sans-bengali-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -19,7 +19,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/fonts/noto-sans-bengali-500.woff2') format('woff2');
+  src: local('Noto Sans Bengali Medium'), local('Noto Sans Bengali'), url('/fonts/noto-sans-bengali-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -27,7 +27,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/noto-sans-bengali-600.woff2') format('woff2');
+  src: local('Noto Sans Bengali SemiBold'), local('Noto Sans Bengali'), url('/fonts/noto-sans-bengali-700.woff2') format('woff2');
 }
 
 @font-face {
@@ -35,7 +35,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/noto-sans-bengali-700.woff2') format('woff2');
+  src: local('Noto Sans Bengali Bold'), local('Noto Sans Bengali'), url('/fonts/noto-sans-bengali-700.woff2') format('woff2');
 }
 
 @font-face {
@@ -43,7 +43,7 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('/fonts/noto-sans-bengali-800.woff2') format('woff2');
+  src: local('Noto Sans Bengali ExtraBold'), local('Noto Sans Bengali'), url('/fonts/noto-sans-bengali-700.woff2') format('woff2');
 }
 
 /* JetBrains Mono */

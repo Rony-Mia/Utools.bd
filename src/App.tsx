@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { Analytics } from '@vercel/analytics/react';
 import { Navbar } from './components/Navbar.tsx';
 import { Footer } from './components/Footer.tsx';
 import { AppRoutes } from './routes.tsx';
@@ -9,6 +8,11 @@ import { ScrollToTop } from './components/ScrollToTop.tsx';
 import { SiteBackdrop } from './components/parallax/SiteBackdrop.tsx';
 import { CursorFollower } from './components/CursorFollower.tsx';
 import { FloatingActions } from './components/floating/FloatingActions.tsx';
+
+// Lazy-load analytics so it never blocks LCP or TBT
+const Analytics = lazy(() =>
+  import('@vercel/analytics/react').then((m) => ({ default: m.Analytics }))
+);
 
 interface AppProps {
   helmetContext?: Record<string, unknown>;
@@ -66,8 +70,10 @@ export default function App({ helmetContext }: AppProps) {
         {/* Floating back-to-top button (bottom-right, every page) */}
         <FloatingActions />
 
-        {/* Vercel Web Analytics */}
-        <Analytics />
+        {/* Vercel Web Analytics — lazy-loaded to avoid blocking LCP */}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
 
         {/* Floating / Direct Terms of Use Modal when triggered from Trust section */}
         {showTermsModal && (

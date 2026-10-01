@@ -31,7 +31,7 @@ export default defineConfig(({ isSsrBuild }): UserConfig => {
     },
     esbuild: {
       legalComments: 'none',
-      drop: process.env.NODE_ENV === 'production' ? ['debugger'] : [],
+      drop: process.env.NODE_ENV === 'production' ? ['debugger', 'console'] : [],
     },
     server: {
       port: 3000,
@@ -41,6 +41,7 @@ export default defineConfig(({ isSsrBuild }): UserConfig => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     build: {
+      modulePreload: { polyfill: false },
       minify: 'esbuild',
       target: 'es2020',
       cssMinify: true,
