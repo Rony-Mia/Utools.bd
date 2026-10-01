@@ -222,7 +222,6 @@ export const PdfSplitPage: React.FC = () => {
       canonicalUrl="https://utools.bd/pdf-split"
       ogTitle={pageContent.metaTitle}
       ogDescription={pageContent.metaDescription}
-      refCode="DOC-PDF-02"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পিডিএফ স্প্লিটার"
       h1={pageContent?.title || "পিডিএফ স্প্লিটার — PDF ফাইল ভাগ ও পেজ আলাদা করুন"}
       introText={pageContent?.introText || "বড় পিডিএফ বই, সরকারি রেজাল্ট শিট বা চাকরির গেজেট থেকে প্রয়োজনীয় পৃষ্ঠাসমূহ আলাদা করুন সহজে ও নিখুঁতভাবে। নির্দিষ্ট রেঞ্জ (যেমন ১-৪, ৭, ১০-১৫) অথবা প্রতিটি পৃষ্ঠাকে একক ফাইলে রূপান্তর করে এক ক্লিকে জিপ (ZIP) ডাউনলোড করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"}

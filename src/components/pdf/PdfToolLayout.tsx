@@ -35,7 +35,6 @@ export interface PdfToolLayoutProps {
   schemas?: object[];
 
   // Header Props
-  refCode: string;
   badgeText: string;
   h1: string;
   introText: string;
@@ -62,7 +61,6 @@ export const PdfToolLayout: React.FC<PdfToolLayoutProps> = ({
   ogTitle,
   ogDescription,
   schemas = [],
-  refCode,
   badgeText,
   h1,
   introText,

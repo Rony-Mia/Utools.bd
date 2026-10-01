@@ -173,8 +173,6 @@ export const TextToHandwritingPage: React.FC = () => {
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>হোমপেজে ফিরুন</span>
             </Link>
-            <span className="text-xs text-[#4A5A52] hidden sm:inline">•</span>
-            <span className="text-xs text-[#4A5A52] font-mono hidden sm:inline">TXT-HAND-01</span>
           </div>
 
           <div className="flex items-center space-x-2 text-xs font-semibold text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3.5 py-1.5 shadow-xs rounded-lg">

@@ -198,7 +198,6 @@ export const PdfRotatePage: React.FC = () => {
       canonicalUrl="https://utools.bd/pdf-rotate"
       ogTitle={pageContent.metaTitle}
       ogDescription={pageContent.metaDescription}
-      refCode="DOC-PDF-04"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পিডিএফ রোটেটর"
       h1={pageContent?.title || "পিডিএফ রোটেট — উল্টো বা বাঁকা পেজ সোজা করুন"}
       introText={pageContent?.introText || "মোবাইল ক্যামেরা বা স্ক্যানার দিয়ে স্ক্যান করার সময় প্রায়ই নথিপত্রের পাতা উল্টো বা ল্যান্ডস্কেপ হয়ে যায়। একক পেজ বা সকল পেজকে ৯০° ডানে/বামে কিংবা ১৮০° উল্টিয়ে চোখের পলকে সঠিক ওরিয়েন্টেশনে সোজা করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"}

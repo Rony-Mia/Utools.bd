@@ -389,7 +389,6 @@ export const ImageMergerPage: React.FC = () => {
             <span className="text-[11px] font-mono font-bold bg-[#0B5D3B] text-[#FFFFFF] px-2.5 py-0.5">
               ইমেজ প্রসেসিং ও লেআউট
             </span>
-            <span className="text-xs font-mono text-[#4A5A52]">IMG-GOV-03</span>
           </div>
 
           <div className="flex items-center space-x-2 text-xs text-[#0B5D3B] font-medium">

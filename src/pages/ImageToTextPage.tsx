@@ -338,7 +338,7 @@ export const ImageToTextPage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#D5E4DB] pb-4">
           <div className="space-y-1">
             <div className="inline-flex items-center space-x-2 text-xs font-medium text-[#0B5D3B] bg-[#0B5D3B]/10 px-2.5 py-1 border border-[#0B5D3B]/20 rounded-lg">
-              <span>TXT-OCR-01 • ১০০% ক্লায়েন্ট-সাইড OCR ইঞ্জিন</span>
+              <span>১০০% ক্লায়েন্ট-সাইড OCR ইঞ্জিন</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#084A2E] font-serif">
               {pageContent.title}

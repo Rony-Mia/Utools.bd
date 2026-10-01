@@ -256,7 +256,6 @@ export const PdfDeletePagesPage: React.FC = () => {
       canonicalUrl="https://utools.bd/pdf-delete-pages"
       ogTitle={pageContent.metaTitle}
       ogDescription={pageContent.metaDescription}
-      refCode="DOC-PDF-03"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পেজ রিমুভার"
       h1={pageContent?.title || "পিডিএফ পেজ ডিলিট — অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন"}
       introText={pageContent?.introText || "স্ক্যান করা নথির খালি পাতা, অতিরিক্ত কভার পেজ বা গোপনীয় তথ্য সংবলিত নির্দিষ্ট পৃষ্ঠা বাদ দিন এক ক্লিকে। ভিজ্যুয়াল পেজ সিলেক্টর ও রিয়েলটাইম প্রিভিউ সহ ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে সেকেন্ডেই ফ্রেশ ও পরিচ্ছন্ন পিডিএফ ফাইল তৈরি করুন।"}
