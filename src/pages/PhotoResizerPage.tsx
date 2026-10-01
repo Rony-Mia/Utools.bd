@@ -345,7 +345,9 @@ export const PhotoResizerPage: React.FC = () => {
     const ext = activeFormat === 'png' ? 'png' : activeFormat === 'webp' ? 'webp' : 'jpg';
     link.download = `utools-bd-${activeWidth}x${activeHeight}-${selectedPreset}.${ext}`;
     link.href = resultDataUrl;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   // Check if output complies with Govt specs
