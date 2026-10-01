@@ -53,6 +53,14 @@ export const ALL_RELATED_TOOLS: RelatedToolItem[] = [
     buttonText: 'জমির মাপ কনভার্টারে যান',
   },
   {
+    id: 'gold-calculator',
+    to: '/gold-calculator',
+    badge: 'ক্যালকুলেটর',
+    title: 'স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর',
+    description: 'ভরি, আনা, রতি ও গ্রাম রূপান্তর, স্বর্ণের ভ্যাট, মজুরিসহ মোট দাম এবং পুরাতন সোনা বিক্রয় হিসাব।',
+    buttonText: 'স্বর্ণ ক্যালকুলেটরে যান',
+  },
+  {
     id: 'photo-resizer',
     to: '/photo-resizer',
     badge: 'গ্রাফিক্স',

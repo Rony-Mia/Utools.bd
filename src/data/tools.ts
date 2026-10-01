@@ -134,6 +134,17 @@ export const TOOLS: ToolItem[] = [
     link: '/land-converter'
   },
   {
+    id: 'gold-calculator',
+    refCode: 'CALC-GOLD-01',
+    title: 'স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর (Gold Calculator)',
+    description: 'বাজুস (BAJUS) মান অনুযায়ী ভরি, আনা, রতি ও পয়েন্ট থেকে গ্রামে রূপান্তর, ২২K/২১K/১৮K স্বর্ণের লাইভ দাম, মজুরি, ৫% ভ্যাট এবং পুরাতন সোনা বিক্রয় ও বদলের রসিদ হিসাব।',
+    feature: 'ভরি-আনা-রতি ↔ গ্রাম • ২২K/২১K/১৮K প্রিসেট • ৫% ভ্যাট ও মজুরি • পুরাতন সোনা বাট্টা',
+    category: 'calculator',
+    status: 'active',
+    version: 'v1.0',
+    link: '/gold-calculator'
+  },
+  {
     id: 'cv-builder',
     refCode: 'DOC-CV-01',
     title: 'সিভি ও জীবনবৃত্তান্ত মেকার (CV Builder)',
