@@ -240,7 +240,7 @@ export const QrGeneratorPage: React.FC = () => {
   // Download SVG file (Scalable Vector Graphics for ultra-sharp printing)
   const handleDownloadSvg = async () => {
     try {
-      const svgString = await QRCode.toString(encodedValue, {
+      let svgString = await QRCode.toString(encodedValue, {
         type: 'svg',
         width: qrSize,
         margin: marginSize,
@@ -250,6 +250,25 @@ export const QrGeneratorPage: React.FC = () => {
           light: bgColor
         }
       });
+
+      // If a logo is uploaded, embed it in the center of the SVG
+      if (logoSrc) {
+        const viewBoxMatch = svgString.match(/viewBox="([^"]+)"/);
+        if (viewBoxMatch) {
+          const [, , vbWidth, vbHeight] = viewBoxMatch[1].split(' ').map(Number);
+          const logoDim = vbWidth * 0.22;
+          const logoX = (vbWidth - logoDim) / 2;
+          const logoY = (vbHeight - logoDim) / 2;
+          const padding = Math.max(0.5, vbWidth * 0.015);
+          const badgeX = logoX - padding;
+          const badgeY = logoY - padding;
+          const badgeDim = logoDim + padding * 2;
+          const strokeWidth = Math.max(0.2, vbWidth * 0.005);
+
+          const logoSvgSnippet = `  <rect x="${badgeX.toFixed(2)}" y="${badgeY.toFixed(2)}" width="${badgeDim.toFixed(2)}" height="${badgeDim.toFixed(2)}" fill="#ffffff" stroke="${fgColor}" stroke-width="${strokeWidth.toFixed(2)}" />\n  <image href="${logoSrc}" x="${logoX.toFixed(2)}" y="${logoY.toFixed(2)}" width="${logoDim.toFixed(2)}" height="${logoDim.toFixed(2)}" preserveAspectRatio="xMidYMid meet" />\n</svg>`;
+          svgString = svgString.replace(/<\/svg>\s*$/, logoSvgSnippet);
+        }
+      }
 
       const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
       const url = URL.createObjectURL(blob);
