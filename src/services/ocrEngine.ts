@@ -155,23 +155,37 @@ export async function getTesseractWorker(
 ) {
   const { createWorker } = await import('tesseract.js');
 
-  const worker = await createWorker(language, undefined, {
-    workerPath: '/vendor/tesseract/worker.min.js',
-    corePath: '/vendor/tesseract',
-    langPath: '/vendor/tesseract',
-    gzip: true,
-    logger: (m) => {
-      if (onProgress) {
-        onProgress({
-          status: translateStatus(m.status),
-          progress: typeof m.progress === 'number' ? m.progress : 0,
-          detail: m.status
-        });
-      }
+  const logger = (m: any) => {
+    if (onProgress) {
+      onProgress({
+        status: translateStatus(m.status),
+        progress: typeof m.progress === 'number' ? m.progress : 0,
+        detail: m.status
+      });
     }
-  });
+  };
 
-  return worker;
+  try {
+    const worker = await createWorker(language, undefined, {
+      workerPath: '/vendor/tesseract/worker.min.js',
+      corePath: '/vendor/tesseract',
+      langPath: '/vendor/tesseract',
+      gzip: true,
+      logger
+    });
+    return worker;
+  } catch (err) {
+    console.warn('[ocr] Local worker initialization failed, attempting fallback worker:', err);
+    // Reliable fallback if local worker script encounters any iframe/sandbox restrictions
+    const worker = await createWorker(language, undefined, {
+      workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/worker.min.js',
+      corePath: '/vendor/tesseract',
+      langPath: '/vendor/tesseract',
+      gzip: true,
+      logger
+    });
+    return worker;
+  }
 }
 
 /**

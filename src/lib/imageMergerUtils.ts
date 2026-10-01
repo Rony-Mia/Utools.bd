@@ -365,9 +365,9 @@ export async function exportCanvasToFormat(
     const imageBytes = await res.arrayBuffer();
     const embeddedImage = await pdfDoc.embedJpg(imageBytes);
 
-    // PDF point dimension: 1 pt = 1/72 inch (scale 150 DPI canvas by 72/150 = 0.48)
-    const ptWidth = Math.round(canvas.width * (72 / 150));
-    const ptHeight = Math.round(canvas.height * (72 / 150));
+    // PDF point dimension: 1 pt = 1/72 inch (scale 150 DPI canvas by 72/150 = 0.48 or 0.75)
+    const ptWidth = Math.round(canvas.width * 0.72);
+    const ptHeight = Math.round(canvas.height * 0.72);
 
     const page = pdfDoc.addPage([ptWidth, ptHeight]);
     page.drawImage(embeddedImage, {

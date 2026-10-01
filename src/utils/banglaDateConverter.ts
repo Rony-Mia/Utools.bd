@@ -87,12 +87,11 @@ export function isGregorianLeapYear(year: number): boolean {
 
 // Bangladesh Bangla Academy 2019 Revised Calendar Month Days
 // First 6 months (Boishakh - Ashwin) = 31 days each
-// Next 4 months (Kartik - Magh) = 30 days each
-// Month 10 (Falgun) = 29 days (30 in Gregorian leap year)
-// Month 11 (Chaitra) = 30 days
+// Next 5 months (Kartik - Falgun) = 30 days each
+// Last month (Chaitra) = 29 days (30 in Gregorian leap year)
 export function getBanglaMonthLengths(startGregorianYear: number): number[] {
-  const isFalgunLeap = isGregorianLeapYear(startGregorianYear + 1);
-  return [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, isFalgunLeap ? 30 : 29, 30];
+  const isChaitraLeap = isGregorianLeapYear(startGregorianYear + 1);
+  return [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, isChaitraLeap ? 30 : 29];
 }
 
 export interface BanglaDateResult {
