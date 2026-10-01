@@ -12,6 +12,17 @@ export interface SiteUpdate {
 
 export const SITE_UPDATES: SiteUpdate[] = [
   {
+    id: 'update-gold-calculator',
+    date: '১ অক্টোবর ২০২৬',
+    version: 'v1.0',
+    badge: 'নতুন টুল',
+    badgeType: 'new',
+    title: 'স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর (Gold Calculator BD) সংযোজন',
+    description: 'বাজুস (BAJUS) মান অনুযায়ী ভরি, আনা, রতি ও পয়েন্ট ↔ গ্রাম নিখুঁত রূপান্তর, ২২K/২১K/১৮K স্বর্ণের লাইভ দর, মজুরি, ৫% ভ্যাট এবং পুরানো সোনা বিক্রয় ও বদলের রসিদ হিসাব।',
+    toolLink: '/gold-calculator',
+    toolName: 'স্বর্ণ ক্যালকুলেটর দেখুন'
+  },
+  {
     id: 'update-land-converter',
     date: '২১ সেপ্টেম্বর ২০২৬',
     version: 'v1.0',

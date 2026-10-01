@@ -284,6 +284,7 @@ export const ContactPage: React.FC = () => {
                     <option value="amount-in-words">টাকা কথায় কনভার্টার</option>
                     <option value="gpa-calculator">জিপিএ ও সিজিপিএ ক্যালকুলেটর</option>
                     <option value="land-converter">জমির মাপ কনভার্টার</option>
+                    <option value="gold-calculator">স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর</option>
                     <option value="cv-builder">সিভি ও জীবনবৃত্তান্ত মেকার</option>
                   </select>
                 </div>

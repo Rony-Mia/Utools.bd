@@ -12,6 +12,7 @@ const POPULAR_TOOLS: ReadonlyArray<{ to: string; label: string }> = [
   { to: '/cv-builder', label: 'সিভি মেকার' },
   { to: '/pdf-merger', label: 'পিডিএফ মার্জার' },
   { to: '/land-converter', label: 'জমির মাপ কনভার্টার' },
+  { to: '/gold-calculator', label: 'স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর' },
 ];
 
 export const NotFoundPage: React.FC = () => (

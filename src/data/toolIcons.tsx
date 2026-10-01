@@ -19,6 +19,7 @@ import {
   Smartphone,
   Stamp,
   Trash2,
+  Scale,
 } from 'lucide-react';
 
 export type ToolIconComponent = React.ComponentType<{ className?: string }>;
@@ -37,6 +38,7 @@ const ICONS: Record<string, ToolIconComponent> = {
   'bangla-date-converter': Calendar,
   'gpa-calculator': GraduationCap,
   'land-converter': LandPlot,
+  'gold-calculator': Scale,
   'cv-builder': FileText,
   'pdf-merger': Layers,
   'pdf-split': Scissors,
