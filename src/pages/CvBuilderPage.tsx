@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   FileText,
   Printer,
@@ -863,34 +863,14 @@ export const CvBuilderPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta name="description" content={pageContent.metaDescription} />
-        <link rel="canonical" href="https://utools.bd/cv-builder" />
-        <meta property="og:title" content={pageContent.metaTitle} />
-        <meta property="og:description" content={pageContent.metaDescription} />
-        <meta property="og:url" content="https://utools.bd/cv-builder" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta name="twitter:description" content={pageContent.metaDescription} />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: faqs.map((f) => ({
-              '@type': 'Question',
-              name: f.question,
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: f.answer,
-              },
-            })),
-          })}
-        </script>
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/cv-builder"
+        toolName="সিভি ও জীবনবৃত্তান্ত মেকার"
+        categoryName="সিভি ও ডকুমেন্ট"
+        faqs={faqs}
+      />
 
       {/* Hidden container for accurate DOM section measurement */}
       <div

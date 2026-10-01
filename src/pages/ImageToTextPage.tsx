@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -313,21 +313,14 @@ export const ImageToTextPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta name="description" content={pageContent.metaDescription} />
-        <link rel="canonical" href="https://utools.bd/image-to-text" />
-        <meta property="og:title" content={pageContent.metaTitle} />
-        <meta property="og:description" content={pageContent.metaDescription} />
-        <meta property="og:url" content="https://utools.bd/image-to-text" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta name="twitter:description" content={pageContent.metaDescription} />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/image-to-text"
+        toolName="ছবি ও PDF থেকে বাংলা টেক্সট (OCR)"
+        categoryName="টেক্সট রূপান্তর"
+        faqs={pageContent.faqs || []}
+      />
 
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-xs text-[#4A5A52]">

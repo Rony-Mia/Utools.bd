@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   ArrowLeft,
   Upload,
@@ -459,32 +459,14 @@ export const PhotoResizerPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta
-          name="description"
-          content={pageContent.metaDescription}
-        />
-        <link rel="canonical" href="https://utools.bd/photo-resizer" />
-        <meta
-          property="og:title"
-          content={pageContent.metaTitle}
-        />
-        <meta
-          property="og:description"
-          content={pageContent.metaDescription}
-        />
-        <meta property="og:url" content="https://utools.bd/photo-resizer" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta
-          name="twitter:description"
-          content={pageContent.metaDescription}
-        />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/photo-resizer"
+        toolName="সরকারি চাকরি ও পাসপোর্ট ছবি রিসাইজার"
+        categoryName="গ্রাফিক্স ও ছবি"
+        faqs={pageContent.faqs || []}
+      />
 
       {/* Top Breadcrumb & Privacy Guarantee */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">

@@ -87,6 +87,7 @@ export default defineConfig(({ isSsrBuild }): UserConfig => {
                   id.includes('/src/components/Footer') ||
                   id.includes('/src/components/UtoolsLogo') ||
                   id.includes('/src/components/ScrollToTop') ||
+                  id.includes('/src/components/ToolSeoHead') ||
                   id.includes('/src/components/floating/') ||
                   id.includes('/src/utils/') ||
                   id.includes('/src/data/tools') ||

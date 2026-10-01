@@ -205,6 +205,14 @@ async function prerender() {
       );
     }
 
+    // 2c. Inject JSON-LD structured data and scripts from Helmet into <head>
+    if (helmet?.script) {
+      const helmetScriptHtml = helmet.script.toString();
+      if (helmetScriptHtml && pageHtml.includes('</head>')) {
+        pageHtml = pageHtml.replace('</head>', `  ${helmetScriptHtml}\n</head>`);
+      }
+    }
+
     // 3. Inject body content into <div id="root">
     pageHtml = pageHtml.replace(
       '<div id="root"></div>',

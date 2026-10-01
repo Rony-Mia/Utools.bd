@@ -226,69 +226,6 @@ export const PdfDeletePagesPage: React.FC = () => {
     document.body.removeChild(a);
   };
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'পেজ মুছে ফেললে কি বাকি পেজগুলোর লেখা বা ছবির কোয়ালিটি নষ্ট হয়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'একদমই না! Utools.bd কোনো ইমেজ কম্প্রেশন বা টেক্সট পরিবর্তন করে না। শুধুমাত্র আপনি যে পেজগুলো বাদ দিয়েছেন সেগুলো বাদ দিয়ে বাকি পেজগুলোকে অবিকল মূল রেজোলিউশন ও ফন্টসহ সংরক্ষণ করে নতুন পিডিএফ তৈরি করে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'একসাথে একাধিক বা নির্দিষ্ট রেঞ্জের পেজ কীভাবে মুছব?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'আপনি সরাসরি পেজের কার্ডের ওপর ক্লিক করে চেকবক্স সিলেক্ট করতে পারেন, অথবা ইনপুট বক্সে "2, 4-6" এর মতো কমা ও হাইফেন দিয়ে পেজ নম্বর লিখে দিতে পারেন। উভয় পদ্ধতি স্বয়ংক্রিয়ভাবে সিঙ্ক থাকবে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমার আপলোড করা ডকুমেন্ট কি কোনো সার্ভারে চলে যায়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'কখনোই না! এটি ১০০% ক্লায়েন্ট-সাইড প্রযুক্তি। আপনার ফাইলের ডেটা সম্পূর্ণভাবে আপনার কম্পিউটারের বা ফোনের ব্রাউজারেই প্রসেস হয়। ইন্টারনেটে কোনো সার্ভারে যায় না বা সংরক্ষিত থাকে না।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'ভুলবশত সবগুলো পেজ সিলেক্ট করে ফেললে কি ফাইল নষ্ট হবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, আমাদের সিস্টেমে সুরক্ষিত ভ্যালিডেশন রয়েছে। একটি পিডিএফে অন্তত ১টি পেজ থাকতে হবে; সবগুলো পেজ সিলেক্ট করলে সিস্টেম সতর্কতা প্রদর্শন করবে এবং কাজ সম্পন্ন করতে দেবে না।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'বড় সরকারি চাকরির সার্কুলার বা স্ক্যান বই থেকে পেজ মুছা যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, যত বড় সাইজের কিংবা যত বেশি পেজের পিডিএফই হোক না কেন, কোনো কৃত্রিম সীমাবদ্ধতা ছাড়াই অনায়াসে পেজ বাদ দিতে পারবেন।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'পাসওয়ার্ড প্রটেক্টেড পিডিএফ থেকে পেজ ডিলিট করা সম্ভব কি?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'বর্তমানে এনক্রিপ্ট করা বা পাসওয়ার্ড সুরক্ষিত পিডিএফ সরাসরি সমর্থিত নয়। এই ধরনের ফাইল থেকে পেজ মুছতে হলে প্রথমে সেটির পাসওয়ার্ড সুরক্ষা তুলে নিয়ে সাধারণ আনলকড পিডিএফ হিসেবে আপলোড করতে হবে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'মোবাইলে টাচ করে কি পেজ সিলেক্ট করা যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, মোবাইল ও ট্যাবলেটের জন্য বড় টাচ টার্গেট রাখা হয়েছে, যাতে যেকোনো ডিভাইসে আঙুল দিয়ে ট্যাপ করে সহজে পেজ নির্বাচন করা যায়।',
-        },
-      },
-    ],
-  };
-
   const howToSteps = [
     {
       stepNum: '১',
@@ -314,16 +251,16 @@ export const PdfDeletePagesPage: React.FC = () => {
 
   return (
     <PdfToolLayout
-      title="পিডিএফ পেজ ডিলিট — PDF Delete Pages Online Free | Utools.bd"
-      metaDescription="অনলাইনে PDF ফাইল থেকে অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন সহজে ও ফ্রিতে। কোনো পেজ সীমা নেই, ১০০% ক্লায়েন্ট-সাইড ব্রাউজারেই নিরাপদ ও দ্রুত প্রসেসিং।"
+      title={pageContent.metaTitle}
+      metaDescription={pageContent.metaDescription}
       canonicalUrl="https://utools.bd/pdf-delete-pages"
-      ogTitle="পিডিএফ পেজ ডিলিট — PDF Delete Pages Online Free | Utools.bd"
-      ogDescription="অনলাইনে PDF ফাইল থেকে অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন সহজে ও ফ্রিতে। কোনো পেজ সীমা নেই, ১০০% ক্লায়েন্ট-সাইড ব্রাউজারেই নিরাপদ ও দ্রুত প্রসেসিং।"
+      ogTitle={pageContent.metaTitle}
+      ogDescription={pageContent.metaDescription}
       refCode="DOC-PDF-03"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পেজ রিমুভার"
       h1={pageContent?.title || "পিডিএফ পেজ ডিলিট — অপ্রয়োজনীয় পৃষ্ঠা মুছে ফেলুন"}
       introText={pageContent?.introText || "স্ক্যান করা নথির খালি পাতা, অতিরিক্ত কভার পেজ বা গোপনীয় তথ্য সংবলিত নির্দিষ্ট পৃষ্ঠা বাদ দিন এক ক্লিকে। ভিজ্যুয়াল পেজ সিলেক্টর ও রিয়েলটাইম প্রিভিউ সহ ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে সেকেন্ডেই ফ্রেশ ও পরিচ্ছন্ন পিডিএফ ফাইল তৈরি করুন।"}
-      schemas={[faqSchema]}
+      faqs={pageContent.faqs}
       howToSteps={howToSteps}
       currentToolId="pdf-delete-pages"
       cmsContent={pageContent}
@@ -414,10 +351,6 @@ export const PdfDeletePagesPage: React.FC = () => {
           </div>
         </>
       }
-      faqs={faqSchema.mainEntity.map((item) => ({
-        question: item.name,
-        answer: item.acceptedAnswer.text,
-      }))}
     >
       {/* Interactive Tool Console */}
       <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-7 space-y-6 shadow-xs rounded-2xl">

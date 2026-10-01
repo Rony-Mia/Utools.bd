@@ -168,69 +168,6 @@ export const PdfRotatePage: React.FC = () => {
   };
 
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'পিডিএফ রোটেট করলে কি ফাইলের ভেতরের লেখা বা ছবির মান কমে যায়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, কোনো মান কমে না। এটি শুধুমাত্র পেজের মেটাডেটার ভিউপোর্ট রোটেশন কোণ (যেমন 90°, 180°, 270°) পরিবর্তন করে। ডকুমেন্টের ভেতরের মূল টেক্সট ও হাই-রেজোলিউশন ইমেজ হুবহু অক্ষুণ্ণ থাকে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'স্ক্যান করা উল্টো পেজ কীভাবে সোজা করব?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'ফাইলটি আপলোড করার পর যে পেজটি উল্টো রয়েছে সেটির ডানে বা বামের রোটেট বাটনে ক্লিক করুন। আর যদি পুরো ডকুমেন্টের সব পেজই উল্টো হয়ে থাকে, তবে উপরের "সব পেজ ১৮০° উল্টান" বা "সব পেজ ৯০° ডানে ঘোরান" বাটনে চাপ দিয়ে এক ক্লিকেই সোজা করতে পারবেন।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমার আপলোড করা ডকুমেন্ট কি নিরাপদ? সার্ভারে জমা থাকে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'শতভাগ নিরাপদ! এটি সম্পূর্ণ ক্লায়েন্ট-সাইড ব্রাউজার মেমোরিতে চলে। আপনার ফাইলটি কখনোই ইন্টারনেটের মাধ্যমে কোনো সার্ভারে আপলোড হয় না, ফলে ব্যাংক ডকুমেন্ট, পাসপোর্ট বা ব্যক্তিগত দলিল সম্পূর্ণ গোপন ও সুরক্ষিত থাকে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'কত বড় বা কত পেজের পিডিএফ রোটেট করা সম্ভব?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'আমাদের সাইটে কোনো ফাইল সাইজ বা পেজ সংখ্যার কৃত্রিম সীমা নেই। আপনার ডিভাইসের মেমোরি অনুযায়ী শত শত পেজের বই বা ডকুমেন্টও অনায়াসে রোটেট করতে পারবেন।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'স্মার্টফোন দিয়ে কি উল্টো পিডিএফ সোজা করা যায়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, যেকোনো অ্যান্ড্রয়েড বা আইফোনে ব্রাউজারের মাধ্যমে পেজগুলো দেখে সহজে আঙুল দিয়ে ট্যাপ করে ঘোরানো ও ডাউনলোড করা সম্ভব।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'রোটেট করার পর কি পূর্বের অবস্থায় ফিরিয়ে নেওয়া যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, "সব আগের অবস্থায় ফেরত (রিসেট)" বাটনে ক্লিক করলেই পেজগুলো আবার তাদের প্রাথমিক কোণে ফিরে যাবে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'পাসওয়ার্ড প্রটেক্টেড পিডিএফ রোটেট করা যাবে কি?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'বর্তমানে পাসওয়ার্ড সুরক্ষিত পিডিএফ সরাসরি সমর্থিত নয়। এনক্রিপ্টেড ফাইলের ক্ষেত্রে আগে পাসওয়ার্ড প্রটেকশন রিমুভ করে সাধারণ আনলকড পিডিএফ আপলোড করতে হবে।',
-        },
-      },
-    ],
-  };
-
   const howToSteps = [
     {
       stepNum: '১',
@@ -256,16 +193,16 @@ export const PdfRotatePage: React.FC = () => {
 
   return (
     <PdfToolLayout
-      title="পিডিএফ রোটেট — Rotate PDF Pages Online Free | Utools.bd"
-      metaDescription="অনলাইনে PDF ফাইল ও পেজ ঘোরান সহজে ও ফ্রিতে। উল্টো স্ক্যান করা পেজ ৯০°, ১৮০° বা ২৭০° ঘুরিয়ে সোজা করুন। ১০০% ক্লায়েন্ট-সাইড ব্রাউজারেই নিরাপদ প্রসেসিং।"
+      title={pageContent.metaTitle}
+      metaDescription={pageContent.metaDescription}
       canonicalUrl="https://utools.bd/pdf-rotate"
-      ogTitle="পিডিএফ রোটেট — Rotate PDF Pages Online Free | Utools.bd"
-      ogDescription="অনলাইনে PDF ফাইল ও পেজ ঘোরান সহজে ও ফ্রিতে। উল্টো স্ক্যান করা পেজ ৯০°, ১৮০° বা ২৭০° ঘুরিয়ে সোজা করুন। ১০০% ক্লায়েন্ট-সাইড ব্রাউজারেই নিরাপদ প্রসেসিং।"
+      ogTitle={pageContent.metaTitle}
+      ogDescription={pageContent.metaDescription}
       refCode="DOC-PDF-04"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পিডিএফ রোটেটর"
       h1={pageContent?.title || "পিডিএফ রোটেট — উল্টো বা বাঁকা পেজ সোজা করুন"}
       introText={pageContent?.introText || "মোবাইল ক্যামেরা বা স্ক্যানার দিয়ে স্ক্যান করার সময় প্রায়ই নথিপত্রের পাতা উল্টো বা ল্যান্ডস্কেপ হয়ে যায়। একক পেজ বা সকল পেজকে ৯০° ডানে/বামে কিংবা ১৮০° উল্টিয়ে চোখের পলকে সঠিক ওরিয়েন্টেশনে সোজা করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"}
-      schemas={[faqSchema]}
+      faqs={pageContent.faqs}
       howToSteps={howToSteps}
       currentToolId="pdf-rotate"
       cmsContent={pageContent}
@@ -356,10 +293,6 @@ export const PdfRotatePage: React.FC = () => {
           </div>
         </>
       }
-      faqs={faqSchema.mainEntity.map((item) => ({
-        question: item.name,
-        answer: item.acceptedAnswer.text,
-      }))}
     >
       {/* Interactive Tool Console */}
       <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-7 space-y-6 shadow-xs rounded-2xl">

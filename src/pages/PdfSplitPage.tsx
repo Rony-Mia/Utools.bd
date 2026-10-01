@@ -192,69 +192,6 @@ export const PdfSplitPage: React.FC = () => {
     }
   };
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'পিডিএফ স্প্লিট করলে কি ভেতরের ছবির রেজোলিউশন বা লেখার স্পষ্টতা কমে যায়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, একদমই কমে না। Utools.bd-এর পিডিএফ স্প্লিটার কোনো ইমেজ কম্প্রেশন বা রি-এনকোডিং ছাড়াই সরাসরি ভেক্টর পেজ স্ট্রাকচার আলাদা করে। ফলে মূল ডকুমেন্টের প্রতিটি ফন্ট, ভেক্টর শেপ ও ছবির কোয়ালিটি ১০০% অক্ষুণ্ণ থাকে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'কীভাবে পেজ রেঞ্জ লিখতে হয়? (উদাহরণসহ)',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'খুবই সহজ! কমা বা হাইফেন দিয়ে রেঞ্জ লিখতে পারেন। যেমন: "1-3, 5, 7-9" লিখলে প্রথম ৩টি পেজ নিয়ে পার্ট-১, ৫ম পেজ নিয়ে পার্ট-২ এবং ৭ম থেকে ৯ম পেজ নিয়ে পার্ট-৩ তৈরি হবে। এছাড়া বাংলা সংখ্যা (যেমন: ১-৪, ৬) লিখলেও সিস্টেম স্বয়ংক্রিয়ভাবে বুঝে নেয়।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমার আপলোড করা ডকুমেন্ট কি নিরাপদ? সার্ভারে জমা থাকে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'শতভাগ নিরাপদ! এটি সম্পূর্ণ ক্লায়েন্ট-সাইড আর্কিটেকচারে তৈরি। ফাইলটি আপনার ডিভাইসের ব্রাউজার মেমোরিতেই স্প্লিট হয়, কোনো অবস্থাতেই ইন্টারনেটে কোনো সার্ভারে আপলোড বা সংরক্ষিত হয় না।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'একসাথে সবগুলো আলাদা করা পেজ কি এক ক্লিকে ডাউনলোড করা যায়?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, স্প্লিট সম্পন্ন হওয়ার পর আপনি আলাদা আলাদা ফাইলের ডাউনলোড লিংকের পাশাপাশি একটি প্রধান "সবগুলো ZIP আকারে ডাউনলোড করুন" বাটন পাবেন। এতে ক্লিক করলেই সবগুলো স্প্লিট করা পিডিএফ একটি সিঙ্গেল .zip ফাইলে সেভ হবে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '৫০ বা ১০০ পেজের বড় বই বা সরকারি গেজেট কি ভাগ করা যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'অবশ্যই! আমাদের সিস্টেমে কোনো ফাইল বা পেজ সংখ্যার কৃত্রিম ক্যাপ নেই। আপনার কম্পিউটার বা মোবাইলের নিজস্ব মেমোরি যতদূর সাপোর্ট করে, তত বড় পিডিএফই নির্বিঘ্নে বিভক্ত করা সম্ভব।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'পাসওয়ার্ড যুক্ত পিডিএফ ফাইল স্প্লিট করা যায় কি?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'বর্তমানে পাসওয়ার্ড-সুরক্ষিত বা এনক্রিপ্টেড পিডিএফ সরাসরি স্প্লিট করা যায় না। এমন ফাইলের ক্ষেত্রে আগে পাসওয়ার্ড বা এনক্রিপশন রিমুভ করে সাধারণ আনলকড পিডিএফ হিসেবে এখানে যুক্ত করতে হবে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'মোবাইল ফোনে কি এই টুল ব্যবহার করে পিডিএফ ভাগ করা সম্ভব?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, স্মার্টফোন (অ্যান্ড্রয়েড ও আইফোন) এবং ট্যাবলেটের ব্রাউজারে এটি পুরোপুরি অপ্টিমাইজড। সহজে টাচ করে রেঞ্জ নির্বাচন ও সরাসরি মেমোরিতে স্প্লিট করা যায়।',
-        },
-      },
-    ],
-  };
-
   const howToSteps = [
     {
       stepNum: '১',
@@ -280,16 +217,16 @@ export const PdfSplitPage: React.FC = () => {
 
   return (
     <PdfToolLayout
-      title="পিডিএফ স্প্লিটার — PDF Split Online Free | Utools.bd"
-      metaDescription="অনলাইনে PDF ফাইল ভাগ করুন ও নির্দিষ্ট পেজ আলাদা করুন সম্পূর্ণ ফ্রিতে। কোনো পেজ সীমা নেই, ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে নিরাপদ প্রসেসিং ও ZIP ডাউনলোড।"
+      title={pageContent.metaTitle}
+      metaDescription={pageContent.metaDescription}
       canonicalUrl="https://utools.bd/pdf-split"
-      ogTitle="পিডিএফ স্প্লিটার — PDF Split Online Free | Utools.bd"
-      ogDescription="অনলাইনে PDF ফাইল ভাগ করুন ও নির্দিষ্ট পেজ আলাদা করুন সম্পূর্ণ ফ্রিতে। কোনো পেজ সীমা নেই, ১০০% ক্লায়েন্ট-সাইড ব্রাউজারে নিরাপদ প্রসেসিং ও ZIP ডাউনলোড।"
+      ogTitle={pageContent.metaTitle}
+      ogDescription={pageContent.metaDescription}
       refCode="DOC-PDF-02"
       badgeText="ডকুমেন্ট ইউটিলিটি • প্রফেশনাল পিডিএফ স্প্লিটার"
       h1={pageContent?.title || "পিডিএফ স্প্লিটার — PDF ফাইল ভাগ ও পেজ আলাদা করুন"}
       introText={pageContent?.introText || "বড় পিডিএফ বই, সরকারি রেজাল্ট শিট বা চাকরির গেজেট থেকে প্রয়োজনীয় পৃষ্ঠাসমূহ আলাদা করুন সহজে ও নিখুঁতভাবে। নির্দিষ্ট রেঞ্জ (যেমন ১-৪, ৭, ১০-১৫) অথবা প্রতিটি পৃষ্ঠাকে একক ফাইলে রূপান্তর করে এক ক্লিকে জিপ (ZIP) ডাউনলোড করুন সম্পূর্ণ ক্লায়েন্ট-সাইড ও নিরাপদে।"}
-      schemas={[faqSchema]}
+      faqs={pageContent.faqs}
       howToSteps={howToSteps}
       currentToolId="pdf-split"
       cmsContent={pageContent}
@@ -380,10 +317,6 @@ export const PdfSplitPage: React.FC = () => {
           </div>
         </>
       }
-      faqs={faqSchema.mainEntity.map((item) => ({
-        question: item.name,
-        answer: item.acceptedAnswer.text,
-      }))}
     >
       {/* Interactive Tool Console */}
       <div className="bg-[#FFFFFF] border border-[#D5E4DB] p-5 sm:p-7 space-y-6 shadow-xs rounded-2xl">

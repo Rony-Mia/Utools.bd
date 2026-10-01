@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   ArrowLeft,
   Upload,
@@ -426,30 +426,14 @@ export const HeicConverterPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta
-          name="description"
-          content={pageContent.metaDescription}
-        />
-        <link rel="canonical" href="https://utools.bd/heic-converter" />
-        <meta
-          property="og:title"
-          content={pageContent.metaTitle}
-        />
-        <meta
-          property="og:description"
-          content={pageContent.metaOgDescription}
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://utools.bd/heic-converter" />
-        <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta name="twitter:description" content={pageContent.metaOgDescription} />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/heic-converter"
+        toolName="HEIC থেকে JPG/PNG কনভার্টার"
+        categoryName="গ্রাফিক্স ও ছবি"
+        faqs={pageContent.faqs || []}
+      />
 
       {/* Top Breadcrumb & Navigation */}
       <div className="flex items-center justify-between border-b border-[#D5E4DB] pb-4">

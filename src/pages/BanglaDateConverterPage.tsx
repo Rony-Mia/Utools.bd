@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   Calendar,
   CalendarDays,
@@ -284,21 +284,14 @@ export const BanglaDateConverterPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta name="description" content={pageContent.metaDescription} />
-        <link rel="canonical" href="https://utools.bd/bangla-date-converter" />
-        <meta property="og:title" content={pageContent.metaTitle} />
-        <meta property="og:description" content={pageContent.metaDescription} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://utools.bd/bangla-date-converter" />
-        <meta property="og:image" content="https://utools.bd/og-image.png?v=2" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta name="twitter:description" content={pageContent.metaDescription} />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png?v=2" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/bangla-date-converter"
+        toolName="বাংলা তারিখ কনভার্টার"
+        categoryName="ক্যালকুলেটর"
+        faqs={pageContent.faqs || []}
+      />
 
       <main className="min-h-screen bg-[#FAFAF7] text-[#0F1F17] py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-8">

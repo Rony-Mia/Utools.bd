@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -252,84 +252,17 @@ export const TypingTestPage: React.FC = () => {
       ? Math.max(0, duration - elapsedSeconds)
       : elapsedSeconds;
 
-  // ── Structured Data Schemas ──────────────────────────────────────────────
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'হোম',
-        item: 'https://utools.bd',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'টাইপিং স্পিড টেস্ট',
-        item: 'https://utools.bd/typing-test',
-      },
-    ],
-  };
-
-  const softwareSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'টাইপিং স্পিড টেস্ট — Utools.bd',
-    url: 'https://utools.bd/typing-test',
-    applicationCategory: 'UtilityApplication',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript. Requires HTML5.',
-    description:
-      'বাংলা ও ইংরেজিতে নির্ভুল টাইপিং গতি ও WPM পরিমাপক। লাইভ স্পিড গ্রাফ, কিবোর্ড এরর হিটম্যাপ ও ফ্রি সার্টিফিকেট ডাউনলোড।',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'BDT',
-    },
-  };
-
-  const faqsList = (pageContent?.faqs && pageContent.faqs.length > 0) ? pageContent.faqs : [];
-
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqsList.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
-      {/* ── SEO Helmet ───────────────────────────────────────────────────── */}
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta name="description" content={pageContent.metaDescription} />
-        <link rel="canonical" href="https://utools.bd/typing-test" />
-
-        {/* OpenGraph */}
-        <meta property="og:title" content={pageContent.metaTitle} />
-        <meta property="og:description" content={pageContent.metaDescription} />
-        <meta property="og:url" content="https://utools.bd/typing-test" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png" />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta name="twitter:description" content={pageContent.metaDescription} />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-
-        {/* JSON-LD Schemas */}
-        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(softwareSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      {/* ── SEO Head ─────────────────────────────────────────────────────── */}
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/typing-test"
+        toolName="বাংলা টাইপিং টেস্ট অনলাইন"
+        categoryName="টাইপিং অনুশীলন"
+        faqs={pageContent.faqs}
+      />
 
       {/* ── Top Breadcrumb & Privacy Badge ───────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">

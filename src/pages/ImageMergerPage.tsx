@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { Link } from 'react-router-dom';
 import {
   Grid,
@@ -373,30 +373,14 @@ export const ImageMergerPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta
-          name="description"
-          content={pageContent.metaDescription}
-        />
-        <link rel="canonical" href="https://utools.bd/image-merger" />
-        <meta property="og:title" content={pageContent.metaTitle} />
-        <meta
-          property="og:description"
-          content={pageContent.metaOgDescription}
-        />
-        <meta property="og:url" content="https://utools.bd/image-merger" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageContent.metaTitle} />
-        <meta
-          name="twitter:description"
-          content={pageContent.metaDescription}
-        />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/image-merger"
+        toolName="ইমেজ মার্জার ও কোলাজ মেকার"
+        categoryName="গ্রাফিক্স ও ছবি"
+        faqs={pageContent.faqs || []}
+      />
 
       {/* HEADER SECTION */}
       <div className="border-b border-[#D5E4DB] pb-6 space-y-3">

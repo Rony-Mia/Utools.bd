@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../ToolSeoHead.tsx';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -76,27 +77,31 @@ export const PdfToolLayout: React.FC<PdfToolLayoutProps> = ({
   cmsContent,
   currentToolId,
 }) => {
+  const rawFaqs = (faqs && faqs.length > 0) ? faqs : (cmsContent?.faqs || []);
+  const effectiveFaqs = rawFaqs
+    .filter((f): f is { question: string; answer: string } => Boolean(f?.question && f?.answer))
+    .map((f) => ({ question: f.question, answer: f.answer }));
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={canonicalUrl} />
-        <meta property="og:title" content={ogTitle || title} />
-        <meta property="og:description" content={ogDescription || metaDescription} />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={ogTitle || title} />
-        <meta name="twitter:description" content={ogDescription || metaDescription} />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-        {schemas.map((schema, idx) => (
-          <script key={idx} type="application/ld+json">
-            {JSON.stringify(schema)}
-          </script>
-        ))}
-      </Helmet>
+      <ToolSeoHead
+        title={title}
+        description={metaDescription}
+        canonicalUrl={canonicalUrl}
+        toolName={h1}
+        categoryName="পিডিএফ টুলস"
+        categoryPath="/pdf-merger"
+        faqs={effectiveFaqs}
+      />
+      {schemas && schemas.length > 0 && (
+        <Helmet>
+          {schemas.map((schema, idx) => (
+            <script key={idx} type="application/ld+json">
+              {JSON.stringify(schema)}
+            </script>
+          ))}
+        </Helmet>
+      )}
 
       {/* Top Breadcrumb & Privacy Badge */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">

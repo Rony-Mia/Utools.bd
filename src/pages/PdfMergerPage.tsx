@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { PDFDocument } from 'pdf-lib';
 import {
   ArrowLeft,
@@ -317,51 +317,16 @@ export const PdfMergerPage: React.FC = () => {
   const totalPagesSelected = files.reduce((acc, f) => acc + f.pageCount, 0);
   const totalBytesSelected = files.reduce((acc, f) => acc + f.sizeBytes, 0);
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: pageContent.faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-      <Helmet>
-        <title>{pageContent.metaTitle}</title>
-        <meta
-          name="description"
-          content={pageContent.metaDescription}
-        />
-        <link rel="canonical" href="https://utools.bd/pdf-merger" />
-        <meta
-          property="og:title"
-          content={pageContent.metaTitle}
-        />
-        <meta
-          property="og:description"
-          content={pageContent.metaDescription}
-        />
-        <meta property="og:url" content="https://utools.bd/pdf-merger" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://utools.bd/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content={pageContent.metaTitle}
-        />
-        <meta
-          name="twitter:description"
-          content={pageContent.metaDescription}
-        />
-        <meta name="twitter:image" content="https://utools.bd/og-image.png" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <ToolSeoHead
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
+        canonicalUrl="https://utools.bd/pdf-merger"
+        toolName="অনলাইন পিডিএফ মার্জার"
+        categoryName="পিডিএফ টুলস"
+        faqs={pageContent.faqs}
+      />
 
       {/* Top Breadcrumb & Prominent Privacy Guarantee Badge */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">

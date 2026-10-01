@@ -254,61 +254,6 @@ export const PdfWatermarkPage: React.FC = () => {
     document.body.removeChild(a);
   };
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'ওয়াটারমার্ক যোগ করলে কি আমার পিডিএফ ফাইলের কোয়ালিটি কমে যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, মূল পিডিএফ ফাইলের টেক্সট ও রেজোলিউশন ১০০% অক্ষুণ্ণ থাকে। ওয়াটারমার্ক বা পেজ নম্বর অতিরিক্ত লেয়ার হিসেবে স্বচ্ছতার (opacity) সাথে যুক্ত হয়।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমি কি বাংলা টেক্সট দিয়ে ওয়াটারমার্ক বসাতে পারি?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, "গোপনীয়", "খসড়া", "নকল নিষিদ্ধ" বা যেকোনো বাংলা লেখা লিখে ওয়াটারমার্ক দেওয়া যায়। আমাদের সিস্টেম স্বয়ংক্রিয়ভাবে হাই-রেজোলিউশন রেন্ডারিংয়ের মাধ্যমে নিখুঁত বাংলা যুক্ত করে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'পেজ নম্বরে কি বাংলা সংখ্যা (১, ২, ৩...) ব্যবহার করা যাবে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, "বাংলা সংখ্যা" অপশন সিলেক্ট করলে "পৃষ্ঠা ১ এর ১০" বা "১, ২, ৩" ইত্যাদি খাঁটি বাংলায় পেজ নম্বর যুক্ত হবে।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমি কি আমার কোম্পানির লোগো ওয়াটারমার্ক হিসেবে দিতে পারব?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'হ্যাঁ, লোগো ইমেজ অপশনে গিয়ে আপনার প্রতিষ্ঠানের পিএনজি (PNG) বা জেপিজি (JPG) লোগো আপলোড করে সাইজ ও হালকা স্বচ্ছতা (opacity) নির্ধারণ করে যুক্ত করতে পারেন।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'টাইল্ড প্যাটার্ন (Tile Pattern) ওয়াটারমার্কের সুবিধা কী?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'টাইল্ড প্যাটার্নে ওয়াটারমার্কটি পুরো পৃষ্ঠাজুড়ে গ্রিড আকারে পুনরাবৃত্ত হয়। ফলে কেউ ডকুমেন্টের কোনো অংশ ক্রপ বা স্ক্রিনশট নিলেও ওয়াটারমার্কটি বাদ দিতে পারে না। গোপনীয় সরকারি, আইনি বা আর্থিক ফাইলের জন্য এটি আদর্শ।',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'আমার আপলোড করা ডকুমেন্ট কি সার্ভারে জমা থাকে?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'না, কোনো ফাইলই সার্ভারে যায় না। সম্পূর্ণ প্রসেসিং আপনার কম্পিউটারের ব্রাউজারে মেমরিতেই সম্পন্ন হয়। ইন্টারনেট সংযোগ বিচ্ছিন্ন করলেও টুলটি কাজ করবে।',
-        },
-      },
-    ],
-  };
-
   // Preview helper values
   const isWatermarkActive = activeMode === 'all' || activeMode === 'watermark';
   const isPageNumberActive = activeMode === 'all' || activeMode === 'pagenumber';
@@ -342,15 +287,16 @@ export const PdfWatermarkPage: React.FC = () => {
 
   return (
     <PdfToolLayout
-      title="পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর অনলাইন | PDF Watermark & Page Number Free — Utools.bd"
-      metaDescription="ফ্রি অনলাইন পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর যোগ করার টুল। গোপনীয়তা রক্ষায় টেক্সট/লোগো স্ট্যাম্প এবং পৃষ্ঠা নম্বর বসান সহজে। ১০০% ব্রাউজার প্রসেসিং ও নিরাপদ।"
+      title={pageContent.metaTitle}
+      metaDescription={pageContent.metaDescription}
       canonicalUrl="https://utools.bd/pdf-watermark-page-number"
+      ogTitle={pageContent.metaTitle}
+      ogDescription={pageContent.metaDescription}
       refCode="DOC-PDF-05"
       badgeText="ডকুমেন্ট সিকিউরিটি ও স্ট্যাম্প"
       h1={pageContent?.title || "পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর (PDF Watermark & Page Number)"}
       introText={pageContent?.introText || "অফিসিয়াল ডকুমেন্ট, টেন্ডার পেপার, থিসিস বা আইনি ফাইলে কাস্টম ওয়াটারমার্ক স্ট্যাম্প এবং পেশাদার পেজ নম্বর বসিয়ে নথিকে অপব্যবহারমুক্ত রাখুন। সম্পূর্ণ ক্লায়েন্ট-সাইড প্রযুক্তি, ১০০% সুরক্ষিত ও নিরাপদ।"}
       currentToolId="pdf-watermark-page-number"
-      schemas={[faqSchema]}
       cmsContent={pageContent}
       howToSteps={[
         {
@@ -374,10 +320,7 @@ export const PdfWatermarkPage: React.FC = () => {
           desc: '"যুক্ত করুন" বাটনে ক্লিক করলেই ব্রাউজারে নিমেষেই প্রসেস হয়ে চূড়ান্ত পিডিএফ ডাউনলোড হয়ে যাবে।',
         },
       ]}
-      faqs={faqSchema.mainEntity.map((q) => ({
-        question: q.name,
-        answer: q.acceptedAnswer.text,
-      }))}
+      faqs={pageContent.faqs}
       deepDiveTitle="ডকুমেন্ট নিরাপত্তা ও পেজ নম্বরিংয়ের প্রয়োজনীয়তা"
       deepDiveContent={
         <div className="space-y-4 text-[#24332B] leading-relaxed">
