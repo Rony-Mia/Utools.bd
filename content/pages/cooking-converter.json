@@ -1,0 +1,34 @@
+{
+  "slug": "cooking-converter",
+  "metaTitle": "রান্নার পরিমাপ ও কাপ টু গ্রাম কনভার্টার | Utools",
+  "metaDescription": "১ কাপ ময়দা, চিনি ও তেল কত গ্রাম? চা চামচ, টেবিল চামচ, কাপ ও গ্রাম রূপান্তর এবং ওভেন তাপমাত্রা (°F থেকে °C) হিসাবের সহজ অনলাইন ক্যালকুলেটর।",
+  "title": "রান্নার পরিমাপ ও রেসিপি কনভার্টার (Cooking Measurement Converter)",
+  "subtitle": "ইউটিউব ও দেশি-বিদেশি রেসিপির কাপ, টেবিল চামচ, চা চামচ থেকে গ্রাম বা মিলিলিটারে নিখুঁত রূপান্তর। ময়দা, চিনি, তেল, মাখনসহ ওভেনের তাপমাত্রা (°F ⇄ °C) হিসাব।",
+  "faqHeading": "রান্না ও বেকিংয়ের পরিমাপ সংক্রান্ত সাধারণ জিজ্ঞাসা (FAQ)",
+  "faqs": [
+    {
+      "question": "১ কাপ ময়দা সমান কত গ্রাম (1 Cup Flour in Grams)?",
+      "answer": "রান্নার স্ট্যান্ডার্ড ১ কাপ (২৪০ মিলি) ময়দা বা আটা সমান প্রায় ১২০ গ্রাম (120g)। তবে আপনি যদি কাপে চেপে চেপে ময়দা ভরেন, তবে তা প্রায় ১৩০-১৩৫ গ্রাম পর্যন্ত হতে পারে। বেকিংয়ে নিখুঁত ফলাফলের জন্য চামচ দিয়ে কাপে আলতো করে ময়দা ভরা আদর্শ।"
+    },
+    {
+      "question": "১ কাপ চিনি কত গ্রাম (1 Cup Sugar in Grams)?",
+      "answer": "১ কাপ সাধারণ সাদা দানাদার চিনি সমান প্রায় ২০০ গ্রাম (200g)। তবে গুঁড়া চিনি বা আইসিং সুগার হলে ১ কাপ সমান প্রায় ১২০ গ্রাম এবং ব্রাউন সুগার বা লাল চিনি হলে ১ কাপ সমান প্রায় ২২০ গ্রাম হয়।"
+    },
+    {
+      "question": "১ টেবিল চামচ সমান কত গ্রাম বা চা চামচ?",
+      "answer": "১ টেবিল চামচ (Tablespoon - tbsp) সমান ৩ চা চামচ (Teaspoon - tsp) বা ১৫ মিলিলিটার (15 ml)। উপাদানের ক্ষেত্রে: ১ টেবিল চামচ ময়দা প্রায় ৮ গ্রাম, ১ টেবিল চামচ চিনি প্রায় ১২.৫ গ্রাম এবং ১ টেবিল চামচ তেল বা মাখন প্রায় ১৪ গ্রাম।"
+    },
+    {
+      "question": "How to convert recipe cups to grams accurately?",
+      "answer": "Since different cooking ingredients have different densities, you cannot convert volume (cups) to weight (grams) with a single generic multiplier. For example, 1 cup of flour is 120g, whereas 1 cup of sugar is 200g and 1 cup of honey is 340g. Our Utools ingredient-aware converter accounts for specific densities to give you exact baking measurements."
+    },
+    {
+      "question": "1 cup moida koto gram? (Banglish search guide)",
+      "answer": "1 standard recipe cup (240ml) moida ba atta shoman pray 120 gram. Ar 1 cup chini shoman pray 200 gram ebong 1 cup shoyabin ba shorishar tel shoman pray 218 gram. Amader ei online cooking converter theke je kono rannar upadaner cup theke gram ba chamoch theke ml shorashori hishab korte parben."
+    },
+    {
+      "question": "বেকিংয়ের ওভেন তাপমাত্রা ৩৫০°F সমান কত ডিগ্রি সেলসিয়াস?",
+      "answer": "আমেরিকান বা ইউরোপিয়ান রেসিপিতে বহুল ব্যবহৃত 350°F (ফারেনহাইট) সমান প্রায় 175°C (সেলসিয়াস), যা গ্যাস ওভেনের ক্ষেত্রে Gas Mark 4 এর সমান। এই তাপমাত্রায় সাধারণত বেশিরভাগ স্পঞ্জ কেক, কাপকেক, কুকিজ ও বিস্কুট বেক করা হয়।"
+    }
+  ]
+}

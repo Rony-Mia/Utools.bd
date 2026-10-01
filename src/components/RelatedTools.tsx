@@ -116,6 +116,22 @@ export const ALL_RELATED_TOOLS: RelatedToolItem[] = [
     description: 'বাংলা ও ইংরেজিতে আপনার টাইপিং গতি (WPM), নির্ভুলতা ও কীবোর্ড ভুল লাইভ পরীক্ষা করুন।',
     buttonText: 'টাইপিং টেস্টে যান',
   },
+  {
+    id: 'text-to-handwriting',
+    to: '/text-to-handwriting',
+    badge: 'টেক্সট',
+    title: 'টেক্সট টু হ্যান্ডরাইটিং কনভার্টার',
+    description: 'টাইপ করা লেখাকে মানুষের আসল হাতের লেখার মতো নোট ও অ্যাসাইনমেন্টে রূপান্তর ও PDF ডাউনলোড।',
+    buttonText: 'হাতে লেখা কনভার্টারে যান',
+  },
+  {
+    id: 'cooking-converter',
+    to: '/cooking-converter',
+    badge: 'ক্যালকুলেটর',
+    title: 'রান্নার পরিমাপ ও রেসিপি কনভার্টার',
+    description: 'কাপ ⇄ গ্রাম, চামচ ⇄ মিলিলিটার ও ওভেন তাপমাত্রা (°F ⇄ °C) নিখুঁতভাবে রূপান্তর করুন।',
+    buttonText: 'রান্নার কনভার্টারে যান',
+  },
 ];
 
 interface RelatedToolsProps {

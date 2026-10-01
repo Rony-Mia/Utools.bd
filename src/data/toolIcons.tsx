@@ -23,6 +23,8 @@ import {
   Binary,
   FileImage,
   Type,
+  PenTool,
+  ChefHat,
 } from 'lucide-react';
 
 export type ToolIconComponent = React.ComponentType<{ className?: string }>;
@@ -52,6 +54,8 @@ const ICONS: Record<string, ToolIconComponent> = {
   'pdf-watermark-page-number': Stamp,
   'image-to-text': ScanText,
   'case-converter': Type,
+  'text-to-handwriting': PenTool,
+  'cooking-converter': ChefHat,
 };
 
 export function getToolIcon(toolId: string): ToolIconComponent {

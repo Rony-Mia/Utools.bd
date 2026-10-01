@@ -253,5 +253,27 @@ export const TOOLS: ToolItem[] = [
     status: 'active',
     version: 'v1.0',
     link: '/case-converter'
+  },
+  {
+    id: 'text-to-handwriting',
+    refCode: 'TXT-HAND-01',
+    title: 'টেক্সট টু হ্যান্ডরাইটিং কনভার্টার (Text to Handwriting)',
+    description: 'টাইপ করা নোট ও রচনাকে খাতার পাতার মতো মানুষের হাতের লেখায় রূপান্তর করুন। রুলটানা পেপার, নীল ও কালো কালি এবং ১ ক্লিকে A4 PDF ডাউনলোড।',
+    feature: 'রুলটানা খাতা • কার্সিভ ফন্ট • রয়েল ব্লু ও কালো কালি • ১ ক্লিকে A4 PDF ও ইমেজ ডাউনলোড',
+    category: 'text',
+    status: 'active',
+    version: 'v1.0',
+    link: '/text-to-handwriting'
+  },
+  {
+    id: 'cooking-converter',
+    refCode: 'CALC-COOK-01',
+    title: 'রান্নার পরিমাপ ও রেসিপি কনভার্টার (Cooking Converter)',
+    description: 'ইউটিউব ও দেশি-বিদেশি রেসিপির ১ কাপ ময়দা, চিনি, তেল ও মাখন কত গ্রাম বা চামচ তা নিখুঁত রূপান্তর। ওভেন তাপমাত্রা (°F ⇄ °C) ও বেকিং চার্ট।',
+    feature: 'উপাদানভিত্তিক কাপ ⇄ গ্রাম • চামচ ⇄ মিলিলিটার • ওভেন তাপমাত্রা (°F ⇄ °C) • বেকিং চিট-শিট',
+    category: 'calculator',
+    status: 'active',
+    version: 'v1.0',
+    link: '/cooking-converter'
   }
 ];

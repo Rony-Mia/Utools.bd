@@ -26,6 +26,11 @@
           "to": "/case-converter",
           "label": "টেক্সট কেস কনভার্টার ও ক্লিনার",
           "description": "Sentence, UPPER, lower case ও ফাঁকা স্পেস রিমুভার"
+        },
+        {
+          "to": "/text-to-handwriting",
+          "label": "টেক্সট টু হ্যান্ডরাইটিং কনভার্টার",
+          "description": "টাইপ করা লেখা থেকে খাতার পাতার মতো হাতের লেখা ও PDF"
         }
       ]
     },
@@ -105,6 +110,11 @@
           "to": "/number-system-converter",
           "label": "সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার",
           "description": "বাইনারি, অক্টাল, ডেসিমাল ও ২-এর পরিপূরক সমাধান"
+        },
+        {
+          "to": "/cooking-converter",
+          "label": "রান্নার পরিমাপ ও রেসিপি কনভার্টার",
+          "description": "কাপ ⇄ গ্রাম, চামচ ⇄ এমএল ও ওভেন তাপমাত্রা (°F ⇄ °C)"
         }
       ]
     },

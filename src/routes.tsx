@@ -31,6 +31,8 @@ const GoldCalculatorPage = lazy(() => import('./pages/GoldCalculatorPage.tsx').t
 const ImageToPdfPage = lazy(() => import('./pages/ImageToPdfPage.tsx').then((m) => ({ default: m.ImageToPdfPage })));
 const NumberSystemConverterPage = lazy(() => import('./pages/NumberSystemConverterPage.tsx').then((m) => ({ default: m.NumberSystemConverterPage })));
 const CaseConverterPage = lazy(() => import('./pages/CaseConverterPage.tsx').then((m) => ({ default: m.CaseConverterPage })));
+const TextToHandwritingPage = lazy(() => import('./pages/TextToHandwritingPage.tsx').then((m) => ({ default: m.TextToHandwritingPage })));
+const CookingConverterPage = lazy(() => import('./pages/CookingConverterPage.tsx').then((m) => ({ default: m.CookingConverterPage })));
 const CustomCmsPage = lazy(() => import('./pages/CustomCmsPage.tsx').then((m) => ({ default: m.CustomCmsPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage })));
 
@@ -70,6 +72,8 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/ImageToPdfPage.tsx'),
   () => import('./pages/NumberSystemConverterPage.tsx'),
   () => import('./pages/CaseConverterPage.tsx'),
+  () => import('./pages/TextToHandwritingPage.tsx'),
+  () => import('./pages/CookingConverterPage.tsx'),
   () => import('./pages/CustomCmsPage.tsx'),
   () => import('./pages/NotFoundPage.tsx'),
 ];
@@ -108,6 +112,8 @@ export const STATIC_PRERENDER_ROUTES = [
   '/image-to-pdf',
   '/number-system-converter',
   '/case-converter',
+  '/text-to-handwriting',
+  '/cooking-converter',
   '/about',
   '/contact',
   '/privacy-policy',
@@ -177,6 +183,8 @@ export function AppRoutes({
         <Route path="/image-to-pdf" element={<ImageToPdfPage />} />
         <Route path="/number-system-converter" element={<NumberSystemConverterPage />} />
         <Route path="/case-converter" element={<CaseConverterPage />} />
+        <Route path="/text-to-handwriting" element={<TextToHandwritingPage />} />
+        <Route path="/cooking-converter" element={<CookingConverterPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

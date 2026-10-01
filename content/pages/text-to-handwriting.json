@@ -1,0 +1,34 @@
+{
+  "slug": "text-to-handwriting",
+  "metaTitle": "টেক্সট টু হ্যান্ডরাইটিং কনভার্টার (Handwriting) | Utools",
+  "metaDescription": "টাইপ করা লেখা থেকে খাতার পাতার মতো হাতের লেখা অ্যাসাইনমেন্ট ও নোট তৈরি করুন। রুলটানা পেজ, নীল ও কালো কালি এবং ১ ক্লিকে A4 PDF ডাউনলোড।",
+  "title": "টেক্সট টু হ্যান্ডরাইটিং কনভার্টার (Text to Handwriting Converter)",
+  "subtitle": "কম্পিউটার বা মোবাইলে টাইপ করা লেখাকে মানুষের আসল হাতের লেখার মতো নোট ও অ্যাসাইনমেন্টে রূপান্তর করুন। রুলটানা খাতা, বিভিন্ন কালির পেন ও ১ ক্লিকে A4 সাইজ PDF ডাউনলোড।",
+  "faqHeading": "হাতের লেখা কনভার্টার সংক্রান্ত সাধারণ জিজ্ঞাসা ও উত্তর (FAQ)",
+  "faqs": [
+    {
+      "question": "টাইপ করা লেখা থেকে কীভাবে খাতার মতো হাতের লেখা অ্যাসাইনমেন্ট তৈরি করব?",
+      "answer": "খুব সহজ! আপনার টাইপ করা টেক্সট ইনপুট বক্সে পেস্ট করুন। সাথে সাথে ডানপাশের লাইভ পেপারে তা মানুষের হাতের লেখার মতো ফুটে উঠবে। আপনি চাইলে খাতার ধরন (রুলটানা, সাদা, হলুদ প্যাড), কলমের কালির রং (রয়েল ব্লু, ব্ল্যাক) এবং ফন্ট স্টাইল পরিবর্তন করে ১ ক্লিকে হাই-কোয়ালিটি ইমেজ বা A4 PDF ডাউনলোড করতে পারবেন।"
+    },
+    {
+      "question": "How to convert typed text to handwriting online for free?",
+      "answer": "Simply paste or type your notes into the input box on Utools.bd. Select your preferred handwriting font (Kalam, Caveat, Indie Flower), choose lined notebook paper or blank page, adjust ink color (blue or black), and click 'Download PDF' or 'Download Image'. It is 100% free, runs locally in your browser, and requires no login or installation."
+    },
+    {
+      "question": "Lekha theke hate lekha assignment kivabe banabo? (Banglish guide)",
+      "answer": "Apnar assignment ba note text box-e copy-paste korun. Tarpor handwriting font ebong lined notebook paper select korun. Pen ink color hishabe Blue ba Black select kore 'Download A4 PDF' button-e click korlei print-ready handwritten assignment file peye jaben, ja shorasori print kore college ba university-te joma deya jabe."
+    },
+    {
+      "question": "তৈরিকৃত অ্যাসাইনমেন্ট কি সরাসরি প্রিন্ট করে কলেজে বা স্কুলে জমা দেওয়া যাবে?",
+      "answer": "হ্যাঁ, সম্পূর্ণ উপযোগী। 'A4 PDF ডাউনলোড' বাটনে চাপলে এটি আসল রুলটানা খাতার সাইজে এবং স্ট্যান্ডার্ড মার্জিনসহ হাই-রেজোলিউশন PDF ফাইলে সেভ হয়, যা যেকোনো কালার বা সাধারণ প্রিন্টারে প্রিন্ট করলে একদম বাস্তব মানুষের হাতের লেখার মতো দেখায়।"
+    },
+    {
+      "question": "আমার টেক্সট বা অ্যাসাইনমেন্টের তথ্যের গোপনীয়তা কি সুরক্ষিত?",
+      "answer": "হ্যাঁ, শতভাগ সুরক্ষিত। Utools.bd সম্পূর্ণ ক্লায়েন্ট-সাইড প্রযুক্তি ব্যবহার করে। আপনার কোনো লেখা বা ডকুমেন্ট কোনো সার্ভারে আপলোড হয় না, সবকিছু সরাসরি আপনার নিজস্ব ব্রাউজারেই প্রসেস ও ডাউনলোড হয়।"
+    },
+    {
+      "question": "বড় আকারের লেখা হলে কি স্বয়ংক্রিয়ভাবে একাধিক পেজ তৈরি হবে?",
+      "answer": "হ্যাঁ, আপনার লেখা দীর্ঘ হলে সিস্টেম স্বয়ংক্রিয়ভাবে পৃষ্ঠা ভাগ করে নেবে (Page 1 of 2, Page 2 of 2)। আপনি আগের বা পরের পেজের প্রিভিউ দেখতে পারবেন এবং প্রয়োজনমতো এক্সপোর্ট করতে পারবেন।"
+    }
+  ]
+}
