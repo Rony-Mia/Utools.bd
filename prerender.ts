@@ -222,18 +222,6 @@ async function prerender() {
     // 3.5. Extract critical above-the-fold CSS and load remaining CSS asynchronously
     try {
       pageHtml = await critters.process(pageHtml);
-      // Format deferred stylesheet link to exact pattern requested:
-      // <link rel="preload" as="style" href="[css file]">
-      // <link rel="stylesheet" href="[css file]" media="print" onload="this.media='all'; this.onload=null;">
-      // <noscript><link rel="stylesheet" href="[css file]"></noscript>
-      pageHtml = pageHtml.replace(
-        /<link([^>]*rel=["']stylesheet["'][^>]*)media=["']print["']\s+onload=["']this\.media='all'["']([^>]*)>/g,
-        (match, p1, p2) => {
-          const hrefMatch = match.match(/href=["']([^"']+)["']/);
-          const href = hrefMatch ? hrefMatch[1] : '';
-          return `<link rel="preload" as="style" href="${href}">\n    <link${p1}media="print" onload="this.media='all'; this.onload=null;"${p2}>`;
-        }
-      );
     } catch (crittersErr) {
       console.warn(`[prerender] Critters optimization warning on ${url}:`, crittersErr);
     }
