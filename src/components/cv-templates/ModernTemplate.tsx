@@ -151,9 +151,9 @@ export const ModernTemplate: React.FC<TemplateProps> = ({
           {/* Header Name & Title */}
           {hasSection('header') && (
             <div data-cv-section="header" className="border-b-2 border-slate-100 pb-4 mb-5">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 {personalInfo.fullName || (language === 'bn' ? 'প্রার্থীর নাম' : 'Full Name')}
-              </h1>
+              </h2>
               {personalInfo.designationOrTitle && (
                 <p className="text-sm font-semibold text-emerald-700 mt-1">
                   {personalInfo.designationOrTitle}

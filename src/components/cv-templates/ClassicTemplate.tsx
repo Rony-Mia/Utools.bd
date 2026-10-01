@@ -39,9 +39,9 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({
             className="flex items-start justify-between border-b-2 border-slate-800 pb-5 mb-6 break-inside-avoid"
           >
             <div className="flex-1 pr-6">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 {personalInfo.fullName || (language === 'bn' ? 'প্রার্থীর নাম' : 'Full Name')}
-              </h1>
+              </h2>
 
               {personalInfo.designationOrTitle && (
                 <p className="text-sm font-sans font-semibold text-emerald-800 mt-1">

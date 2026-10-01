@@ -117,7 +117,7 @@ const SLUG_REDIRECTS: Record<string, string> = {
   };
 
   // SEO metadata overrides
-  const metaTitle = post.seoTitle || `${post.title} — Utools.bd ব্লগ`;
+  const metaTitle = post.seoTitle || (post.title.length > 50 ? post.title : `${post.title} | Utools`);
   const metaDesc = post.metaDescription || post.excerpt;
   const canonical = post.canonicalUrl || postUrl;
   const ogImageUrl = post.image

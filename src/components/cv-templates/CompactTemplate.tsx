@@ -40,9 +40,9 @@ export const CompactTemplate: React.FC<TemplateProps> = ({
           >
             <div className="flex items-center justify-between gap-4">
               <div className="flex-1">
-                <h1 className="text-xl sm:text-2xl font-extrabold text-white">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white">
                   {personalInfo.fullName || (language === 'bn' ? 'প্রার্থীর নাম' : 'Full Name')}
-                </h1>
+                </h2>
 
                 {personalInfo.designationOrTitle && (
                   <p className="text-xs font-semibold text-emerald-400 mt-0.5">

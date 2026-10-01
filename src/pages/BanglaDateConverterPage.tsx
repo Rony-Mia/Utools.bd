@@ -595,7 +595,7 @@ export const BanglaDateConverterPage: React.FC = () => {
               <a
                 href={`https://en.wikipedia.org/wiki/${activeDate.toLocaleString('en-US', { month: 'long' })}_${activeDate.getDate()}`}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow"
                 className="inline-flex items-center gap-1 text-[11px] text-[#4A5A52] hover:text-[#0B5D3B] bg-[#F0F4F2] px-2.5 py-1 rounded-md transition-colors"
               >
                 <span>Source: Wikipedia</span>

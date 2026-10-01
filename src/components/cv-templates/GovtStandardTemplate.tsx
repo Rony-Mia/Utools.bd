@@ -68,9 +68,9 @@ export const GovtStandardTemplate: React.FC<TemplateProps> = ({
 
             {/* Centered Heading */}
             <div className="text-center sm:pr-32">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 inline-block border-b-2 border-slate-800 pb-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 inline-block border-b-2 border-slate-800 pb-1">
                 {t.curriculumVitae}
-              </h1>
+              </h2>
               <p className="text-[11px] text-slate-600 mt-1 font-sans italic">
                 {isBn
                   ? '(বাংলাদেশ সরকারি ও আধা-সরকারি চাকরির সার্কুলার ফরম্যাট অনুযায়ী)'

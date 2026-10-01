@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 const HomePage = lazy(() => import('./pages/HomePage.tsx').then((m) => ({ default: m.HomePage })));
 const ConverterPage = lazy(() => import('./pages/ConverterPage.tsx').then((m) => ({ default: m.ConverterPage })));
@@ -172,6 +172,7 @@ export function AppRoutes({
         <Route path="/pdf-delete-pages" element={<PdfDeletePagesPage />} />
         <Route path="/pdf-rotate" element={<PdfRotatePage />} />
         <Route path="/pdf-watermark-page-number" element={<PdfWatermarkPage />} />
+        <Route path="/pdf-watermark" element={<Navigate to="/pdf-watermark-page-number" replace />} />
         <Route path="/gold-calculator" element={<GoldCalculatorPage />} />
         <Route path="/image-to-pdf" element={<ImageToPdfPage />} />
         <Route path="/number-system-converter" element={<NumberSystemConverterPage />} />

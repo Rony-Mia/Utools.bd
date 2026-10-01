@@ -64,9 +64,9 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({
                     <span>Curriculum Vitae</span>
                   </div>
 
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
                     {personalInfo.fullName || (language === 'bn' ? 'প্রার্থীর নাম' : 'Full Name')}
-                  </h1>
+                  </h2>
 
                   {personalInfo.designationOrTitle && (
                     <p className="text-xs sm:text-sm font-semibold text-amber-400 mt-1">
