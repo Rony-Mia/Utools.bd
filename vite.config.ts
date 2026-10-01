@@ -79,19 +79,33 @@ export default defineConfig(({ isSsrBuild }): UserConfig => {
                   if (id.includes('/node_modules/motion/')) {
                     return 'vendor-motion';
                   }
+                  // PDF libraries (pdf-lib, @pdf-lib) - only loaded when PDF tools are used
+                  if (
+                    id.includes('/node_modules/pdf-lib/') ||
+                    id.includes('/node_modules/@pdf-lib/')
+                  ) {
+                    return 'vendor-pdf';
+                  }
+                  // Lucide React icon components
+                  if (id.includes('/node_modules/lucide-react/')) {
+                    return 'vendor-lucide';
+                  }
                 }
 
                 // App-shared shell code (Navbar, Footer, shared UI & data utilities)
                 if (
-                  id.includes('/src/components/Navbar') ||
-                  id.includes('/src/components/Footer') ||
-                  id.includes('/src/components/UtoolsLogo') ||
-                  id.includes('/src/components/ScrollToTop') ||
-                  id.includes('/src/components/ToolSeoHead') ||
-                  id.includes('/src/components/floating/') ||
-                  id.includes('/src/utils/') ||
-                  id.includes('/src/data/tools') ||
-                  id.includes('/src/data/toolIcons')
+                  !id.includes('node_modules') &&
+                  (
+                    id.includes('/src/components/Navbar') ||
+                    id.includes('/src/components/Footer') ||
+                    id.includes('/src/components/UtoolsLogo') ||
+                    id.includes('/src/components/ScrollToTop') ||
+                    id.includes('/src/components/ToolSeoHead') ||
+                    id.includes('/src/components/floating/') ||
+                    id.includes('/src/utils/bnDigits') ||
+                    id.includes('/src/data/tools') ||
+                    id.includes('/src/data/toolIcons')
+                  )
                 ) {
                   return 'app-shell';
                 }

@@ -64,6 +64,8 @@ export const BlogImage: React.FC<BlogImageProps> = ({
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
           decoding="async"
+          width={aspectRatio === '4/3' ? 640 : 640}
+          height={aspectRatio === '4/3' ? 480 : 360}
           onError={() => setHasError(true)}
           className={`w-full h-full object-cover transition-transform duration-300 ${className}`}
         />
@@ -79,6 +81,8 @@ export const BlogImage: React.FC<BlogImageProps> = ({
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : 'auto'}
       decoding="async"
+      width={aspectRatio === '4/3' ? 640 : 640}
+      height={aspectRatio === '4/3' ? 480 : 360}
       onError={() => setHasError(true)}
       className={`w-full h-full object-cover transition-transform duration-300 ${className}`}
     />
