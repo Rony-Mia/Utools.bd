@@ -12,6 +12,39 @@ export interface SiteUpdate {
 
 export const SITE_UPDATES: SiteUpdate[] = [
   {
+    id: 'update-image-to-pdf',
+    date: '১ অক্টোবর ২০২৬',
+    version: 'v1.0',
+    badge: 'নতুন টুল',
+    badgeType: 'new',
+    title: 'ছবি থেকে পিডিএফ কনভার্টার (Image to PDF Converter) উন্মোচন',
+    description: 'একাধিক ছবি (JPG, PNG, WebP) এক ক্লিকে প্রমিত A4 সাইজের একক পিডিএফ নথিতে রূপান্তর। মার্জিন ও ওরিয়েন্টেশন কন্ট্রোলসহ ১০০% ক্লায়েন্ট-সাইড।',
+    toolLink: '/image-to-pdf',
+    toolName: 'ছবি টু PDF কনভার্টার দেখুন'
+  },
+  {
+    id: 'update-number-system',
+    date: '১ অক্টোবর ২০২৬',
+    version: 'v1.0',
+    badge: 'নতুন টুল',
+    badgeType: 'new',
+    title: 'সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার (HSC ICT Number System) সংযোজন',
+    description: 'বাইনারি, অক্টাল, ডেসিমাল ও হেক্সাডেসিমেল রূপান্তর, ভগ্নাংশ হিসাব, ১ ও ২-এর পরিপূরক (2\'s Complement) এবং বোর্ড পরীক্ষার ধাপে ধাপে সমাধান।',
+    toolLink: '/number-system-converter',
+    toolName: 'সংখ্যা পদ্ধতি কনভার্টার দেখুন'
+  },
+  {
+    id: 'update-case-converter',
+    date: '১ অক্টোবর ২০২৬',
+    version: 'v1.0',
+    badge: 'নতুন টুল',
+    badgeType: 'new',
+    title: 'টেক্সট কেস কনভার্টার ও ক্লিনার (Case Converter) প্রকাশ',
+    description: 'Sentence Case, UPPER, lower case, Title Case ও camelCase রূপান্তর এবং বাংলা লেখার অতিরিক্ত ফাঁকা স্পেস ও খালি লাইন দূরীকরণ।',
+    toolLink: '/case-converter',
+    toolName: 'কেস কনভার্টার দেখুন'
+  },
+  {
     id: 'update-gold-calculator',
     date: '১ অক্টোবর ২০২৬',
     version: 'v1.0',

@@ -21,6 +21,11 @@
           "to": "/image-to-text",
           "label": "ছবি/PDF থেকে টেক্সট (OCR)",
           "description": "ছাপার বাংলা ও ইংরেজি ছবি বা PDF থেকে টেক্সট এক্সট্রাক্ট"
+        },
+        {
+          "to": "/case-converter",
+          "label": "টেক্সট কেস কনভার্টার ও ক্লিনার",
+          "description": "Sentence, UPPER, lower case ও ফাঁকা স্পেস রিমুভার"
         }
       ]
     },
@@ -53,6 +58,11 @@
           "to": "/qr-generator",
           "label": "কাস্টম QR কোড জেনারেটর",
           "description": "লোগো, রঙ ও হাই-রেজোলিউশন SVG/PNG ডাউনলোড"
+        },
+        {
+          "to": "/image-to-pdf",
+          "label": "ছবি থেকে পিডিএফ কনভার্টার",
+          "description": "একাধিক JPG/PNG এক ক্লিকে A4 সাইজ PDF ডাউনলোড"
         }
       ]
     },
@@ -90,6 +100,11 @@
           "to": "/gold-calculator",
           "label": "স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর",
           "description": "ভরি-আনা-রতি ↔ গ্রাম, মজুরি ও ভ্যাটসহ সোনার দাম"
+        },
+        {
+          "to": "/number-system-converter",
+          "label": "সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার",
+          "description": "বাইনারি, অক্টাল, ডেসিমাল ও ২-এর পরিপূরক সমাধান"
         }
       ]
     },

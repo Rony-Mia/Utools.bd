@@ -68,6 +68,17 @@ export const TOOLS: ToolItem[] = [
     link: '/image-merger'
   },
   {
+    id: 'image-to-pdf',
+    refCode: 'IMG-PDF-01',
+    title: 'ছবি থেকে পিডিএফ কনভার্টার (Image to PDF)',
+    description: 'একাধিক ছবি (JPG, PNG, WebP) এক ক্লিকে অফিশিয়াল A4 সাইজ পিডিএফ নথিতে রূপান্তর করুন। পেজ রিঅর্ডার ও মার্জিন কন্ট্রোলসহ ১০০% ক্লায়েন্ট-সাইড।',
+    feature: 'মাল্টিপল ছবি সাপোর্ট • প্রমিত A4 ও Letter লেআউট • মার্জিন ও কোয়ালিটি কন্ট্রোল • দ্রুত ডাউনলোড',
+    category: 'image',
+    status: 'active',
+    version: 'v1.0',
+    link: '/image-to-pdf'
+  },
+  {
     id: 'qr-generator',
     refCode: 'QR-ST-01',
     title: 'কাস্টম QR কোড জেনারেটর',
@@ -145,6 +156,17 @@ export const TOOLS: ToolItem[] = [
     link: '/gold-calculator'
   },
   {
+    id: 'number-system-converter',
+    refCode: 'CALC-ICT-01',
+    title: 'সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার (Number System)',
+    description: 'বাইনারি, অক্টাল, ডেসিমাল ও হেক্সাডেসিমেল রূপান্তর, ভগ্নাংশ হিসাব, ১ ও ২-এর পরিপূরক (2\'s Complement) এবং HSC ICT বোর্ড পরীক্ষার ধাপে ধাপে সমাধান।',
+    feature: '৪টি পদ্ধতির লাইভ ইন্টারচেঞ্জ • ভগ্নাংশ ক্যালকুলেশন • ২-এর পরিপূরক • ধাপে ধাপে লিখিত সমাধান',
+    category: 'calculator',
+    status: 'active',
+    version: 'v1.0',
+    link: '/number-system-converter'
+  },
+  {
     id: 'cv-builder',
     refCode: 'DOC-CV-01',
     title: 'সিভি ও জীবনবৃত্তান্ত মেকার (CV Builder)',
@@ -220,5 +242,16 @@ export const TOOLS: ToolItem[] = [
     status: 'active',
     version: 'v1.0',
     link: '/image-to-text'
+  },
+  {
+    id: 'case-converter',
+    refCode: 'TXT-CASE-01',
+    title: 'টেক্সট কেস কনভার্টার ও ক্লিনার (Case Converter)',
+    description: 'এক ক্লিকে Sentence Case, UPPERCASE, lowercase, Title Case, camelCase রূপান্তর এবং বাংলা লেখার অতিরিক্ত স্পেস ও খালি লাইন পরিষ্কার করুন।',
+    feature: '১০টি কেস স্টাইল • বাংলা ডাবল-স্পেস রিমুভার • লাইভ শব্দ ও ক্যারেক্টার কাউন্টার • .txt ডাউনলোড',
+    category: 'text',
+    status: 'active',
+    version: 'v1.0',
+    link: '/case-converter'
   }
 ];

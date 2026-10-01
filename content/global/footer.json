@@ -7,7 +7,8 @@
     { "to": "/bulk-photo-resizer", "label": "বাল্ক ফটো রিসাইজার (Bulk Resizer)" },
     { "to": "/heic-converter", "label": "HEIC → JPG/PNG কনভার্টার" },
     { "to": "/image-merger", "label": "ইমেজ মার্জার ও কোলাজ মেকার" },
-    { "to": "/qr-generator", "label": "কাস্টম QR কোড জেনারেটর" }
+    { "to": "/qr-generator", "label": "কাস্টম QR কোড জেনারেটর" },
+    { "to": "/image-to-pdf", "label": "ছবি থেকে পিডিএফ কনভার্টার" }
   ],
   "pdfDocumentHeading": "পিডিএফ ও ডকুমেন্ট",
   "pdfDocumentTools": [
@@ -28,7 +29,9 @@
     { "to": "/amount-in-words", "label": "টাকা → কথায় কনভার্টার" },
     { "to": "/gpa-calculator", "label": "জিপিএ ও সিজিপিএ ক্যালকুলেটর" },
     { "to": "/land-converter", "label": "জমির মাপ কনভার্টার" },
-    { "to": "/gold-calculator", "label": "স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর" }
+    { "to": "/gold-calculator", "label": "স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর" },
+    { "to": "/case-converter", "label": "টেক্সট কেস কনভার্টার ও ক্লিনার" },
+    { "to": "/number-system-converter", "label": "সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার" }
   ],
   "importantLinksHeading": "গুরুত্বপূর্ণ লিংক",
   "importantLinks": [

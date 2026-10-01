@@ -20,6 +20,9 @@ import {
   Stamp,
   Trash2,
   Scale,
+  Binary,
+  FileImage,
+  Type,
 } from 'lucide-react';
 
 export type ToolIconComponent = React.ComponentType<{ className?: string }>;
@@ -32,6 +35,7 @@ const ICONS: Record<string, ToolIconComponent> = {
   'bulk-photo-resizer': Images,
   'heic-converter': Smartphone,
   'image-merger': Grid,
+  'image-to-pdf': FileImage,
   'qr-generator': QrCode,
   'age-calculator': Calculator,
   'amount-in-words': Coins,
@@ -39,6 +43,7 @@ const ICONS: Record<string, ToolIconComponent> = {
   'gpa-calculator': GraduationCap,
   'land-converter': LandPlot,
   'gold-calculator': Scale,
+  'number-system-converter': Binary,
   'cv-builder': FileText,
   'pdf-merger': Layers,
   'pdf-split': Scissors,
@@ -46,6 +51,7 @@ const ICONS: Record<string, ToolIconComponent> = {
   'pdf-rotate': RotateCw,
   'pdf-watermark-page-number': Stamp,
   'image-to-text': ScanText,
+  'case-converter': Type,
 };
 
 export function getToolIcon(toolId: string): ToolIconComponent {

@@ -28,6 +28,9 @@ const BlogListPage = lazy(() => import('./pages/BlogListPage.tsx').then((m) => (
 const BlogCategoryPage = lazy(() => import('./pages/BlogCategoryPage.tsx').then((m) => ({ default: m.BlogCategoryPage })));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage.tsx').then((m) => ({ default: m.BlogPostPage })));
 const GoldCalculatorPage = lazy(() => import('./pages/GoldCalculatorPage.tsx').then((m) => ({ default: m.GoldCalculatorPage })));
+const ImageToPdfPage = lazy(() => import('./pages/ImageToPdfPage.tsx').then((m) => ({ default: m.ImageToPdfPage })));
+const NumberSystemConverterPage = lazy(() => import('./pages/NumberSystemConverterPage.tsx').then((m) => ({ default: m.NumberSystemConverterPage })));
+const CaseConverterPage = lazy(() => import('./pages/CaseConverterPage.tsx').then((m) => ({ default: m.CaseConverterPage })));
 const CustomCmsPage = lazy(() => import('./pages/CustomCmsPage.tsx').then((m) => ({ default: m.CustomCmsPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage })));
 
@@ -64,6 +67,9 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/BlogCategoryPage.tsx'),
   () => import('./pages/BlogPostPage.tsx'),
   () => import('./pages/GoldCalculatorPage.tsx'),
+  () => import('./pages/ImageToPdfPage.tsx'),
+  () => import('./pages/NumberSystemConverterPage.tsx'),
+  () => import('./pages/CaseConverterPage.tsx'),
   () => import('./pages/CustomCmsPage.tsx'),
   () => import('./pages/NotFoundPage.tsx'),
 ];
@@ -99,6 +105,9 @@ export const STATIC_PRERENDER_ROUTES = [
   '/pdf-rotate',
   '/pdf-watermark-page-number',
   '/gold-calculator',
+  '/image-to-pdf',
+  '/number-system-converter',
+  '/case-converter',
   '/about',
   '/contact',
   '/privacy-policy',
@@ -164,6 +173,9 @@ export function AppRoutes({
         <Route path="/pdf-rotate" element={<PdfRotatePage />} />
         <Route path="/pdf-watermark-page-number" element={<PdfWatermarkPage />} />
         <Route path="/gold-calculator" element={<GoldCalculatorPage />} />
+        <Route path="/image-to-pdf" element={<ImageToPdfPage />} />
+        <Route path="/number-system-converter" element={<NumberSystemConverterPage />} />
+        <Route path="/case-converter" element={<CaseConverterPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
