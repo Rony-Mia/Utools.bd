@@ -33,6 +33,7 @@ import {
   OldGoldTradeType
 } from '../utils/goldCalculator.ts';
 import { toBanglaNum } from '../utils/bnDigits.ts';
+import { convertAmountToBengaliWords } from '../amountToWords.ts';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
@@ -155,6 +156,32 @@ export const GoldCalculatorPage: React.FC = () => {
     stoneWeightGrams
   ]);
 
+  // Memo Reference & Print Timestamp
+  const [memoRefNumber] = useState(() => {
+    const timestamp = Date.now().toString().slice(-6);
+    return `UBD-GOLD-${timestamp}`;
+  });
+
+  const [printTimestamp] = useState(() => {
+    try {
+      const now = new Date();
+      return `${now.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' })} • ${now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}`;
+    } catch {
+      return '';
+    }
+  });
+
+  // Convert total amount to Bengali words for receipt
+  const amountInWordsText = useMemo(() => {
+    try {
+      const amount = activeTab === 'exchange' ? tradeResult.netPayout : purchaseResult.totalPrice;
+      const res = convertAmountToBengaliWords(Math.round(amount).toString());
+      return res.isValid ? res.words : '';
+    } catch {
+      return '';
+    }
+  }, [activeTab, tradeResult.netPayout, purchaseResult.totalPrice]);
+
   // Copy receipt text to clipboard
   const handleCopyReceipt = () => {
     const karatInfo = KARAT_PRESETS[selectedKarat];
@@ -181,7 +208,7 @@ https://utools.bd/gold-calculator`;
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8 print:p-0 print:m-0 print:max-w-none print:space-y-0">
       {/* ── SEO Head ── */}
       <ToolSeoHead
         title={pageContent.metaTitle}
@@ -194,7 +221,7 @@ https://utools.bd/gold-calculator`;
       />
 
       {/* ── Top Breadcrumb & Guarantee ── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB] no-print">
         <div className="flex items-center space-x-3">
           <Link
             to="/"
@@ -214,7 +241,7 @@ https://utools.bd/gold-calculator`;
       </div>
 
       {/* ── Title & Intro Header ── */}
-      <div className="space-y-2">
+      <div className="space-y-2 no-print">
         <div className="inline-flex items-center space-x-2 text-xs font-medium text-[#0B5D3B] bg-[#0B5D3B]/10 px-2.5 py-1 border border-[#0B5D3B]/20 rounded-lg">
           <Coins className="w-3.5 h-3.5" />
           <span>জুয়েলারি ও ফিন্যান্সিয়াল ইউটিলিটি • স্বর্ণের পরিমাপক</span>
@@ -228,7 +255,7 @@ https://utools.bd/gold-calculator`;
       </div>
 
       {/* ── Mode Switcher Tabs ── */}
-      <div className="border-b border-[#D5E4DB] flex flex-wrap items-center gap-2">
+      <div className="border-b border-[#D5E4DB] flex flex-wrap items-center gap-2 no-print">
         <button
           type="button"
           onClick={() => setActiveTab('price')}
@@ -270,9 +297,9 @@ https://utools.bd/gold-calculator`;
       </div>
 
       {/* ── Main Interactive Layout ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block print:w-full">
         {/* Left Column: Form Controls (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-6 no-print">
           {/* Card: Weight Input Section */}
           <div className="border border-[#D5E4DB] bg-[#FFFFFF] p-5 sm:p-6 space-y-5 rounded-2xl shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#D5E4DB]">
@@ -731,10 +758,25 @@ https://utools.bd/gold-calculator`;
         </div>
 
         {/* Right Column: Output Summary Receipt Card (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-[#FFFFFF] border-2 border-[#0B5D3B] p-6 space-y-6 rounded-2xl shadow-sm relative overflow-hidden">
+        <div id="gold-receipt-print-wrapper" className="lg:col-span-5 space-y-6 print:w-full print:m-0 print:p-0 print:space-y-0">
+          <div
+            id="gold-receipt-card"
+            className="bg-[#FFFFFF] border-2 border-[#0B5D3B] p-6 space-y-6 rounded-2xl shadow-sm relative overflow-hidden print:p-8 print:border-2 print:border-[#0B5D3B] print:rounded-2xl print:shadow-none print:w-full"
+          >
             <div className="absolute top-0 right-0 bg-[#0B5D3B] text-white text-[10px] font-mono font-bold px-3 py-1 rounded-bl-lg">
               {activeTab === 'exchange' ? 'বিক্রয় রসিদ' : 'ক্রয় রসিদ'}
+            </div>
+
+            {/* Print-Only Official Memo Header */}
+            <div className="hidden print:flex justify-between items-center text-[11px] text-[#4A5A52] pb-3 border-b border-[#D5E4DB]">
+              <div>
+                <span className="font-bold text-[#084A2E]">মেমো নম্বর:</span>{' '}
+                <span className="font-mono font-bold text-[#0B5D3B]">{memoRefNumber}</span>
+              </div>
+              <div>
+                <span className="font-bold text-[#084A2E]">তারিখ ও সময়:</span>{' '}
+                <span>{printTimestamp}</span>
+              </div>
             </div>
 
             <div className="space-y-1 pb-4 border-b border-[#D5E4DB]">
@@ -800,6 +842,13 @@ https://utools.bd/gold-calculator`;
                     ৳{toBanglaNum(purchaseResult.totalPrice.toLocaleString('en-IN'))}
                   </span>
                 </div>
+
+                {amountInWordsText && (
+                  <div className="text-[11px] text-[#34443B] bg-[#FAFAF7] p-2.5 rounded-lg border border-[#D5E4DB] flex items-start gap-1.5">
+                    <span className="font-bold text-[#084A2E] shrink-0">কথায়:</span>
+                    <span className="italic font-medium">{amountInWordsText}</span>
+                  </div>
+                )}
               </div>
             ) : (
               /* If Exchange Tab Active */
@@ -855,11 +904,41 @@ https://utools.bd/gold-calculator`;
                     ৳{toBanglaNum(tradeResult.netPayout.toLocaleString('en-IN'))}
                   </span>
                 </div>
+
+                {amountInWordsText && (
+                  <div className="text-[11px] text-[#34443B] bg-[#FAFAF7] p-2.5 rounded-lg border border-[#D5E4DB] flex items-start gap-1.5">
+                    <span className="font-bold text-[#084A2E] shrink-0">কথায়:</span>
+                    <span className="italic font-medium">{amountInWordsText}</span>
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Official Memo Footer for Print */}
+            <div className="hidden print:block pt-6 border-t border-dashed border-[#D5E4DB] space-y-8">
+              <div className="text-[11px] text-[#4A5A52] text-center space-y-1">
+                <p className="font-semibold text-[#084A2E]">
+                  এটি একটি ডিজিটাল হিসাব বিবরণী রসিদ • বাজুস (BAJUS) মানদণ্ড অনুযায়ী প্রস্তুতকৃত
+                </p>
+                <p className="font-mono text-[10px] text-[#4A5A52]">
+                  যাচাই ও হিসাবের জন্য ভিজিট করুন: https://utools.bd/gold-calculator
+                </p>
+              </div>
+
+              <div className="flex justify-between items-end pt-8 px-6 text-xs text-[#084A2E]">
+                <div className="text-center">
+                  <div className="w-36 border-t border-[#084A2E] mb-1.5" />
+                  <span className="font-medium">গ্রাহকের স্বাক্ষর</span>
+                </div>
+                <div className="text-center">
+                  <div className="w-36 border-t border-[#084A2E] mb-1.5" />
+                  <span className="font-medium">অনুমোদিত স্বাক্ষর ও সিল</span>
+                </div>
+              </div>
+            </div>
+
             {/* Actions: Copy & Print */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="grid grid-cols-2 gap-3 pt-2 no-print">
               <button
                 type="button"
                 onClick={handleCopyReceipt}
@@ -892,7 +971,7 @@ https://utools.bd/gold-calculator`;
       </div>
 
       {/* ── Educational Guide & Hallmark Reference ── */}
-      <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-8 space-y-6 rounded-2xl">
+      <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-8 space-y-6 rounded-2xl no-print">
         <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
           <Info className="w-5 h-5 text-[#0B5D3B]" />
           <h2 className="text-base sm:text-xl font-bold text-[#084A2E] font-serif">
@@ -940,10 +1019,14 @@ https://utools.bd/gold-calculator`;
       </section>
 
       {/* ── CMS Dynamic FAQs & Content ── */}
-      <CmsDynamicContent content={pageContent} />
+      <div className="no-print">
+        <CmsDynamicContent content={pageContent} />
+      </div>
 
       {/* ── Related Tools ── */}
-      <RelatedTools currentToolId="gold-calculator" />
+      <div className="no-print">
+        <RelatedTools currentToolId="gold-calculator" />
+      </div>
     </div>
   );
 };

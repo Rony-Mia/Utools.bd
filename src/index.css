@@ -487,6 +487,30 @@ h1, h2, h3, h4, .font-heading {
   .page-screen-badge, .cv-page-break-guide {
     display: none !important;
   }
+
+  /* ── Gold Jewelry Memo / Receipt Print Formatting ── */
+  #gold-receipt-print-wrapper {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #gold-receipt-card {
+    display: block !important;
+    width: 100% !important;
+    max-width: 165mm !important;
+    margin: 15mm auto !important;
+    padding: 24px 28px !important;
+    border: 2px solid #0B5D3B !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 
 /* QR Code Preview Frame Enforcement - Prevents high-res canvases from expanding beyond preview */
