@@ -3,27 +3,24 @@ import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   Grid,
-  Calculator,
   Layers,
-  Sparkles,
   Copy,
   Check,
-  Printer,
   Share2,
   HelpCircle,
   Plus,
   Trash2,
+  Edit2,
   Info,
   DollarSign,
-  Package,
-  Home,
+  AlertTriangle,
+  Building,
   CheckCircle2,
-  TrendingUp,
+  Calculator,
 } from 'lucide-react';
 import {
   WALL_TILE_SIZES,
   FLOOR_TILE_SIZES,
-  BANGLADESHI_BRANDS,
   calculateWallCombo,
   calculateFloorTiles,
   calculateMaterialAndCost,
@@ -32,26 +29,58 @@ import { toBanglaNum } from '../utils/bnDigits.ts';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 
-type CalculatorTab = 'wall-combo' | 'floor' | 'materials' | 'multi-room';
+type MainTab = 'wall-combo' | 'floor';
 
-interface MultiRoomItem {
+interface HouseRoom {
   id: string;
-  roomName: string;
+  name: string;
   type: 'wall' | 'floor';
   areaSft: number;
-  tileSize: string;
-  boxesNeeded: number;
-  note: string;
+  tileSizeName: string;
+  tileWidthInches: number;
+  tileHeightInches: number;
+  pcsPerBox: number;
+  ratePerSft: number;
+  // Wall-specific
+  wallHeightFt?: number;
+  deepLines?: number;
+  decorLines?: number;
+  lightLines?: number;
+  deepBoxes?: number;
+  decorBoxes?: number;
+  lightBoxes?: number;
+  deepPcs?: number;
+  decorPcs?: number;
+  lightPcs?: number;
+  // Floor-specific
+  skirtingInches?: number;
+  wastagePercent?: number;
+  // Calculated outputs
+  totalPieces: number;
+  totalBoxes: number;
+  tileCost: number;
+  cementBags: number;
+  sandCft: number;
+  groutKg: number;
 }
 
 export const TilesCalculatorPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<CalculatorTab>('wall-combo');
-  const [selectedBrand, setSelectedBrand] = useState<string>('dbl');
+  const [activeTab, setActiveTab] = useState<MainTab>('wall-combo');
 
-  // ── Tab 1: Wall Combo State (Excel Formula) ──
+  // Global settings for labor & materials rate
+  const [laborCostPerSft, setLaborCostPerSft] = useState<number>(22);
+  const [cementBagPrice, setCementBagPrice] = useState<number>(520);
+  const [sandPricePerCft, setSandPricePerCft] = useState<number>(45);
+  const [groutPricePerKg, setGroutPricePerKg] = useState<number>(130);
+
+  // ── Wall Tiles Tab State ──
+  const [wallRoomName, setWallRoomName] = useState<string>('মাস্টার বাথরুম');
   const [wallAreaSft, setWallAreaSft] = useState<number>(350);
   const [wallHeightFt, setWallHeightFt] = useState<number>(7);
+  const [wallRatePerSft, setWallRatePerSft] = useState<number>(65);
+
   const [selectedWallSizeId, setSelectedWallSizeId] = useState<string>('8x12');
+  const [isCustomWallSize, setIsCustomWallSize] = useState<boolean>(false);
   const [customWallTileW, setCustomWallTileW] = useState<number>(12);
   const [customWallTileH, setCustomWallTileH] = useState<number>(8);
   const [wallPcsPerBox, setWallPcsPerBox] = useState<number>(25);
@@ -62,86 +91,130 @@ export const TilesCalculatorPage: React.FC = () => {
   const [wallDeductionSft, setWallDeductionSft] = useState<number>(0);
   const [wallWastagePercent, setWallWastagePercent] = useState<number>(0);
 
-  // ── Tab 2: Floor Tiles State ──
-  const [floorInputType, setFloorInputType] = useState<'dimensions' | 'direct'>('direct');
+  // ── Floor Tiles Tab State ──
+  const [floorRoomName, setFloorRoomName] = useState<string>('বেডরুম ১');
+  const [floorInputType, setFloorInputType] = useState<'direct' | 'dimensions'>('direct');
   const [floorLengthFt, setFloorLengthFt] = useState<number>(15);
   const [floorWidthFt, setFloorWidthFt] = useState<number>(12);
   const [floorDirectSft, setFloorDirectSft] = useState<number>(180);
+  const [floorRatePerSft, setFloorRatePerSft] = useState<number>(80);
+
   const [selectedFloorSizeId, setSelectedFloorSizeId] = useState<string>('24x24');
+  const [isCustomFloorSize, setIsCustomFloorSize] = useState<boolean>(false);
+  const [customFloorTileW, setCustomFloorTileW] = useState<number>(24);
+  const [customFloorTileH, setCustomFloorTileH] = useState<number>(24);
   const [floorPcsPerBox, setFloorPcsPerBox] = useState<number>(4);
   const [skirtingHeightInches, setSkirtingHeightInches] = useState<number>(4);
   const [floorWastagePercent, setFloorWastagePercent] = useState<number>(5);
 
-  // ── Tab 3: Materials & Cost State ──
-  const [pricePerBox, setPricePerBox] = useState<number>(850);
-  const [laborCostPerSft, setLaborCostPerSft] = useState<number>(22);
-  const [cementBagPrice, setCementBagPrice] = useState<number>(520);
-  const [sandPricePerCft, setSandPricePerCft] = useState<number>(45);
-  const [groutPricePerKg, setGroutPricePerKg] = useState<number>(130);
+  // ── Edit State for Multi-Room ──
+  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
 
-  // ── Tab 4: Multi-Room Estimator State ──
-  const [multiRooms, setMultiRooms] = useState<MultiRoomItem[]>([
+  // ── Multi-Room House List ──
+  const [houseRooms, setHouseRooms] = useState<HouseRoom[]>([
     {
       id: '1',
-      roomName: 'মাস্টার বাথরুম (ওয়াল কম্বো)',
+      name: 'মাস্টার বাথরুম (ওয়াল)',
       type: 'wall',
       areaSft: 350,
-      tileSize: '8" × 12"',
-      boxesNeeded: 21,
-      note: 'ডিপ: ১১ কার্টন, ডেকোর: ২ কার্টন, লাইট: ৮ কার্টন',
+      tileSizeName: '৮" × ১২"',
+      tileWidthInches: 12,
+      tileHeightInches: 8,
+      pcsPerBox: 25,
+      ratePerSft: 65,
+      wallHeightFt: 7,
+      deepLines: 5.5,
+      decorLines: 1,
+      lightLines: 4,
+      deepBoxes: 11,
+      decorBoxes: 2,
+      lightBoxes: 8,
+      deepPcs: 275,
+      decorPcs: 50,
+      lightPcs: 200,
+      totalPieces: 525,
+      totalBoxes: 21,
+      tileCost: 350 * 65,
+      cementBags: Math.round((350 / 100) * 3.2 * 10) / 10,
+      sandCft: Math.round((350 / 100) * 11),
+      groutKg: Math.round((350 / 100) * 1.0 * 10) / 10,
     },
     {
       id: '2',
-      roomName: 'বেডরুম ১ (ফ্লোর)',
+      name: 'বেডরুম ১ (ফ্লোর)',
       type: 'floor',
       areaSft: 180,
-      tileSize: '24" × 24" (2x2 ft)',
-      boxesNeeded: 12,
-      note: 'ফ্লোর + স্কার্টিং + ৫% ওয়েস্টেজ',
+      tileSizeName: '২৪" × ২৪" (2x2 ft)',
+      tileWidthInches: 24,
+      tileHeightInches: 24,
+      pcsPerBox: 4,
+      ratePerSft: 80,
+      skirtingInches: 4,
+      wastagePercent: 5,
+      totalPieces: 48,
+      totalBoxes: 12,
+      tileCost: 180 * 80,
+      cementBags: Math.round((180 / 100) * 3.2 * 10) / 10,
+      sandCft: Math.round((180 / 100) * 11),
+      groutKg: Math.round((180 / 100) * 1.0 * 10) / 10,
     },
   ]);
-  const [newRoomName, setNewRoomName] = useState<string>('');
-  const [newRoomType, setNewRoomType] = useState<'wall' | 'floor'>('floor');
-  const [newRoomArea, setNewRoomArea] = useState<number>(120);
 
-  // ── Copy Feedback ──
+  // Copy feedback
   const [copied, setCopied] = useState<boolean>(false);
 
-  // Auto-set preset values when Wall Size changes
-  const handleWallSizeChange = (presetId: string) => {
-    setSelectedWallSizeId(presetId);
-    const preset = WALL_TILE_SIZES.find((s) => s.id === presetId);
+  // ── Wall Size Handler ──
+  const handleWallSizeChange = (id: string) => {
+    if (id === 'custom') {
+      setIsCustomWallSize(true);
+      setSelectedWallSizeId('custom');
+      return;
+    }
+    setIsCustomWallSize(false);
+    setSelectedWallSizeId(id);
+    const preset = WALL_TILE_SIZES.find((s) => s.id === id);
     if (preset) {
       setCustomWallTileW(preset.widthInches);
       setCustomWallTileH(preset.heightInches);
       setWallPcsPerBox(preset.defaultPcsPerBox);
 
-      // Recalculate default line breakdown based on height
+      // Line breakdown based on height
       const totalLines = (wallHeightFt * 12) / preset.heightInches;
       const defaultDecor = 1;
       const remaining = Math.max(0, totalLines - defaultDecor);
-      setDeepLines(Math.round((remaining * 0.55) * 10) / 10);
+      setDeepLines(Math.round(remaining * 0.55 * 10) / 10);
       setDecorLines(defaultDecor);
-      setLightLines(Math.round((remaining * 0.45) * 10) / 10);
+      setLightLines(Math.round(remaining * 0.45 * 10) / 10);
     }
   };
 
-  // Auto-set preset values when Floor Size changes
-  const handleFloorSizeChange = (presetId: string) => {
-    setSelectedFloorSizeId(presetId);
-    const preset = FLOOR_TILE_SIZES.find((s) => s.id === presetId);
+  // ── Floor Size Handler ──
+  const handleFloorSizeChange = (id: string) => {
+    if (id === 'custom') {
+      setIsCustomFloorSize(true);
+      setSelectedFloorSizeId('custom');
+      return;
+    }
+    setIsCustomFloorSize(false);
+    setSelectedFloorSizeId(id);
+    const preset = FLOOR_TILE_SIZES.find((s) => s.id === id);
     if (preset) {
+      setCustomFloorTileW(preset.widthInches);
+      setCustomFloorTileH(preset.heightInches);
       setFloorPcsPerBox(preset.defaultPcsPerBox);
     }
   };
 
-  // ── Computations ──
-  const wallComboResult = useMemo(() => {
+  // ── Live Calculations for Active Tab ──
+  const activeWallTileW = isCustomWallSize ? customWallTileW : customWallTileW;
+  const activeWallTileH = isCustomWallSize ? customWallTileH : customWallTileH;
+
+  const currentWallCombo = useMemo(() => {
     return calculateWallCombo({
       wallAreaSft,
       wallHeightFt,
-      tileHeightInches: customWallTileH,
-      tileWidthInches: customWallTileW,
+      tileHeightInches: activeWallTileH,
+      tileWidthInches: activeWallTileW,
       pcsPerBox: wallPcsPerBox,
       deepLines,
       decorLines,
@@ -152,8 +225,8 @@ export const TilesCalculatorPage: React.FC = () => {
   }, [
     wallAreaSft,
     wallHeightFt,
-    customWallTileH,
-    customWallTileW,
+    activeWallTileH,
+    activeWallTileW,
     wallPcsPerBox,
     deepLines,
     decorLines,
@@ -162,14 +235,16 @@ export const TilesCalculatorPage: React.FC = () => {
     wallWastagePercent,
   ]);
 
-  const floorResult = useMemo(() => {
-    const currentPreset = FLOOR_TILE_SIZES.find((s) => s.id === selectedFloorSizeId) || FLOOR_TILE_SIZES[0];
+  const activeFloorTileW = isCustomFloorSize ? customFloorTileW : customFloorTileW;
+  const activeFloorTileH = isCustomFloorSize ? customFloorTileH : customFloorTileH;
+
+  const currentFloorResult = useMemo(() => {
     return calculateFloorTiles({
       lengthFt: floorInputType === 'dimensions' ? floorLengthFt : 0,
       widthFt: floorInputType === 'dimensions' ? floorWidthFt : 0,
       directAreaSft: floorInputType === 'direct' ? floorDirectSft : 0,
-      tileLengthInches: currentPreset.widthInches,
-      tileWidthInches: currentPreset.heightInches,
+      tileLengthInches: activeFloorTileW,
+      tileWidthInches: activeFloorTileH,
       pcsPerBox: floorPcsPerBox,
       skirtingHeightInches,
       wastagePercent: floorWastagePercent,
@@ -179,105 +254,222 @@ export const TilesCalculatorPage: React.FC = () => {
     floorLengthFt,
     floorWidthFt,
     floorDirectSft,
-    selectedFloorSizeId,
+    activeFloorTileW,
+    activeFloorTileH,
     floorPcsPerBox,
     skirtingHeightInches,
     floorWastagePercent,
   ]);
 
-  // Compute materials & costs based on currently active context
-  const activeAreaForCost = activeTab === 'wall-combo' ? wallComboResult.grossAreaSft : floorResult.totalGrossAreaSft;
-  const activeBoxesForCost = activeTab === 'wall-combo' ? wallComboResult.grandTotalBoxes : floorResult.totalBoxesNeeded;
-
-  const costResult = useMemo(() => {
-    return calculateMaterialAndCost({
-      totalAreaSft: activeAreaForCost,
-      totalBoxes: activeBoxesForCost,
-      pricePerBox,
-      laborCostPerSft,
-      cementBagPrice,
-      sandPricePerCft,
-      groutPricePerKg,
-    });
-  }, [
-    activeAreaForCost,
-    activeBoxesForCost,
-    pricePerBox,
-    laborCostPerSft,
-    cementBagPrice,
-    sandPricePerCft,
-    groutPricePerKg,
-  ]);
-
-  // Multi-room grand summary
-  const multiRoomGrandTotal = useMemo(() => {
-    const totalArea = multiRooms.reduce((acc, r) => acc + r.areaSft, 0);
-    const totalBoxes = multiRooms.reduce((acc, r) => acc + r.boxesNeeded, 0);
-    const estCost = totalBoxes * pricePerBox;
-    return { totalArea, totalBoxes, estCost };
-  }, [multiRooms, pricePerBox]);
-
-  const handleAddMultiRoom = () => {
-    if (!newRoomName.trim() || newRoomArea <= 0) return;
-    const isWall = newRoomType === 'wall';
-    const defaultBoxes = isWall
-      ? Math.ceil(newRoomArea / 16.67)
-      : Math.ceil(newRoomArea / 16.0);
-
-    const newItem: MultiRoomItem = {
-      id: Date.now().toString(),
-      roomName: newRoomName.trim(),
-      type: newRoomType,
-      areaSft: newRoomArea,
-      tileSize: isWall ? '8" × 12" ওয়াল' : '24" × 24" ফ্লোর',
-      boxesNeeded: defaultBoxes,
-      note: isWall ? 'ওয়াল টাইলস কম্বো' : 'ফ্লোর ও স্কার্টিং',
-    };
-
-    setMultiRooms([...multiRooms, newItem]);
-    setNewRoomName('');
-    setNewRoomArea(100);
-  };
-
-  const handleRemoveMultiRoom = (id: string) => {
-    setMultiRooms(multiRooms.filter((r) => r.id !== id));
-  };
-
-  // Generate WhatsApp / Copy message
-  const handleCopyMemo = () => {
-    let message = `📋 *Utools.bd — টাইলস হিসাব মেমো*\n`;
-    message += `ব্র্যান্ড: ${BANGLADESHI_BRANDS.find((b) => b.id === selectedBrand)?.name || 'DBL'}\n\n`;
-
+  // Current active room live cost
+  const currentLiveCost = useMemo(() => {
     if (activeTab === 'wall-combo') {
-      message += `🛁 *বাথরুম/কিচেন ওয়াল টাইলস কম্বো*\n`;
-      message += `• মোট এরিয়া: ${toBanglaNum(wallComboResult.netAreaSft)} স্কয়ার ফিট (উচ্চতা ${toBanglaNum(wallHeightFt)} ফিট)\n`;
-      message += `• টাইলসের মাপ: ${selectedWallSizeId}\n`;
-      message += `• মোট লাইন (সারি): ${toBanglaNum(wallComboResult.totalLines)} টি\n`;
-      message += `-------------------------\n`;
-      message += `১. ডিপ (Deep): ${toBanglaNum(wallComboResult.deep.boxes)} কার্টন ${toBanglaNum(wallComboResult.deep.extraPieces)} পিস (${toBanglaNum(wallComboResult.deep.pieces)} পিস)\n`;
-      message += `২. ডেকোর (Decor): ${toBanglaNum(wallComboResult.decor.boxes)} কার্টন ${toBanglaNum(wallComboResult.decor.extraPieces)} পিস (${toBanglaNum(wallComboResult.decor.pieces)} পিস)\n`;
-      message += `৩. লাইট (Light): ${toBanglaNum(wallComboResult.light.boxes)} কার্টন ${toBanglaNum(wallComboResult.light.extraPieces)} পিস (${toBanglaNum(wallComboResult.light.pieces)} পিস)\n`;
-      message += `-------------------------\n`;
-      message += `📦 *সর্বমোট কার্টন:* ${toBanglaNum(wallComboResult.grandTotalBoxes)} কার্টন (${toBanglaNum(wallComboResult.totalPieces)} পিস)\n`;
-    } else if (activeTab === 'floor') {
-      message += `🏠 *ফ্লোর টাইলস হিসাব*\n`;
-      message += `• ফ্লোর এরিয়া: ${toBanglaNum(floorResult.floorAreaSft)} SFT (স্কার্টিং: ${toBanglaNum(Math.round(floorResult.skirtingAreaSft))} SFT)\n`;
-      message += `• টাইলসের মাপ: ${selectedFloorSizeId}\n`;
-      message += `• ফ্লোর পিস: ${toBanglaNum(floorResult.floorPieces)} | স্কার্টিং: ${toBanglaNum(floorResult.skirtingPieces)} পিস\n`;
-      message += `• অপচয় (Wastage ${toBanglaNum(floorWastagePercent)}%): ${toBanglaNum(floorResult.wastagePieces)} পিস\n`;
-      message += `-------------------------\n`;
-      message += `📦 *সর্বমোট দরকার:* ${toBanglaNum(floorResult.totalBoxesNeeded)} কার্টন (${toBanglaNum(floorResult.totalPieces)} পিস)\n`;
+      const tileCost = wallAreaSft * wallRatePerSft;
+      const cementBags = Math.round((wallAreaSft / 100) * 3.2 * 10) / 10;
+      const sandCft = Math.round((wallAreaSft / 100) * 11);
+      const groutKg = Math.round((wallAreaSft / 100) * 1.0 * 10) / 10;
+      return { tileCost, cementBags, sandCft, groutKg };
     } else {
-      message += `🏢 *মাল্টি-রুম টাইলস সামারি মেমো*\n`;
-      multiRooms.forEach((r, idx) => {
-        message += `${toBanglaNum(idx + 1)}. ${r.roomName} (${toBanglaNum(r.areaSft)} SFT) ➔ ${toBanglaNum(r.boxesNeeded)} কার্টন\n`;
-      });
-      message += `-------------------------\n`;
-      message += `📦 *মোট কার্টন:* ${toBanglaNum(multiRoomGrandTotal.totalBoxes)} টি\n`;
-      message += `💰 *আনুমানিক টাইলসের দাম:* ৳${toBanglaNum(multiRoomGrandTotal.estCost.toLocaleString('bn-BD'))}\n`;
+      const area = currentFloorResult.totalGrossAreaSft;
+      const tileCost = area * floorRatePerSft;
+      const cementBags = Math.round((area / 100) * 3.2 * 10) / 10;
+      const sandCft = Math.round((area / 100) * 11);
+      const groutKg = Math.round((area / 100) * 1.0 * 10) / 10;
+      return { tileCost, cementBags, sandCft, groutKg };
+    }
+  }, [activeTab, wallAreaSft, wallRatePerSft, currentFloorResult, floorRatePerSft]);
+
+  // ── Add or Update Room in Multi-Room House List ──
+  const handleSaveRoom = () => {
+    if (activeTab === 'wall-combo') {
+      const area = Math.max(1, wallAreaSft);
+      const tileCost = area * wallRatePerSft;
+      const cementBags = Math.round((area / 100) * 3.2 * 10) / 10;
+      const sandCft = Math.round((area / 100) * 11);
+      const groutKg = Math.round((area / 100) * 1.0 * 10) / 10;
+
+      const sizeLabel = isCustomWallSize
+        ? `${customWallTileH}" × ${customWallTileW}" (কাস্টম)`
+        : WALL_TILE_SIZES.find((s) => s.id === selectedWallSizeId)?.name || '৮" × ১২"';
+
+      const roomData: HouseRoom = {
+        id: editingRoomId || Date.now().toString(),
+        name: wallRoomName.trim() || 'বাথরুম/ওয়াল',
+        type: 'wall',
+        areaSft: area,
+        tileSizeName: sizeLabel,
+        tileWidthInches: activeWallTileW,
+        tileHeightInches: activeWallTileH,
+        pcsPerBox: wallPcsPerBox,
+        ratePerSft: wallRatePerSft,
+        wallHeightFt,
+        deepLines,
+        decorLines,
+        lightLines,
+        deepBoxes: currentWallCombo.deep.boxes,
+        decorBoxes: currentWallCombo.decor.boxes,
+        lightBoxes: currentWallCombo.light.boxes,
+        deepPcs: currentWallCombo.deep.pieces,
+        decorPcs: currentWallCombo.decor.pieces,
+        lightPcs: currentWallCombo.light.pieces,
+        totalPieces: currentWallCombo.totalPieces,
+        totalBoxes: currentWallCombo.grandTotalBoxes,
+        tileCost,
+        cementBags,
+        sandCft,
+        groutKg,
+      };
+
+      if (editingRoomId) {
+        setHouseRooms(houseRooms.map((r) => (r.id === editingRoomId ? roomData : r)));
+        setEditingRoomId(null);
+      } else {
+        setHouseRooms([...houseRooms, roomData]);
+      }
+      setWallRoomName(`বাথরুম ${houseRooms.length + 1}`);
+    } else {
+      const area = currentFloorResult.totalGrossAreaSft;
+      const tileCost = area * floorRatePerSft;
+      const cementBags = Math.round((area / 100) * 3.2 * 10) / 10;
+      const sandCft = Math.round((area / 100) * 11);
+      const groutKg = Math.round((area / 100) * 1.0 * 10) / 10;
+
+      const sizeLabel = isCustomFloorSize
+        ? `${customFloorTileH}" × ${customFloorTileW}" (কাস্টম)`
+        : FLOOR_TILE_SIZES.find((s) => s.id === selectedFloorSizeId)?.name || '২৪" × ২৪"';
+
+      const roomData: HouseRoom = {
+        id: editingRoomId || Date.now().toString(),
+        name: floorRoomName.trim() || 'ফ্লোর রুম',
+        type: 'floor',
+        areaSft: Math.round(area),
+        tileSizeName: sizeLabel,
+        tileWidthInches: activeFloorTileW,
+        tileHeightInches: activeFloorTileH,
+        pcsPerBox: floorPcsPerBox,
+        ratePerSft: floorRatePerSft,
+        skirtingInches: skirtingHeightInches,
+        wastagePercent: floorWastagePercent,
+        totalPieces: currentFloorResult.totalPieces,
+        totalBoxes: currentFloorResult.totalBoxesNeeded,
+        tileCost,
+        cementBags,
+        sandCft,
+        groutKg,
+      };
+
+      if (editingRoomId) {
+        setHouseRooms(houseRooms.map((r) => (r.id === editingRoomId ? roomData : r)));
+        setEditingRoomId(null);
+      } else {
+        setHouseRooms([...houseRooms, roomData]);
+      }
+      setFloorRoomName(`বেডরুম ${houseRooms.length + 1}`);
+    }
+  };
+
+  // ── Load room into form for editing ──
+  const handleEditRoom = (room: HouseRoom) => {
+    setEditingRoomId(room.id);
+    if (room.type === 'wall') {
+      setActiveTab('wall-combo');
+      setWallRoomName(room.name);
+      setWallAreaSft(room.areaSft);
+      setWallRatePerSft(room.ratePerSft);
+      if (room.wallHeightFt) setWallHeightFt(room.wallHeightFt);
+      if (room.deepLines !== undefined) setDeepLines(room.deepLines);
+      if (room.decorLines !== undefined) setDecorLines(room.decorLines);
+      if (room.lightLines !== undefined) setLightLines(room.lightLines);
+      setWallPcsPerBox(room.pcsPerBox);
+      setCustomWallTileW(room.tileWidthInches);
+      setCustomWallTileH(room.tileHeightInches);
+    } else {
+      setActiveTab('floor');
+      setFloorRoomName(room.name);
+      setFloorInputType('direct');
+      setFloorDirectSft(room.areaSft);
+      setFloorRatePerSft(room.ratePerSft);
+      setFloorPcsPerBox(room.pcsPerBox);
+      setCustomFloorTileW(room.tileWidthInches);
+      setCustomFloorTileH(room.tileHeightInches);
+      if (room.skirtingInches !== undefined) setSkirtingHeightInches(room.skirtingInches);
+      if (room.wastagePercent !== undefined) setFloorWastagePercent(room.wastagePercent);
     }
 
-    message += `\nহিসাবটি তৈরি করা হয়েছে: https://utools.bd/tiles-calculator`;
+    // Scroll to top smooth
+    window.scrollTo({ top: 150, behavior: 'smooth' });
+  };
+
+  const handleDeleteRoom = (id: string) => {
+    setHouseRooms(houseRooms.filter((r) => r.id !== id));
+    if (editingRoomId === id) setEditingRoomId(null);
+  };
+
+  // ── Grand Total Calculations ──
+  const grandTotal = useMemo(() => {
+    let totalArea = 0;
+    let totalBoxes = 0;
+    let totalPieces = 0;
+    let totalTileCost = 0;
+    let totalCementBags = 0;
+    let totalSandCft = 0;
+    let totalGroutKg = 0;
+
+    houseRooms.forEach((r) => {
+      totalArea += r.areaSft;
+      totalBoxes += r.totalBoxes;
+      totalPieces += r.totalPieces;
+      totalTileCost += r.tileCost;
+      totalCementBags += r.cementBags;
+      totalSandCft += r.sandCft;
+      totalGroutKg += r.groutKg;
+    });
+
+    const totalCementCost = Math.round(totalCementBags * cementBagPrice);
+    const totalSandCost = Math.round(totalSandCft * sandPricePerCft);
+    const totalGroutCost = Math.round(totalGroutKg * groutPricePerKg);
+    const totalLaborCost = Math.round(totalArea * laborCostPerSft);
+    const grandProjectCost =
+      totalTileCost + totalCementCost + totalSandCost + totalGroutCost + totalLaborCost;
+
+    return {
+      totalArea,
+      totalBoxes,
+      totalPieces,
+      totalTileCost,
+      totalCementBags: Math.round(totalCementBags * 10) / 10,
+      totalSandCft,
+      totalGroutKg: Math.round(totalGroutKg * 10) / 10,
+      totalCementCost,
+      totalSandCost,
+      totalGroutCost,
+      totalLaborCost,
+      grandProjectCost,
+    };
+  }, [houseRooms, cementBagPrice, sandPricePerCft, groutPricePerKg, laborCostPerSft]);
+
+  // ── Copy Memo for WhatsApp ──
+  const handleCopyMemo = () => {
+    let message = `📋 *Utools.bd — পুরো বাড়ির টাইলস ও খরচ মেমো*\n\n`;
+
+    houseRooms.forEach((r, idx) => {
+      message += `*${toBanglaNum(idx + 1)}. ${r.name}* (${toBanglaNum(r.areaSft)} SFT - ${r.tileSizeName})\n`;
+      if (r.type === 'wall') {
+        message += `   • ডিপ: ${toBanglaNum(r.deepBoxes || 0)} কার্টন | ডেকোর: ${toBanglaNum(r.decorBoxes || 0)} কার্টন | লাইট: ${toBanglaNum(r.lightBoxes || 0)} কার্টন\n`;
+      }
+      message += `   • টাইলস: ${toBanglaNum(r.totalBoxes)} কার্টন | দাম: ৳${toBanglaNum(r.tileCost.toLocaleString('bn-BD'))}\n`;
+      message += `   • সিমেন্ট: ${toBanglaNum(r.cementBags)} বস্তা | বালু: ${toBanglaNum(r.sandCft)} CFT\n\n`;
+    });
+
+    message += `---------------------------------\n`;
+    message += `📦 *মোট টাইলস দরকার:* ${toBanglaNum(grandTotal.totalBoxes)} কার্টন (${toBanglaNum(grandTotal.totalPieces)} পিস)\n`;
+    message += `💰 *টাইলসের মোট দাম:* ৳${toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}\n`;
+    message += `🧱 *প্রয়োজনীয় সিমেন্ট:* ${toBanglaNum(grandTotal.totalCementBags)} বস্তা (৳${toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))})\n`;
+    message += `⏳ *প্রয়োজনীয় বালু:* ${toBanglaNum(grandTotal.totalSandCft)} CFT (৳${toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))})\n`;
+    message += `🛠️ *মিস্ত্রি খরচ:* ৳${toBanglaNum(grandTotal.totalLaborCost.toLocaleString('bn-BD'))}\n`;
+    message += `---------------------------------\n`;
+    message += `🏷️ *সর্বমোট আনুমানিক বাজেট:* ৳${toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}\n\n`;
+    message += `হিসাবটি তৈরি করা হয়েছে: https://utools.bd/tiles-calculator`;
 
     navigator.clipboard.writeText(message);
     setCopied(true);
@@ -287,7 +479,7 @@ export const TilesCalculatorPage: React.FC = () => {
   const handleWhatsAppShare = () => {
     handleCopyMemo();
     const encoded = encodeURIComponent(
-      `Utools.bd টাইলস হিসাব মেমো দেখতে লিংকে যান: https://utools.bd/tiles-calculator`
+      `Utools.bd টাইলস ও পুরো বাড়ির হিসাব মেমো দেখতে লিংকে যান: https://utools.bd/tiles-calculator`
     );
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
   };
@@ -300,9 +492,9 @@ export const TilesCalculatorPage: React.FC = () => {
         'বাংলাদেশে টাইলসের সাইজ অনুযায়ী প্রতি কার্টনের ক্ষেত্রফল নির্ধারিত হয়। যেমন: ৮"×১২" বাথরুম টাইলসে ২৫ পিস (১৬.৬৭ স্কয়ার ফিট), ১০"×১৬" সাইজে ১৫ পিস (১৬.৬৭ স্কয়ার ফিট), ১২"×১৮" সাইজে ১০ পিস (১৫ স্কয়ার ফিট), এবং জনপ্রিয় ২×২ ফিট (২৪"×২৪") ফ্লোর টাইলসের প্রতি বক্সে ৪ পিস অর্থাৎ ঠিক ১৬ স্কয়ার ফিট থাকে।',
     },
     {
-      question: 'বাথরুম ওয়াল টাইলসে ডিপ, ডেকোর ও লাইট কীভাবে হিসাব করতে হয়?',
+      question: 'ওয়াল টাইলসে ডিপ, ডেকোর ও লাইট কীভাবে হিসাব করতে হয়?',
       answer:
-        'বাথরুমের উচ্চতাকে টাইলের উচ্চতা দিয়ে ভাগ করে মোট সারি (লাইন) বের করা হয়। যেমন ৭ ফিট বাথরুম ও ৮ ইঞ্চি টাইলে মোট ১০.৫টি সারি হয়। নিচে সাধারণত ৫ থেকে ৫.৫ লাইন ডিপ (Deep), মাঝে ১ লাইন ডেকোর বা বর্ডার (Decor) এবং উপরে বাকি অংশ লাইট (Light) টাইলস লাগানো হয়। প্রতি অংশের লাইনের শতকরা অনুপাত দিয়ে মোট পিস ও কার্টনের হিসাব বের করা হয়।',
+        'দেয়ালের উচ্চতাকে টাইলের উচ্চতা দিয়ে ভাগ করে মোট সারি (লাইন) বের করা হয়। যেমন ৭ ফিট দেয়াল ও ৮ ইঞ্চি টাইলে মোট ১০.৫টি সারি হয়। নিচে সাধারণত ৫ থেকে ৫.৫ লাইন ডিপ (Deep), মাঝে ১ লাইন ডেকোর বা বর্ডার (Decor) এবং উপরে বাকি অংশ লাইট (Light) টাইলস লাগানো হয়। প্রতি অংশের লাইনের শতকরা অনুপাত দিয়ে মোট পিস ও কার্টনের হিসাব বের করা হয়।',
     },
     {
       question: 'টাইলস কেনার সময় কত শতাংশ অতিরিক্ত (Wastage) নেওয়া উচিত?',
@@ -319,8 +511,8 @@ export const TilesCalculatorPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
       <ToolSeoHead
-        title="টাইলস ক্যালকুলেটর — বাথরুম কম্বো, ফ্লোর টাইলস কার্টন ও খরচ হিসাব | Utools.bd"
-        description="বাথরুম ও কিচেন ওয়াল টাইলসের ডিপ-ডেকোর-লাইট অনুপাত, ফ্লোর টাইলস কার্টন ও পিস হিসাব, স্কার্টিং, সিমেন্ট-বালু ও মিস্ত্রি খরচ ক্যালকুলেটর।"
+        title="টাইলস ক্যালকুলেটর — ওয়াল কম্বো, ফ্লোর টাইলস কার্টন ও পুরো বাড়ির খরচ হিসাব | Utools.bd"
+        description="ওয়াল টাইলসের ডিপ-ডেকোর-লাইট কম্বো, ফ্লোর টাইলস কার্টন ও পিস হিসাব, স্কার্টিং, প্রতি রুমের আলাদা সিমেন্ট-বালু ও পুরো বাড়ির খরচের মেমো।"
         canonicalUrl="https://utools.bd/tiles-calculator"
         toolName="টাইলস ক্যালকুলেটর (Tiles Calculator BD)"
         categoryName="ক্যালকুলেটর"
@@ -339,125 +531,140 @@ export const TilesCalculatorPage: React.FC = () => {
       </div>
 
       {/* Hero Header */}
-      <div className="text-center max-w-3xl mx-auto mb-10">
+      <div className="text-center max-w-3xl mx-auto mb-8">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#E6F4EC] text-[#0B5D3B] border border-[#0B5D3B]/20 mb-3">
           <Grid className="w-4 h-4" />
-          <span>বাংলাদেশি ব্র্যান্ড ও সাইজ প্রিসেট (DBL, Akij, RAK)</span>
+          <span>বাথরুম ওয়াল কম্বো • ফ্লোর টাইলস • পুরো বাড়ির মেমো</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0F1F17] tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0F1F17] tracking-tight mb-3">
           টাইলস ক্যালকুলেটর <span className="text-[#0B5D3B]">(Tiles Calculator BD)</span>
         </h1>
-        <p className="text-base sm:text-lg text-[#4A5A52] leading-relaxed">
-          বাথরুম ও কিচেন ওয়াল টাইলসের <strong>ডিপ-ডেকোর-লাইট</strong> কম্বো, ফ্লোরের কার্টন ও পিস হিসাব, স্কার্টিং, সিমেন্ট-বালু ও পূর্ণাঙ্গ খরচের মেমো।
+        <p className="text-base text-[#4A5A52] leading-relaxed">
+          ওয়াল টাইলসের <strong>ডিপ-ডেকোর-লাইট</strong> কম্বো ও ফ্লোর টাইলস হিসাব করুন, রেট দিন এবং এক ক্লিকে পুরো বাড়ির মেমো তৈরি করুন।
         </p>
       </div>
 
-      {/* Brand Selector Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#D5E4DB] shadow-xs mb-8 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm font-semibold text-[#0F1F17]">
-          <Package className="w-4 h-4 text-[#0B5D3B]" />
-          <span>টাইলস ব্র্যান্ড নির্বাচন করুন:</span>
-        </div>
-        <div className="flex-1 max-w-xs">
-          <select
-            value={selectedBrand}
-            onChange={(e) => setSelectedBrand(e.target.value)}
-            className="w-full px-3 py-2 text-sm rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-medium text-[#0F1F17] focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+      {/* Edit Mode Alert Banner */}
+      {editingRoomId && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-amber-900 text-sm font-semibold">
+            <Edit2 className="w-4 h-4 text-amber-700" />
+            <span>
+              আপনি <strong>"{houseRooms.find((r) => r.id === editingRoomId)?.name}"</strong> এডিট করছেন।
+              মাপ পরিবর্তন করে নিচের "পরিবর্তন সংরক্ষণ করুন" বাটনে চাপুন।
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setEditingRoomId(null)}
+            className="text-xs px-3 py-1 bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-lg font-bold"
           >
-            {BANGLADESHI_BRANDS.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.name}
-              </option>
-            ))}
-          </select>
+            বাতিল
+          </button>
         </div>
-        <div className="text-xs text-[#4A5A52] bg-[#E6F4EC] px-3 py-1.5 rounded-lg border border-[#0B5D3B]/10">
-          ✓ ১০০% নিরাপদ ও ক্লায়েন্ট-সাইড হিসাব
-        </div>
-      </div>
+      )}
 
-      {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 mb-8 p-1.5 bg-[#EAF2ED] rounded-2xl border border-[#D5E4DB]">
+      {/* Streamlined 2-Tab Navigation */}
+      <div className="flex gap-2 mb-8 p-1.5 bg-[#EAF2ED] rounded-2xl border border-[#D5E4DB]">
         <button
           type="button"
           onClick={() => setActiveTab('wall-combo')}
-          className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold transition-all ${
             activeTab === 'wall-combo'
               ? 'bg-white text-[#0B5D3B] shadow-xs'
               : 'text-[#4A5A52] hover:text-[#0F1F17]'
           }`}
         >
-          <Layers className="w-4 h-4" /> বাথরুম ওয়াল কম্বো
+          <Layers className="w-4 h-4" /> ওয়াল টাইলস কম্বো (Wall Tiles)
         </button>
         <button
           type="button"
           onClick={() => setActiveTab('floor')}
-          className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold transition-all ${
             activeTab === 'floor'
               ? 'bg-white text-[#0B5D3B] shadow-xs'
               : 'text-[#4A5A52] hover:text-[#0F1F17]'
           }`}
         >
-          <Grid className="w-4 h-4" /> ফ্লোর টাইলস
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('materials')}
-          className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all ${
-            activeTab === 'materials'
-              ? 'bg-white text-[#0B5D3B] shadow-xs'
-              : 'text-[#4A5A52] hover:text-[#0F1F17]'
-          }`}
-        >
-          <DollarSign className="w-4 h-4" /> সিমেন্ট, বালু ও খরচ
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('multi-room')}
-          className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all ${
-            activeTab === 'multi-room'
-              ? 'bg-white text-[#0B5D3B] shadow-xs'
-              : 'text-[#4A5A52] hover:text-[#0F1F17]'
-          }`}
-        >
-          <Home className="w-4 h-4" /> পুরো বাড়ির মেমো ({toBanglaNum(multiRooms.length)})
+          <Grid className="w-4 h-4" /> ফ্লোর টাইলস (Floor Tiles)
         </button>
       </div>
 
-      {/* ── Tab 1: Wall Combo (Excel Deep-Decor-Light) ── */}
+      {/* ── Tab 1: Wall Tiles Combo ── */}
       {activeTab === 'wall-combo' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
           {/* Left Form (7 cols) */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-6">
-            <h2 className="text-xl font-bold text-[#0F1F17] flex items-center gap-2 pb-3 border-b border-[#D5E4DB]">
-              <Layers className="w-5 h-5 text-[#0B5D3B]" /> বাথরুম ও কিচেন ওয়াল টাইলস পরিমাপ
-            </h2>
+            <div className="flex items-center justify-between pb-3 border-b border-[#D5E4DB]">
+              <h2 className="text-xl font-bold text-[#0F1F17] flex items-center gap-2">
+                <Layers className="w-5 h-5 text-[#0B5D3B]" /> ওয়াল টাইলস কম্বো পরিমাপ
+              </h2>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#E6F4EC] text-[#0B5D3B]">
+                বাথরুম / কিচেন / দেয়াল
+              </span>
+            </div>
 
-            {/* Inputs: Wall Area & Height */}
+            {/* Room Name & Rate per SFT */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#0F1F17] mb-1.5">
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
+                  রুমের নাম (Room Name)
+                </label>
+                <input
+                  type="text"
+                  value={wallRoomName}
+                  onChange={(e) => setWallRoomName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-semibold text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                  placeholder="যেমন: মাস্টার বাথরুম"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
+                  টাইলসের দাম (টাকা প্রতি SFT)
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type="number"
+                    value={wallRatePerSft || ''}
+                    onChange={(e) => setWallRatePerSft(Math.max(0, Number(e.target.value)))}
+                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0B5D3B] text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                    placeholder="যেমন: ৬৫"
+                  />
+                  <span className="absolute right-3 text-xs font-semibold text-[#4A5A52] pointer-events-none">
+                    ৳/SFT
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Wall SFT & Height */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
                   দেয়ালের মোট ক্ষেত্রফল (SFT) *
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     min="1"
                     value={wallAreaSft || ''}
                     onChange={(e) => setWallAreaSft(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0B5D3B] text-lg focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
-                    placeholder="যেমন: ৩৫০"
+                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0B5D3B] text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                    placeholder="৩৫০"
                   />
-                  <span className="absolute right-3.5 top-3 text-xs font-semibold text-[#4A5A52]">SFT</span>
+                  <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
+                    SFT
+                  </span>
                 </div>
                 <p className="text-[11px] text-[#4A5A52] mt-1">সব দেয়ালের মোট মাপ (চার দেয়াল যোগফল)</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#0F1F17] mb-1.5">
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
                   দেয়ালের উচ্চতা (ফিট) *
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     step="0.5"
@@ -465,62 +672,120 @@ export const TilesCalculatorPage: React.FC = () => {
                     max="20"
                     value={wallHeightFt || ''}
                     onChange={(e) => setWallHeightFt(Math.max(1, Number(e.target.value)))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0F1F17] text-lg focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0F1F17] text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
                     placeholder="৭"
                   />
-                  <span className="absolute right-3.5 top-3 text-xs font-semibold text-[#4A5A52]">ফিট</span>
+                  <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
+                    ফিট
+                  </span>
                 </div>
-                <p className="text-[11px] text-[#4A5A52] mt-1">বাথরুমের স্ট্যান্ডার্ড উচ্চতা সাধারণত ৭ বা ৮ ফিট</p>
+                <p className="text-[11px] text-[#4A5A52] mt-1">স্ট্যান্ডার্ড উচ্চতা সাধারণত ৭ বা ৮ ফিট</p>
               </div>
             </div>
 
-            {/* Tile Size Presets */}
+            {/* Tile Size Presets + Custom Size Option */}
             <div>
-              <label className="block text-sm font-medium text-[#0F1F17] mb-2">
-                টাইলসের সাইজ নির্বাচন করুন:
+              <label className="block text-xs font-semibold text-[#0F1F17] mb-2">
+                টাইলসের সাইজ নির্বাচন করুন (অথবা কাস্টম সাইজ লিখুন):
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {WALL_TILE_SIZES.map((size) => (
                   <button
                     key={size.id}
                     type="button"
                     onClick={() => handleWallSizeChange(size.id)}
-                    className={`p-3 rounded-xl border text-left transition-all ${
-                      selectedWallSizeId === size.id
+                    className={`p-2.5 rounded-xl border text-left transition-all ${
+                      selectedWallSizeId === size.id && !isCustomWallSize
                         ? 'border-[#0B5D3B] bg-[#E6F4EC] text-[#0B5D3B] font-bold shadow-xs'
                         : 'border-[#D5E4DB] bg-[#FAFAF7] text-[#4A5A52] hover:bg-white hover:text-[#0F1F17]'
                     }`}
                   >
-                    <div className="text-sm">{size.name}</div>
-                    <div className="text-[11px] opacity-80 mt-0.5">{size.popularFor}</div>
+                    <div className="text-sm font-semibold">{size.name}</div>
+                    <div className="text-[10px] opacity-80 mt-0.5">{size.popularFor}</div>
                   </button>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => handleWallSizeChange('custom')}
+                  className={`p-2.5 rounded-xl border text-left transition-all ${
+                    isCustomWallSize
+                      ? 'border-[#0B5D3B] bg-[#E6F4EC] text-[#0B5D3B] font-bold shadow-xs'
+                      : 'border-[#D5E4DB] bg-[#FAFAF7] text-[#4A5A52] hover:bg-white hover:text-[#0F1F17]'
+                  }`}
+                >
+                  <div className="text-sm font-semibold">✏️ কাস্টম সাইজ</div>
+                  <div className="text-[10px] opacity-80 mt-0.5">ইচ্ছেমতো মাপ টাইপ করুন</div>
+                </button>
               </div>
             </div>
 
-            {/* Carton Specs */}
-            <div className="p-4 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">১ বক্সে কত পিস?</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={wallPcsPerBox || ''}
-                  onChange={(e) => setWallPcsPerBox(Math.max(1, Number(e.target.value)))}
-                  className="w-full px-3 py-1.5 rounded-lg border border-[#D5E4DB] bg-white font-semibold text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">১ পিসের ক্ষেত্রফল</label>
-                <div className="px-3 py-1.5 rounded-lg bg-white border border-[#D5E4DB] font-semibold text-sm text-[#0F1F17]">
-                  {toBanglaNum(wallComboResult.sqftPerPiece.toFixed(3))} SFT
+            {/* Custom Size Inputs (When Custom Selected) */}
+            {isCustomWallSize && (
+              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-amber-900 mb-1">
+                    টাইলের উচ্চতা (ইঞ্চি)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={customWallTileH || ''}
+                    onChange={(e) => setCustomWallTileH(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white font-bold text-sm"
+                    placeholder="8"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-amber-900 mb-1">
+                    টাইলের প্রস্থ (ইঞ্চি)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={customWallTileW || ''}
+                    onChange={(e) => setCustomWallTileW(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white font-bold text-sm"
+                    placeholder="12"
+                  />
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">১ বক্সের ক্ষেত্রফল</label>
-                <div className="px-3 py-1.5 rounded-lg bg-white border border-[#D5E4DB] font-semibold text-sm text-[#0B5D3B]">
-                  {toBanglaNum(wallComboResult.sqftPerBox.toFixed(2))} SFT
+            )}
+
+            {/* Carton Box Pieces with CRITICAL WARNING NOTICE */}
+            <div className="p-4 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#0F1F17] mb-1">
+                    ১ বক্সে কত পিস?
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={wallPcsPerBox || ''}
+                    onChange={(e) => setWallPcsPerBox(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-3 py-1.5 rounded-lg border border-[#D5E4DB] bg-white font-bold text-sm text-[#0B5D3B]"
+                  />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#4A5A52] mb-1">১ পিসের ক্ষেত্রফল</label>
+                  <div className="px-3 py-1.5 rounded-lg bg-white border border-[#D5E4DB] font-semibold text-sm text-[#0F1F17]">
+                    {toBanglaNum(currentWallCombo.sqftPerPiece.toFixed(3))} SFT
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#4A5A52] mb-1">১ বক্সের ক্ষেত্রফল</label>
+                  <div className="px-3 py-1.5 rounded-lg bg-white border border-[#D5E4DB] font-semibold text-sm text-[#0B5D3B]">
+                    {toBanglaNum(currentWallCombo.sqftPerBox.toFixed(2))} SFT
+                  </div>
+                </div>
+              </div>
+
+              {/* Company Box Variation Notice */}
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-900 leading-relaxed">
+                  <strong>জরুরি সতর্কতা:</strong> কোম্পানি ও ব্র্যান্ডভেদে (যেমন: DBL, Akij, RAK ইত্যাদি) একই সাইজের টাইলস হলেও প্রতি কার্টনে পিস সংখ্যা ভিন্ন হতে পারে। আপনার কেনা টাইলসের কার্টনের গায়ে লেখা পিস সংখ্যা দেখে প্রয়োজনে এখানে পরিবর্তন করে নিন।
+                </p>
               </div>
             </div>
 
@@ -528,26 +793,24 @@ export const TilesCalculatorPage: React.FC = () => {
             <div className="p-5 rounded-2xl bg-[#FAFAF7] border border-[#D5E4DB] space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-[#0F1F17]">
-                  🎨 দেয়ালের শেইড অনুপাত (মোট {toBanglaNum(wallComboResult.totalLines.toFixed(1))} টি সারি/লাইন)
+                  🎨 দেয়ালের শেইড অনুপাত (মোট {toBanglaNum(currentWallCombo.totalLines.toFixed(1))} টি সারি/লাইন)
                 </span>
                 <span className="text-xs px-2.5 py-1 rounded-full bg-[#E6F4EC] text-[#0B5D3B] font-semibold">
-                  উচ্চতা {toBanglaNum(wallHeightFt * 12)}" ÷ {toBanglaNum(customWallTileH)}"
+                  উচ্চতা {toBanglaNum(wallHeightFt * 12)}" ÷ {toBanglaNum(activeWallTileH)}"
                 </span>
               </div>
 
               <div className="space-y-3">
-                {/* Deep Line */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <span className="w-3.5 h-3.5 rounded-full bg-[#1E3A8A] shrink-0" />
-                    <span className="text-sm font-medium text-[#0F1F17]">১. ডিপ (Deep) লাইন (নিচের অংশ):</span>
+                    <span className="text-sm font-medium text-[#0F1F17]">১. ডিপ (Deep) লাইন (নিচে):</span>
                   </div>
                   <div className="w-24">
                     <input
                       type="number"
                       step="0.5"
                       min="0"
-                      max={wallComboResult.totalLines}
                       value={deepLines}
                       onChange={(e) => setDeepLines(Math.max(0, Number(e.target.value)))}
                       className="w-full px-2.5 py-1 text-center font-bold text-sm rounded-lg border border-[#D5E4DB] bg-white"
@@ -555,7 +818,6 @@ export const TilesCalculatorPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Decor Line */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <span className="w-3.5 h-3.5 rounded-full bg-[#F59E0B] shrink-0" />
@@ -566,7 +828,6 @@ export const TilesCalculatorPage: React.FC = () => {
                       type="number"
                       step="0.5"
                       min="0"
-                      max={wallComboResult.totalLines}
                       value={decorLines}
                       onChange={(e) => setDecorLines(Math.max(0, Number(e.target.value)))}
                       className="w-full px-2.5 py-1 text-center font-bold text-sm rounded-lg border border-[#D5E4DB] bg-white"
@@ -574,18 +835,16 @@ export const TilesCalculatorPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Light Line */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-[#E2E8F0] border border-[#CBD5E1] shrink-0" />
-                    <span className="text-sm font-medium text-[#0F1F17]">৩. লাইট (Light) লাইন (উপরের অংশ):</span>
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#CBD5E1] border border-[#94A3B8] shrink-0" />
+                    <span className="text-sm font-medium text-[#0F1F17]">৩. লাইট (Light) লাইন (উপরে):</span>
                   </div>
                   <div className="w-24">
                     <input
                       type="number"
                       step="0.5"
                       min="0"
-                      max={wallComboResult.totalLines}
                       value={lightLines}
                       onChange={(e) => setLightLines(Math.max(0, Number(e.target.value)))}
                       className="w-full px-2.5 py-1 text-center font-bold text-sm rounded-lg border border-[#D5E4DB] bg-white"
@@ -595,39 +854,20 @@ export const TilesCalculatorPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Optional Deductions & Wastage */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">
-                  দরজা ও জানালার মাপ বাদ (SFT)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={wallDeductionSft || ''}
-                  onChange={(e) => setWallDeductionSft(Math.max(0, Number(e.target.value)))}
-                  className="w-full px-3 py-1.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] text-sm"
-                  placeholder="যেমন: ১৫"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">
-                  অপচয় / ভাঙা সতর্কতা (Wastage %)
-                </label>
-                <select
-                  value={wallWastagePercent}
-                  onChange={(e) => setWallWastagePercent(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] text-sm"
-                >
-                  <option value="0">০% (সঠিক মাপ)</option>
-                  <option value="5">৫% (সাধারণ রিকমেন্ডেড)</option>
-                  <option value="10">১০% (নিরাপদ ব্যাকআপ)</option>
-                </select>
-              </div>
-            </div>
+            {/* Action Button: Add Room */}
+            <button
+              type="button"
+              onClick={handleSaveRoom}
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#0B5D3B] hover:bg-[#084A2E] text-white font-bold text-base flex items-center justify-center gap-2 transition-colors shadow-sm"
+            >
+              {editingRoomId ? <CheckCircle2 className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+              {editingRoomId
+                ? '✓ পরিবর্তন সংরক্ষণ করুন (Update Room)'
+                : '+ পুরো বাড়ির হিসাবে এই রুমটি যোগ করুন (Add to House List)'}
+            </button>
           </div>
 
-          {/* Right Visual & Output Cards (5 cols) */}
+          {/* Right Live Preview & Result (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
             {/* Visual 2D Bathroom Wall Preview */}
             <div className="bg-white p-6 rounded-3xl border border-[#D5E4DB] shadow-xs">
@@ -636,9 +876,8 @@ export const TilesCalculatorPage: React.FC = () => {
                 <span className="text-xs font-normal text-[#4A5A52]">উচ্চতা {toBanglaNum(wallHeightFt)} ফিট</span>
               </h3>
 
-              {/* 2D Wall Canvas */}
-              <div className="w-full h-56 rounded-2xl overflow-hidden border-2 border-[#D5E4DB] flex flex-col justify-end shadow-inner relative bg-[#F8FAF9]">
-                {/* Light Section (Top) */}
+              <div className="w-full h-52 rounded-2xl overflow-hidden border-2 border-[#D5E4DB] flex flex-col justify-end shadow-inner relative bg-[#F8FAF9]">
+                {/* Light Section */}
                 <div
                   className="w-full transition-all duration-300 relative flex items-center justify-center text-xs font-semibold text-[#475569] border-b border-[#CBD5E1]"
                   style={{
@@ -646,12 +885,12 @@ export const TilesCalculatorPage: React.FC = () => {
                     background: 'linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%)',
                   }}
                 >
-                  <div className="text-center px-2 py-1 bg-white/80 rounded-md backdrop-blur-xs shadow-xs text-[11px]">
-                    লাইট: {toBanglaNum(wallComboResult.light.boxes)} কার্টন ({toBanglaNum(wallComboResult.light.pieces)} পিস)
+                  <div className="text-center px-2 py-0.5 bg-white/80 rounded-md shadow-xs text-[11px]">
+                    লাইট: {toBanglaNum(currentWallCombo.light.boxes)} কার্টন ({toBanglaNum(currentWallCombo.light.pieces)} পিস)
                   </div>
                 </div>
 
-                {/* Decor Section (Middle) */}
+                {/* Decor Section */}
                 <div
                   className="w-full transition-all duration-300 relative flex items-center justify-center text-xs font-bold text-[#92400E] border-b border-[#F59E0B]/50"
                   style={{
@@ -660,11 +899,11 @@ export const TilesCalculatorPage: React.FC = () => {
                   }}
                 >
                   <div className="text-center px-2 py-0.5 bg-white/90 rounded-md shadow-xs text-[11px]">
-                    ডেকোর: {toBanglaNum(wallComboResult.decor.boxes)} কার্টন ({toBanglaNum(wallComboResult.decor.pieces)} পিস)
+                    ডেকোর: {toBanglaNum(currentWallCombo.decor.boxes)} কার্টন ({toBanglaNum(currentWallCombo.decor.pieces)} পিস)
                   </div>
                 </div>
 
-                {/* Deep Section (Bottom) */}
+                {/* Deep Section */}
                 <div
                   className="w-full transition-all duration-300 relative flex items-center justify-center text-xs font-bold text-white"
                   style={{
@@ -672,95 +911,58 @@ export const TilesCalculatorPage: React.FC = () => {
                     background: 'linear-gradient(180deg, #1E3A8A 0%, #0F172A 100%)',
                   }}
                 >
-                  <div className="text-center px-2 py-1 bg-black/40 rounded-md backdrop-blur-xs text-[11px]">
-                    ডিপ: {toBanglaNum(wallComboResult.deep.boxes)} কার্টন ({toBanglaNum(wallComboResult.deep.pieces)} পিস)
+                  <div className="text-center px-2 py-0.5 bg-black/40 rounded-md text-[11px]">
+                    ডিপ: {toBanglaNum(currentWallCombo.deep.boxes)} কার্টন ({toBanglaNum(currentWallCombo.deep.pieces)} পিস)
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Results Breakdown Summary */}
-            <div className="bg-[#E6F4EC] p-6 sm:p-7 rounded-3xl border border-[#0B5D3B]/20 shadow-xs space-y-5">
+            {/* Current Room Result Card */}
+            <div className="bg-[#E6F4EC] p-6 rounded-3xl border border-[#0B5D3B]/20 shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#0B5D3B]/15">
                 <div>
-                  <div className="text-xs font-semibold text-[#0B5D3B] uppercase tracking-wider">সর্বমোট টাইলস দরকার</div>
-                  <div className="text-3xl font-extrabold text-[#084A2E]">
-                    {toBanglaNum(wallComboResult.grandTotalBoxes)} কার্টন
+                  <div className="text-xs font-semibold text-[#0B5D3B] uppercase tracking-wider">এই রুমের মোট টাইলস</div>
+                  <div className="text-3xl font-black text-[#084A2E]">
+                    {toBanglaNum(currentWallCombo.grandTotalBoxes)} কার্টন
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-[#4A5A52]">মোট পিস</div>
+                  <div className="text-xs text-[#4A5A52]">আনুমানিক দাম</div>
                   <div className="text-xl font-bold text-[#0F1F17]">
-                    {toBanglaNum(wallComboResult.totalPieces)} পিস
+                    ৳{toBanglaNum(currentLiveCost.tileCost.toLocaleString('bn-BD'))}
                   </div>
                 </div>
               </div>
 
-              {/* Exact Breakdown List */}
-              <div className="space-y-2.5 text-sm">
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 border border-[#0B5D3B]/10">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#1E3A8A]" />
-                    <span className="font-semibold text-[#0F1F17]">ডিপ (Deep):</span>
-                  </div>
-                  <div className="font-bold text-[#0B5D3B]">
-                    {toBanglaNum(wallComboResult.deep.boxes)} কার্টন{' '}
-                    {wallComboResult.deep.extraPieces > 0 && (
-                      <span className="text-xs text-[#4A5A52]">
-                        ({toBanglaNum(wallComboResult.deep.extraPieces)} পিস)
-                      </span>
-                    )}
-                  </div>
+              <div className="space-y-2 text-xs sm:text-sm">
+                <div className="flex justify-between p-2 rounded-xl bg-white/80">
+                  <span className="font-medium text-[#1E3A8A]">১. ডিপ (Deep):</span>
+                  <span className="font-bold text-[#0B5D3B]">
+                    {toBanglaNum(currentWallCombo.deep.boxes)} কার্টন ({toBanglaNum(currentWallCombo.deep.pieces)} পিস)
+                  </span>
                 </div>
-
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 border border-[#0B5D3B]/10">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#F59E0B]" />
-                    <span className="font-semibold text-[#0F1F17]">ডেকোর (Decor):</span>
-                  </div>
-                  <div className="font-bold text-[#0B5D3B]">
-                    {toBanglaNum(wallComboResult.decor.boxes)} কার্টন{' '}
-                    {wallComboResult.decor.extraPieces > 0 && (
-                      <span className="text-xs text-[#4A5A52]">
-                        ({toBanglaNum(wallComboResult.decor.extraPieces)} পিস)
-                      </span>
-                    )}
-                  </div>
+                <div className="flex justify-between p-2 rounded-xl bg-white/80">
+                  <span className="font-medium text-[#B45309]">২. ডেকোর (Decor):</span>
+                  <span className="font-bold text-[#0B5D3B]">
+                    {toBanglaNum(currentWallCombo.decor.boxes)} কার্টন ({toBanglaNum(currentWallCombo.decor.pieces)} পিস)
+                  </span>
                 </div>
-
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 border border-[#0B5D3B]/10">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#94A3B8]" />
-                    <span className="font-semibold text-[#0F1F17]">লাইট (Light):</span>
-                  </div>
-                  <div className="font-bold text-[#0B5D3B]">
-                    {toBanglaNum(wallComboResult.light.boxes)} কার্টন{' '}
-                    {wallComboResult.light.extraPieces > 0 && (
-                      <span className="text-xs text-[#4A5A52]">
-                        ({toBanglaNum(wallComboResult.light.extraPieces)} পিস)
-                      </span>
-                    )}
-                  </div>
+                <div className="flex justify-between p-2 rounded-xl bg-white/80">
+                  <span className="font-medium text-[#475569]">৩. লাইট (Light):</span>
+                  <span className="font-bold text-[#0B5D3B]">
+                    {toBanglaNum(currentWallCombo.light.boxes)} কার্টন ({toBanglaNum(currentWallCombo.light.pieces)} পিস)
+                  </span>
                 </div>
               </div>
 
-              {/* Share / Copy Buttons */}
-              <div className="pt-2 grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={handleCopyMemo}
-                  className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white border border-[#0B5D3B]/20 text-[#0B5D3B] text-xs font-bold hover:bg-[#F8FAF9] transition-colors shadow-xs"
-                >
-                  {copied ? <Check className="w-4 h-4 text-[#0B5D3B]" /> : <Copy className="w-4 h-4" />}
-                  {copied ? 'কপি হয়েছে!' : 'মেমো কপি করুন'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleWhatsAppShare}
-                  className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#0B5D3B] text-white text-xs font-bold hover:bg-[#084A2E] transition-colors shadow-xs"
-                >
-                  <Share2 className="w-4 h-4" /> WhatsApp এ পাঠান
-                </button>
+              <div className="pt-2 border-t border-[#0B5D3B]/10 grid grid-cols-2 gap-2 text-xs text-[#4A5A52]">
+                <div className="p-2 bg-white/60 rounded-lg">
+                  সিমেন্ট: <strong>{toBanglaNum(currentLiveCost.cementBags)}</strong> বস্তা
+                </div>
+                <div className="p-2 bg-white/60 rounded-lg">
+                  বালু: <strong>{toBanglaNum(currentLiveCost.sandCft)}</strong> CFT
+                </div>
               </div>
             </div>
           </div>
@@ -769,12 +971,51 @@ export const TilesCalculatorPage: React.FC = () => {
 
       {/* ── Tab 2: Floor Tiles ── */}
       {activeTab === 'floor' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
           {/* Left Form */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-6">
-            <h2 className="text-xl font-bold text-[#0F1F17] flex items-center gap-2 pb-3 border-b border-[#D5E4DB]">
-              <Grid className="w-5 h-5 text-[#0B5D3B]" /> ফ্লোর টাইলসের পরিমাপ ও হিসাব
-            </h2>
+            <div className="flex items-center justify-between pb-3 border-b border-[#D5E4DB]">
+              <h2 className="text-xl font-bold text-[#0F1F17] flex items-center gap-2">
+                <Grid className="w-5 h-5 text-[#0B5D3B]" /> ফ্লোর টাইলস পরিমাপ ও হিসাব
+              </h2>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#E6F4EC] text-[#0B5D3B]">
+                বেডরুম / ড্রয়িং / ফ্লোর
+              </span>
+            </div>
+
+            {/* Room Name & Rate per SFT */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
+                  রুমের নাম (Room Name)
+                </label>
+                <input
+                  type="text"
+                  value={floorRoomName}
+                  onChange={(e) => setFloorRoomName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-semibold text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                  placeholder="যেমন: বেডরুম ১"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
+                  টাইলসের দাম (টাকা প্রতি SFT)
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type="number"
+                    value={floorRatePerSft || ''}
+                    onChange={(e) => setFloorRatePerSft(Math.max(0, Number(e.target.value)))}
+                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0B5D3B] text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                    placeholder="৮০"
+                  />
+                  <span className="absolute right-3 text-xs font-semibold text-[#4A5A52] pointer-events-none">
+                    ৳/SFT
+                  </span>
+                </div>
+              </div>
+            </div>
 
             {/* Input Mode Selector */}
             <div className="flex gap-4">
@@ -802,76 +1043,153 @@ export const TilesCalculatorPage: React.FC = () => {
 
             {floorInputType === 'direct' ? (
               <div>
-                <label className="block text-sm font-medium text-[#0F1F17] mb-1.5">
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">
                   ফ্লোরের মোট ক্ষেত্রফল (SFT) *
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     min="1"
                     value={floorDirectSft || ''}
                     onChange={(e) => setFloorDirectSft(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0B5D3B] text-lg focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
-                    placeholder="যেমন: ১৮০"
+                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-[#0B5D3B] text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+                    placeholder="১৮০"
                   />
-                  <span className="absolute right-3.5 top-3 text-xs font-semibold text-[#4A5A52]">SFT</span>
+                  <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
+                    SFT
+                  </span>
                 </div>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#0F1F17] mb-1.5">দৈর্ঘ্য (ফিট)</label>
+                  <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">দৈর্ঘ্য (ফিট)</label>
                   <input
                     type="number"
                     min="1"
                     value={floorLengthFt || ''}
                     onChange={(e) => setFloorLengthFt(Math.max(1, Number(e.target.value)))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-lg"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-lg"
                     placeholder="১৫"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#0F1F17] mb-1.5">প্রস্থ (ফিট)</label>
+                  <label className="block text-xs font-semibold text-[#0F1F17] mb-1.5">প্রস্থ (ফিট)</label>
                   <input
                     type="number"
                     min="1"
                     value={floorWidthFt || ''}
                     onChange={(e) => setFloorWidthFt(Math.max(1, Number(e.target.value)))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-lg"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-lg"
                     placeholder="১২"
                   />
                 </div>
               </div>
             )}
 
-            {/* Floor Tile Sizes */}
+            {/* Floor Tile Sizes + Custom Option */}
             <div>
-              <label className="block text-sm font-medium text-[#0F1F17] mb-2">
+              <label className="block text-xs font-semibold text-[#0F1F17] mb-2">
                 টাইলসের সাইজ নির্বাচন করুন:
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {FLOOR_TILE_SIZES.map((size) => (
                   <button
                     key={size.id}
                     type="button"
                     onClick={() => handleFloorSizeChange(size.id)}
-                    className={`p-3 rounded-xl border text-left transition-all ${
-                      selectedFloorSizeId === size.id
+                    className={`p-2.5 rounded-xl border text-left transition-all ${
+                      selectedFloorSizeId === size.id && !isCustomFloorSize
                         ? 'border-[#0B5D3B] bg-[#E6F4EC] text-[#0B5D3B] font-bold shadow-xs'
                         : 'border-[#D5E4DB] bg-[#FAFAF7] text-[#4A5A52] hover:bg-white hover:text-[#0F1F17]'
                     }`}
                   >
-                    <div className="text-sm">{size.name}</div>
-                    <div className="text-[11px] opacity-80 mt-0.5">{size.popularFor}</div>
+                    <div className="text-sm font-semibold">{size.name}</div>
+                    <div className="text-[10px] opacity-80 mt-0.5">{size.popularFor}</div>
                   </button>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => handleFloorSizeChange('custom')}
+                  className={`p-2.5 rounded-xl border text-left transition-all ${
+                    isCustomFloorSize
+                      ? 'border-[#0B5D3B] bg-[#E6F4EC] text-[#0B5D3B] font-bold shadow-xs'
+                      : 'border-[#D5E4DB] bg-[#FAFAF7] text-[#4A5A52] hover:bg-white hover:text-[#0F1F17]'
+                  }`}
+                >
+                  <div className="text-sm font-semibold">✏️ কাস্টম সাইজ</div>
+                  <div className="text-[10px] opacity-80 mt-0.5">ইচ্ছেমতো মাপ টাইপ করুন</div>
+                </button>
+              </div>
+            </div>
+
+            {/* Custom Floor Size Inputs */}
+            {isCustomFloorSize && (
+              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-amber-900 mb-1">
+                    টাইলের দৈর্ঘ্য (ইঞ্চি)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={customFloorTileW || ''}
+                    onChange={(e) => setCustomFloorTileW(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white font-bold text-sm"
+                    placeholder="24"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-amber-900 mb-1">
+                    টাইলের প্রস্থ (ইঞ্চি)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={customFloorTileH || ''}
+                    onChange={(e) => setCustomFloorTileH(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white font-bold text-sm"
+                    placeholder="24"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Box Pieces & Notice */}
+            <div className="p-4 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] space-y-3">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-[#0F1F17] mb-1">
+                    ১ বক্সে কত পিস?
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={floorPcsPerBox || ''}
+                    onChange={(e) => setFloorPcsPerBox(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-3 py-1.5 rounded-lg border border-[#D5E4DB] bg-white font-bold text-sm text-[#0B5D3B]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#4A5A52] mb-1">১ বক্সের ক্ষেত্রফল</label>
+                  <div className="px-3 py-1.5 rounded-lg bg-white border border-[#D5E4DB] font-semibold text-sm text-[#0B5D3B]">
+                    {toBanglaNum(currentFloorResult.sqftPerBox.toFixed(2))} SFT
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-900 leading-relaxed">
+                  <strong>জরুরি সতর্কতা:</strong> কোম্পানিভেদে এক কার্টনে পিস সংখ্যা ভিন্ন হতে পারে। আপনার কেনা টাইলসের কার্টনের গায়ে লেখা পিস সংখ্যা দেখে এখানে মিলিয়ে নিন।
+                </p>
               </div>
             </div>
 
             {/* Skirting & Wastage */}
             <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#D5E4DB] grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#0F1F17] mb-1">
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1">
                   স্কার্টিং বর্ডার (Skirting)
                 </label>
                 <select
@@ -883,14 +1201,12 @@ export const TilesCalculatorPage: React.FC = () => {
                   <option value="5">৫ ইঞ্চি স্কার্টিং</option>
                   <option value="0">স্কার্টিং নেই (০")</option>
                 </select>
-                <p className="text-[11px] text-[#4A5A52] mt-1">
-                  দেয়ালের নিচে লাগানোর জন্য স্বয়ংক্রিয় হিসাব
-                </p>
+                <p className="text-[11px] text-[#4A5A52] mt-1">দেয়ালের নিচে লাগানোর জন্য হিসাব</p>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#0F1F17] mb-1">
-                  কাটিং ও ওয়েস্টেজ (Wastage %)
+                <label className="block text-xs font-semibold text-[#0F1F17] mb-1">
+                  কাটিং ও অপচয় (Wastage %)
                 </label>
                 <select
                   value={floorWastagePercent}
@@ -899,346 +1215,312 @@ export const TilesCalculatorPage: React.FC = () => {
                 >
                   <option value="0">০% (অতিরিক্ত ছাড়া)</option>
                   <option value="5">৫% (সুপারিশকৃত)</option>
-                  <option value="10">১০% (ডায়াগোনাল/কোণাকাটা)</option>
+                  <option value="10">১০% (নিরাপদ ব্যাকআপ)</option>
                 </select>
                 <p className="text-[11px] text-[#4A5A52] mt-1">ভাঙা ও কোনা কাটার ব্যাকআপ</p>
               </div>
             </div>
+
+            {/* Action Button: Add Room */}
+            <button
+              type="button"
+              onClick={handleSaveRoom}
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#0B5D3B] hover:bg-[#084A2E] text-white font-bold text-base flex items-center justify-center gap-2 transition-colors shadow-sm"
+            >
+              {editingRoomId ? <CheckCircle2 className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+              {editingRoomId
+                ? '✓ পরিবর্তন সংরক্ষণ করুন (Update Room)'
+                : '+ পুরো বাড়ির হিসাবে এই রুমটি যোগ করুন (Add to House List)'}
+            </button>
           </div>
 
           {/* Right Summary */}
           <div className="lg:col-span-5 bg-[#E6F4EC] p-6 sm:p-8 rounded-3xl border border-[#0B5D3B]/20 shadow-xs space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-[#0B5D3B]/15">
               <div>
-                <div className="text-xs font-semibold text-[#0B5D3B] uppercase tracking-wider">মোট ফ্লোর টাইলস দরকার</div>
-                <div className="text-3xl font-extrabold text-[#084A2E]">
-                  {toBanglaNum(floorResult.totalBoxesNeeded)} কার্টন
+                <div className="text-xs font-semibold text-[#0B5D3B] uppercase tracking-wider">এই ফ্লোরের টাইলস</div>
+                <div className="text-3xl font-black text-[#084A2E]">
+                  {toBanglaNum(currentFloorResult.totalBoxesNeeded)} কার্টন
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-xs text-[#4A5A52]">মোট পিস</div>
                 <div className="text-2xl font-bold text-[#0F1F17]">
-                  {toBanglaNum(floorResult.totalPieces)} টি
+                  {toBanglaNum(currentFloorResult.totalPieces)} টি
                 </div>
               </div>
             </div>
 
-            {/* Detailed Table */}
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between py-1.5 border-b border-[#0B5D3B]/10">
+            <div className="space-y-2.5 text-sm">
+              <div className="flex justify-between py-1 border-b border-[#0B5D3B]/10">
                 <span className="text-[#4A5A52]">মূল ফ্লোর এরিয়া:</span>
                 <span className="font-bold text-[#0F1F17]">
-                  {toBanglaNum(floorResult.floorAreaSft)} SFT ({toBanglaNum(floorResult.floorPieces)} পিস)
+                  {toBanglaNum(currentFloorResult.floorAreaSft)} SFT
                 </span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-[#0B5D3B]/10">
-                <span className="text-[#4A5A52]">স্কার্টিং বর্ডার এরিয়া:</span>
+              <div className="flex justify-between py-1 border-b border-[#0B5D3B]/10">
+                <span className="text-[#4A5A52]">স্কার্টিং বর্ডার:</span>
                 <span className="font-bold text-[#0F1F17]">
-                  {toBanglaNum(Math.round(floorResult.skirtingAreaSft))} SFT ({toBanglaNum(floorResult.skirtingPieces)} পিস)
+                  {toBanglaNum(Math.round(currentFloorResult.skirtingAreaSft))} SFT ({toBanglaNum(currentFloorResult.skirtingPieces)} পিস)
                 </span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-[#0B5D3B]/10">
-                <span className="text-[#4A5A52]">ওয়েস্টেজ ({toBanglaNum(floorWastagePercent)}%):</span>
-                <span className="font-bold text-[#0F1F17]">{toBanglaNum(floorResult.wastagePieces)} পিস</span>
+              <div className="flex justify-between py-1 border-b border-[#0B5D3B]/10">
+                <span className="text-[#4A5A52]">অপচয় ({toBanglaNum(floorWastagePercent)}%):</span>
+                <span className="font-bold text-[#0F1F17]">
+                  {toBanglaNum(currentFloorResult.wastagePieces)} পিস
+                </span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-[#0B5D3B]/10">
-                <span className="text-[#4A5A52]">১ কার্টনে কভার করে:</span>
-                <span className="font-semibold text-[#0B5D3B]">
-                  {toBanglaNum(floorResult.sqftPerBox.toFixed(1))} SFT
+              <div className="flex justify-between py-1 border-b border-[#0B5D3B]/10">
+                <span className="text-[#4A5A52]">আনুমানিক টাইলসের দাম:</span>
+                <span className="font-bold text-[#0B5D3B]">
+                  ৳{toBanglaNum(currentLiveCost.tileCost.toLocaleString('bn-BD'))}
                 </span>
               </div>
             </div>
 
-            {/* Buttons */}
-            <div className="pt-2 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={handleCopyMemo}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white border border-[#0B5D3B]/20 text-[#0B5D3B] text-xs font-bold hover:bg-[#F8FAF9] transition-colors shadow-xs"
-              >
-                {copied ? <Check className="w-4 h-4 text-[#0B5D3B]" /> : <Copy className="w-4 h-4" />}
-                {copied ? 'কপি হয়েছে!' : 'মেমো কপি'}
-              </button>
-              <button
-                type="button"
-                onClick={handleWhatsAppShare}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#0B5D3B] text-white text-xs font-bold hover:bg-[#084A2E] transition-colors shadow-xs"
-              >
-                <Share2 className="w-4 h-4" /> WhatsApp
-              </button>
+            <div className="pt-2 border-t border-[#0B5D3B]/10 grid grid-cols-2 gap-2 text-xs text-[#4A5A52]">
+              <div className="p-2 bg-white/70 rounded-lg">
+                সিমেন্ট: <strong>{toBanglaNum(currentLiveCost.cementBags)}</strong> বস্তা
+              </div>
+              <div className="p-2 bg-white/70 rounded-lg">
+                বালু: <strong>{toBanglaNum(currentLiveCost.sandCft)}</strong> CFT
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Tab 3: Cement, Sand, Labor Cost ── */}
-      {activeTab === 'materials' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-5">
-            <h2 className="text-xl font-bold text-[#0F1F17] flex items-center gap-2 pb-3 border-b border-[#D5E4DB]">
-              <DollarSign className="w-5 h-5 text-[#0B5D3B]" /> প্রতি এককের বাজারদর ইনপুট
+      {/* ── PERSISTENT INTEGRATED SECTION: Cost Analysis & House Summary ── */}
+      <div id="cost-analysis" className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#0B5D3B]/20 shadow-md space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
+          <div>
+            <h2 className="text-2xl font-black text-[#0F1F17] flex items-center gap-2">
+              <Building className="w-6 h-6 text-[#0B5D3B]" /> খরচ ও পুরো বাড়ির সমন্বিত হিসাব (Cost Analysis & House Memo)
             </h2>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">
-                  টাইলসের গড় দাম (প্রতি কার্টন / বক্স)
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={pricePerBox || ''}
-                    onChange={(e) => setPricePerBox(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] font-bold text-[#0B5D3B]"
-                  />
-                  <span className="absolute right-3.5 top-2.5 text-xs text-[#4A5A52]">টাকা</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">
-                  মিস্ত্রি মজুরি (প্রতি স্কয়ার ফিট SFT)
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={laborCostPerSft || ''}
-                    onChange={(e) => setLaborCostPerSft(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] font-bold text-[#0F1F17]"
-                  />
-                  <span className="absolute right-3.5 top-2.5 text-xs text-[#4A5A52]">টাকা/SFT</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[#4A5A52] mb-1">সিমেন্ট (বস্তা)</label>
-                  <input
-                    type="number"
-                    value={cementBagPrice || ''}
-                    onChange={(e) => setCementBagPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#4A5A52] mb-1">বালু (প্রতি CFT)</label>
-                  <input
-                    type="number"
-                    value={sandPricePerCft || ''}
-                    onChange={(e) => setSandPricePerCft(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] text-sm"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[#4A5A52] mb-1">
-                  টাইলস পুটিং / গ্রাউট পাউডার (প্রতি কেজি)
-                </label>
-                <input
-                  type="number"
-                  value={groutPricePerKg || ''}
-                  onChange={(e) => setGroutPricePerKg(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] text-sm"
-                />
-              </div>
-            </div>
+            <p className="text-xs text-[#4A5A52] mt-1">
+              যুক্ত করা প্রতিটি রুমের আলাদা হিসাব ও পুরো বাড়ির গ্র্যান্ড টোটাল মেমো।
+            </p>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#E6F4EC] text-[#0B5D3B]">
+              মোট রুম: {toBanglaNum(houseRooms.length)} টি
+            </span>
+          </div>
+        </div>
 
-          {/* Right Materials Breakdown */}
-          <div className="lg:col-span-6 bg-[#FAFAF7] p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-6">
-            <h3 className="text-lg font-bold text-[#0F1F17] pb-2 border-b border-[#D5E4DB]">
-              🏗️ প্রয়োজনীয় মালামাল ও মোট আনুমানিক বাজেট
+        {/* Global Rates Quick Config */}
+        <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#D5E4DB] grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label className="block text-[#4A5A52] mb-1 font-medium">মিস্ত্রি খরচ (৳/SFT)</label>
+            <input
+              type="number"
+              value={laborCostPerSft}
+              onChange={(e) => setLaborCostPerSft(Math.max(0, Number(e.target.value)))}
+              className="w-full px-2.5 py-1 rounded-lg border border-[#D5E4DB] bg-white font-bold"
+            />
+          </div>
+          <div>
+            <label className="block text-[#4A5A52] mb-1 font-medium">সিমেন্ট (বস্তা ৳)</label>
+            <input
+              type="number"
+              value={cementBagPrice}
+              onChange={(e) => setCementBagPrice(Math.max(0, Number(e.target.value)))}
+              className="w-full px-2.5 py-1 rounded-lg border border-[#D5E4DB] bg-white font-bold"
+            />
+          </div>
+          <div>
+            <label className="block text-[#4A5A52] mb-1 font-medium">বালু (CFT ৳)</label>
+            <input
+              type="number"
+              value={sandPricePerCft}
+              onChange={(e) => setSandPricePerCft(Math.max(0, Number(e.target.value)))}
+              className="w-full px-2.5 py-1 rounded-lg border border-[#D5E4DB] bg-white font-bold"
+            />
+          </div>
+          <div>
+            <label className="block text-[#4A5A52] mb-1 font-medium">পুটিং/গ্রাউট (কেজি ৳)</label>
+            <input
+              type="number"
+              value={groutPricePerKg}
+              onChange={(e) => setGroutPricePerKg(Math.max(0, Number(e.target.value)))}
+              className="w-full px-2.5 py-1 rounded-lg border border-[#D5E4DB] bg-white font-bold"
+            />
+          </div>
+        </div>
+
+        {/* Rooms Detailed Breakdown Cards */}
+        {houseRooms.length === 0 ? (
+          <div className="text-center py-10 bg-[#F8FAF9] rounded-2xl border border-dashed border-[#D5E4DB]">
+            <p className="text-sm font-semibold text-[#4A5A52]">এখনো কোনো রুম যোগ করা হয়নি।</p>
+            <p className="text-xs text-[#4A5A52] mt-1">
+              উপরের ফর্ম থেকে মাপ দিয়ে <strong>"+ পুরো বাড়ির হিসাবে এই রুমটি যোগ করুন"</strong> বাটনে চাপ দিন।
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <h3 className="text-base font-bold text-[#0F1F17]">
+              🏠 যুক্ত করা রুমগুলোর আলাদা হিসাব তালিকা:
             </h3>
 
-            {/* Cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3.5 rounded-2xl bg-white border border-[#D5E4DB]">
-                <div className="text-xs text-[#4A5A52]">প্রয়োজনীয় সিমেন্ট</div>
-                <div className="text-xl font-extrabold text-[#0B5D3B] mt-1">
-                  {toBanglaNum(costResult.cementBags)} বস্তা
-                </div>
-                <div className="text-[11px] text-[#4A5A52] mt-0.5">
-                  ৳{toBanglaNum(costResult.cementCost.toLocaleString('bn-BD'))}
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {houseRooms.map((room, idx) => (
+                <div
+                  key={room.id}
+                  className={`p-5 rounded-2xl border transition-all ${
+                    editingRoomId === room.id
+                      ? 'border-amber-400 bg-amber-50/50 shadow-sm'
+                      : 'border-[#D5E4DB] bg-[#F8FAF9] hover:bg-white'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-[#D5E4DB]">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-[#0B5D3B]">#{toBanglaNum(idx + 1)}</span>
+                        <h4 className="font-bold text-base text-[#0F1F17]">{room.name}</h4>
+                      </div>
+                      <div className="text-xs text-[#4A5A52] mt-0.5">
+                        {room.type === 'wall' ? 'ওয়াল টাইলস কম্বো' : 'ফ্লোর টাইলস'} • {room.tileSizeName} • {toBanglaNum(room.areaSft)} SFT
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleEditRoom(room)}
+                        className="p-1.5 text-[#0B5D3B] hover:bg-[#E6F4EC] rounded-lg transition-colors"
+                        title="এডিট করুন"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteRoom(room.id)}
+                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
 
-              <div className="p-3.5 rounded-2xl bg-white border border-[#D5E4DB]">
-                <div className="text-xs text-[#4A5A52]">প্রয়োজনীয় বালু</div>
-                <div className="text-xl font-extrabold text-[#0B5D3B] mt-1">
-                  {toBanglaNum(costResult.sandCft)} CFT
-                </div>
-                <div className="text-[11px] text-[#4A5A52] mt-0.5">
-                  ৳{toBanglaNum(costResult.sandCost.toLocaleString('bn-BD'))}
-                </div>
-              </div>
+                  {/* Room Specific Tile Output */}
+                  <div className="mt-3 space-y-2 text-xs">
+                    <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-[#D5E4DB]/60">
+                      <span className="font-medium text-[#4A5A52]">টাইলস প্রয়োজন:</span>
+                      <span className="font-bold text-[#0B5D3B] text-sm">
+                        {toBanglaNum(room.totalBoxes)} কার্টন ({toBanglaNum(room.totalPieces)} পিস)
+                      </span>
+                    </div>
 
-              <div className="p-3.5 rounded-2xl bg-white border border-[#D5E4DB]">
-                <div className="text-xs text-[#4A5A52]">টাইলস পুটিং/গ্রাউট</div>
-                <div className="text-xl font-extrabold text-[#0B5D3B] mt-1">
-                  {toBanglaNum(costResult.groutKg)} কেজি
-                </div>
-                <div className="text-[11px] text-[#4A5A52] mt-0.5">
-                  ৳{toBanglaNum(costResult.groutCost.toLocaleString('bn-BD'))}
-                </div>
-              </div>
+                    {/* Wall breakdown if available */}
+                    {room.type === 'wall' && (
+                      <div className="p-2 bg-white/70 rounded-lg text-[11px] text-[#4A5A52] space-y-1">
+                        <div>• ডিপ (Deep): <strong>{toBanglaNum(room.deepBoxes || 0)} কার্টন</strong> ({toBanglaNum(room.deepPcs || 0)} পিস)</div>
+                        <div>• ডেকোর (Decor): <strong>{toBanglaNum(room.decorBoxes || 0)} কার্টন</strong> ({toBanglaNum(room.decorPcs || 0)} পিস)</div>
+                        <div>• লাইট (Light): <strong>{toBanglaNum(room.lightBoxes || 0)} কার্টন</strong> ({toBanglaNum(room.lightPcs || 0)} পিস)</div>
+                      </div>
+                    )}
 
-              <div className="p-3.5 rounded-2xl bg-white border border-[#D5E4DB]">
-                <div className="text-xs text-[#4A5A52]">মিস্ত্রি মজুরি</div>
-                <div className="text-xl font-extrabold text-[#0F1F17] mt-1">
-                  ৳{toBanglaNum(costResult.laborCost.toLocaleString('bn-BD'))}
+                    {/* Materials for this room */}
+                    <div className="grid grid-cols-3 gap-2 pt-1">
+                      <div className="p-2 bg-white rounded-lg border border-[#D5E4DB]/60 text-center">
+                        <div className="text-[10px] text-[#4A5A52]">টাইলসের দাম</div>
+                        <div className="font-bold text-[#0F1F17]">৳{toBanglaNum(room.tileCost.toLocaleString('bn-BD'))}</div>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-[#D5E4DB]/60 text-center">
+                        <div className="text-[10px] text-[#4A5A52]">সিমেন্ট</div>
+                        <div className="font-bold text-[#0B5D3B]">{toBanglaNum(room.cementBags)} বস্তা</div>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-[#D5E4DB]/60 text-center">
+                        <div className="text-[10px] text-[#4A5A52]">বালু</div>
+                        <div className="font-bold text-[#0B5D3B]">{toBanglaNum(room.sandCft)} CFT</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-[11px] text-[#4A5A52] mt-0.5">
-                  {toBanglaNum(Math.round(activeAreaForCost))} SFT এর জন্য
-                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Grand Total Memo Card ── */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#0B5D3B] text-white shadow-lg space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-emerald-600/60">
+            <div>
+              <div className="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+                পুরো বাড়ির সর্বমোট হিসাব ও বাজেট
+              </div>
+              <div className="text-3xl sm:text-4xl font-black mt-1">
+                {toBanglaNum(grandTotal.totalBoxes)} কার্টন টাইলস
+              </div>
+              <div className="text-xs text-emerald-100 mt-1">
+                মোট ক্ষেত্রফল: {toBanglaNum(grandTotal.totalArea)} স্কয়ার ফিট ({toBanglaNum(grandTotal.totalPieces)} পিস টাইলস)
               </div>
             </div>
-
-            {/* Total Budget Card */}
-            <div className="p-5 rounded-2xl bg-[#0B5D3B] text-white">
-              <div className="text-xs font-medium text-emerald-100 uppercase">সর্বমোট প্রজেক্ট খরচ (আনুমানিক)</div>
-              <div className="text-3xl font-black mt-1">
-                ৳{toBanglaNum(costResult.totalEstimatedCost.toLocaleString('bn-BD'))}
-              </div>
-              <div className="text-xs text-emerald-100 mt-2">
-                টাইলস (৳{toBanglaNum(costResult.tileCost.toLocaleString('bn-BD'))}) + মালামাল + মিস্ত্রি খরচ
+            <div className="text-right">
+              <div className="text-xs text-emerald-200">মোট আনুমানিক প্রজেক্ট খরচ:</div>
+              <div className="text-2xl sm:text-3xl font-black text-amber-300">
+                ৳{toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}
               </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* ── Tab 4: Multi-Room Estimator ── */}
-      {activeTab === 'multi-room' && (
-        <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs">
-            <h2 className="text-xl font-bold text-[#0F1F17] mb-4 flex items-center justify-between">
-              <span>🏠 পুরো বাড়ির সব রুমের টাইলস হিসাব</span>
-              <span className="text-xs font-normal text-[#4A5A52]">দোকানে দেওয়ার মতো ফুল মেমো</span>
-            </h2>
-
-            {/* Add Room Bar */}
-            <div className="p-4 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] flex flex-wrap items-center gap-3 mb-6">
-              <input
-                type="text"
-                value={newRoomName}
-                onChange={(e) => setNewRoomName(e.target.value)}
-                placeholder="রুমের নাম (যেমন: ড্রয়িং রুম, কিচেন)"
-                className="flex-1 min-w-[200px] px-3.5 py-2 text-sm rounded-xl border border-[#D5E4DB] bg-white font-medium"
-              />
-              <select
-                value={newRoomType}
-                onChange={(e) => setNewRoomType(e.target.value as 'wall' | 'floor')}
-                className="px-3.5 py-2 text-sm rounded-xl border border-[#D5E4DB] bg-white font-medium"
-              >
-                <option value="floor">ফ্লোর টাইলস</option>
-                <option value="wall">ওয়াল টাইলস</option>
-              </select>
-              <div className="relative w-28">
-                <input
-                  type="number"
-                  min="1"
-                  value={newRoomArea}
-                  onChange={(e) => setNewRoomArea(Math.max(1, Number(e.target.value)))}
-                  className="w-full px-3 py-2 text-sm rounded-xl border border-[#D5E4DB] bg-white font-bold"
-                  placeholder="SFT"
-                />
-                <span className="absolute right-2.5 top-2.5 text-[10px] text-[#4A5A52]">SFT</span>
+          {/* Material Totals Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+              <div className="text-emerald-200">টাইলসের মোট দাম</div>
+              <div className="text-base sm:text-lg font-bold text-white mt-1">
+                ৳{toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}
               </div>
-              <button
-                type="button"
-                onClick={handleAddMultiRoom}
-                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#0B5D3B] text-white text-sm font-bold hover:bg-[#084A2E] transition-colors"
-              >
-                <Plus className="w-4 h-4" /> যোগ করুন
-              </button>
             </div>
-
-            {/* Room List Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-[#D5E4DB] text-xs font-semibold text-[#4A5A52]">
-                    <th className="pb-3">রুমের বিবরণ</th>
-                    <th className="pb-3">ধরন</th>
-                    <th className="pb-3">ক্ষেত্রফল</th>
-                    <th className="pb-3">টাইলস সাইজ</th>
-                    <th className="pb-3">প্রয়োজনীয় কার্টন</th>
-                    <th className="pb-3 text-right">অ্যাকশন</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#D5E4DB]">
-                  {multiRooms.map((room) => (
-                    <tr key={room.id} className="hover:bg-[#F8FAF9]">
-                      <td className="py-3.5 font-bold text-[#0F1F17]">{room.roomName}</td>
-                      <td className="py-3.5">
-                        <span
-                          className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
-                            room.type === 'wall'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-emerald-100 text-emerald-800'
-                          }`}
-                        >
-                          {room.type === 'wall' ? 'ওয়াল' : 'ফ্লোর'}
-                        </span>
-                      </td>
-                      <td className="py-3.5 font-semibold text-[#0F1F17]">
-                        {toBanglaNum(room.areaSft)} SFT
-                      </td>
-                      <td className="py-3.5 text-xs text-[#4A5A52]">{room.tileSize}</td>
-                      <td className="py-3.5 font-bold text-[#0B5D3B]">
-                        {toBanglaNum(room.boxesNeeded)} কার্টন
-                      </td>
-                      <td className="py-3.5 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveMultiRoom(room.id)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="মুছে ফেলুন"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+              <div className="text-emerald-200">মোট সিমেন্ট দরকার</div>
+              <div className="text-base sm:text-lg font-bold text-white mt-1">
+                {toBanglaNum(grandTotal.totalCementBags)} বস্তা
+              </div>
+              <div className="text-[10px] text-emerald-200 mt-0.5">
+                (৳{toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))})
+              </div>
             </div>
-
-            {/* Multi-Room Grand Total Bar */}
-            <div className="mt-6 p-6 rounded-2xl bg-[#E6F4EC] border border-[#0B5D3B]/20 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <div className="text-xs text-[#4A5A52]">মোট এরিয়া ও কার্টন:</div>
-                <div className="text-2xl font-black text-[#084A2E]">
-                  {toBanglaNum(multiRoomGrandTotal.totalArea)} SFT ➔ {toBanglaNum(multiRoomGrandTotal.totalBoxes)} কার্টন
-                </div>
+            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+              <div className="text-emerald-200">মোট বালু দরকার</div>
+              <div className="text-base sm:text-lg font-bold text-white mt-1">
+                {toBanglaNum(grandTotal.totalSandCft)} CFT
               </div>
-              <div className="text-right">
-                <div className="text-xs text-[#4A5A52]">আনুমানিক বাজেট (টাইলস):</div>
-                <div className="text-2xl font-black text-[#0B5D3B]">
-                  ৳{toBanglaNum(multiRoomGrandTotal.estCost.toLocaleString('bn-BD'))}
-                </div>
+              <div className="text-[10px] text-emerald-200 mt-0.5">
+                (৳{toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))})
               </div>
-              <div className="flex gap-2 w-full sm:w-auto">
-                <button
-                  type="button"
-                  onClick={handleCopyMemo}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white border border-[#0B5D3B]/30 text-[#0B5D3B] text-xs font-bold hover:bg-emerald-50"
-                >
-                  <Copy className="w-4 h-4" /> কপি মেমো
-                </button>
-                <button
-                  type="button"
-                  onClick={handleWhatsAppShare}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[#0B5D3B] text-white text-xs font-bold hover:bg-[#084A2E]"
-                >
-                  <Share2 className="w-4 h-4" /> WhatsApp
-                </button>
+            </div>
+            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+              <div className="text-emerald-200">মিস্ত্রি মজুরি</div>
+              <div className="text-base sm:text-lg font-bold text-white mt-1">
+                ৳{toBanglaNum(grandTotal.totalLaborCost.toLocaleString('bn-BD'))}
+              </div>
+              <div className="text-[10px] text-emerald-200 mt-0.5">
+                (৳{toBanglaNum(laborCostPerSft)}/SFT হিসেবে)
               </div>
             </div>
           </div>
+
+          {/* Action Buttons */}
+          <div className="pt-2 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={handleCopyMemo}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-white text-[#0B5D3B] text-sm font-bold hover:bg-emerald-50 transition-colors shadow-sm"
+            >
+              {copied ? <Check className="w-4 h-4 text-[#0B5D3B]" /> : <Copy className="w-4 h-4" />}
+              {copied ? 'মেমো কপি হয়েছে!' : 'দোকান মেমো কপি করুন'}
+            </button>
+            <button
+              type="button"
+              onClick={handleWhatsAppShare}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#20BD5A] transition-colors shadow-sm"
+            >
+              <Share2 className="w-4 h-4" /> WhatsApp এ মেমো পাঠান
+            </button>
+          </div>
         </div>
-      )}
+      </div>
 
       {/* ── Brand Reference Guide & Specifications ── */}
       <div className="mt-12 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs">
