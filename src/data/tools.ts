@@ -275,5 +275,16 @@ export const TOOLS: ToolItem[] = [
     status: 'active',
     version: 'v1.0',
     link: '/cooking-converter'
+  },
+  {
+    id: 'tiles-calculator',
+    refCode: 'CALC-TILE-01',
+    title: 'টাইলস ক্যালকুলেটর (Tiles Calculator BD)',
+    description: 'বাথরুম ও কিচেন ওয়াল টাইলসের ডিপ-ডেকোর-লাইট কম্বো, ফ্লোর টাইলস কার্টন হিসাব, স্কার্টিং, সিমেন্ট-বালু ও মিস্ত্রি খরচ।',
+    feature: 'ডিপ-ডেকোর-লাইট রেশিও • কার্টন ও পিস হিসাব • স্কার্টিং ও ওয়েস্টেজ • সিমেন্ট ও বালুর বাজেট • WhatsApp মেমো',
+    category: 'calculator',
+    status: 'active',
+    version: 'v1.0',
+    link: '/tiles-calculator'
   }
 ];

@@ -56,6 +56,7 @@ const ICONS: Record<string, ToolIconComponent> = {
   'case-converter': Type,
   'text-to-handwriting': PenTool,
   'cooking-converter': ChefHat,
+  'tiles-calculator': Grid,
 };
 
 export function getToolIcon(toolId: string): ToolIconComponent {

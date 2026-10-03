@@ -33,6 +33,7 @@ const NumberSystemConverterPage = lazy(() => import('./pages/NumberSystemConvert
 const CaseConverterPage = lazy(() => import('./pages/CaseConverterPage.tsx').then((m) => ({ default: m.CaseConverterPage })));
 const TextToHandwritingPage = lazy(() => import('./pages/TextToHandwritingPage.tsx').then((m) => ({ default: m.TextToHandwritingPage })));
 const CookingConverterPage = lazy(() => import('./pages/CookingConverterPage.tsx').then((m) => ({ default: m.CookingConverterPage })));
+const TilesCalculatorPage = lazy(() => import('./pages/TilesCalculatorPage.tsx').then((m) => ({ default: m.TilesCalculatorPage })));
 const CustomCmsPage = lazy(() => import('./pages/CustomCmsPage.tsx').then((m) => ({ default: m.CustomCmsPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage })));
 
@@ -74,6 +75,7 @@ const LAZY_PAGE_IMPORTERS: Array<() => Promise<unknown>> = [
   () => import('./pages/CaseConverterPage.tsx'),
   () => import('./pages/TextToHandwritingPage.tsx'),
   () => import('./pages/CookingConverterPage.tsx'),
+  () => import('./pages/TilesCalculatorPage.tsx'),
   () => import('./pages/CustomCmsPage.tsx'),
   () => import('./pages/NotFoundPage.tsx'),
 ];
@@ -114,6 +116,7 @@ export const STATIC_PRERENDER_ROUTES = [
   '/case-converter',
   '/text-to-handwriting',
   '/cooking-converter',
+  '/tiles-calculator',
   '/about',
   '/contact',
   '/privacy-policy',
@@ -185,6 +188,7 @@ export function AppRoutes({
         <Route path="/case-converter" element={<CaseConverterPage />} />
         <Route path="/text-to-handwriting" element={<TextToHandwritingPage />} />
         <Route path="/cooking-converter" element={<CookingConverterPage />} />
+        <Route path="/tiles-calculator" element={<TilesCalculatorPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
