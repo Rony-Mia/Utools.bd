@@ -373,8 +373,8 @@ export function calculateMaterialAndCost(params: {
   const cementBags = Math.round((totalAreaSft / 100) * 3.2 * 10) / 10;
   // 100 sft tiling needs approx 11 cft sand
   const sandCft = Math.round((totalAreaSft / 100) * 11);
-  // 100 sft tiling needs approx 1.0 kg grout powder
-  const groutKg = Math.round((totalAreaSft / 100) * 1.0 * 10) / 10;
+  // 150 sft tiling needs approx 1.0 kg grout / putting powder
+  const groutKg = Math.round((totalAreaSft / 150) * 10) / 10;
 
   let tileCost = 0;
   if (pricePerBox > 0) {
