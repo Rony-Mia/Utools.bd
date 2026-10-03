@@ -511,6 +511,29 @@ h1, h2, h3, h4, .font-heading {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+
+  /* ── Tiles House Memo & Voucher Print Formatting ── */
+  #tiles-memo-print-area {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+    width: 100% !important;
+    max-width: 195mm !important;
+    margin: 5mm auto !important;
+    padding: 16px 20px !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    color: #0F1F17 !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    page-break-inside: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 
 /* QR Code Preview Frame Enforcement - Prevents high-res canvases from expanding beyond preview */

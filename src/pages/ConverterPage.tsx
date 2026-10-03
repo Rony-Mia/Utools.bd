@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   ArrowLeftRight,
@@ -145,15 +146,12 @@ export const ConverterPage: React.FC = () => {
       />
 
       {/* Breadcrumb */}
-      <nav className="flex items-center space-x-2 text-xs text-[#4A5A52]">
-        <Link to="/" className="hover:text-[#084A2E] underline-offset-2 hover:underline">
-          হোম
-        </Link>
-        <span>&gt;</span>
-        <span className="text-[#4A5A52]">টেক্সট টুলস</span>
-        <span>&gt;</span>
-        <span className="text-[#084A2E] font-medium">বিজয় ↔ ইউনিকোড</span>
-      </nav>
+      <ToolBreadcrumb
+        toolName="বিজয় ↔ ইউনিকোড টেক্সট কনভার্টার"
+        categoryName="টেক্সট টুলস"
+        categoryPath="/converter"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো ডেটা সার্ভারে যায় না"
+      />
 
       {/* Page Header */}
       <section className="space-y-2">

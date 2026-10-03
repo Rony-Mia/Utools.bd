@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import { Link } from 'react-router-dom';
 import {
   Grid,
@@ -380,6 +381,14 @@ export const ImageMergerPage: React.FC = () => {
         toolName="ইমেজ মার্জার ও কোলাজ মেকার"
         categoryName="গ্রাফিক্স ও ছবি"
         faqs={pageContent.faqs || []}
+      />
+
+      {/* Top Breadcrumb */}
+      <ToolBreadcrumb
+        toolName="ইমেজ মার্জার ও কোলাজ মেকার"
+        categoryName="ইমেজ টুলস"
+        categoryPath="/image-merger"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
       />
 
       {/* HEADER SECTION */}

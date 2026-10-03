@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
-import { Link } from 'react-router-dom';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
-  ArrowLeft,
   ShieldCheck,
   Keyboard,
   RotateCcw,
@@ -265,24 +264,11 @@ export const TypingTestPage: React.FC = () => {
       />
 
       {/* ── Top Breadcrumb & Privacy Badge ───────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-        <div className="flex items-center space-x-3">
-          <Link
-            to="/"
-            className="border border-[#D5E4DB] bg-[#FFFFFF] hover:bg-[#F0F4F2] px-3 py-1.5 text-xs text-[#084A2E] flex items-center space-x-1.5 transition-colors cursor-pointer rounded-lg font-medium"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>হোমে ফিরুন</span>
-          </Link>
-          <span className="text-[#D5E4DB]">/</span>
-          <span className="text-xs font-semibold text-[#0F1F17]">টাইপিং স্পিড টেস্ট</span>
-        </div>
-
-        <div className="flex items-center space-x-2 text-xs font-semibold text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3.5 py-1.5 shadow-2xs rounded-lg">
-          <ShieldCheck className="w-4 h-4 text-[#0B5D3B]" />
-          <span>🔒 আপনার টাইপিং ডেটা এই ডিভাইসেই থাকে</span>
-        </div>
-      </div>
+      <ToolBreadcrumb
+        toolName="টাইপিং স্পিড টেস্ট"
+        categoryName="টাইপিং অনুশীলন"
+        privacyText="🔒 আপনার টাইপিং ডেটা এই ডিভাইসেই থাকে"
+      />
 
       {/* ── Hero Section (Single H1) ─────────────────────────────────────── */}
       <div className="space-y-2 text-center sm:text-left">

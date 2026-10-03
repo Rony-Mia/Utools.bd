@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 import {
-  ArrowLeft,
   Calendar,
   CalendarDays,
   Clock,
@@ -368,23 +368,12 @@ export const AgeCalculatorPage: React.FC = () => {
       />
 
       {/* Top Breadcrumb & Privacy Guarantee */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-        <div className="flex items-center space-x-3">
-          <Link
-            to="/"
-            className="border border-[#D5E4DB] bg-[#FFFFFF] hover:bg-[#F0F4F2] px-3 py-1.5 text-xs text-[#084A2E] flex items-center space-x-1.5 transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>হোমপেজে ফিরুন</span>
-          </Link>
-        </div>
-
-        {/* 100% Client-Side Privacy Badge */}
-        <div className="flex items-center space-x-2 text-xs font-medium text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3 py-1.5 shadow-xs rounded-lg">
-          <ShieldCheck className="w-4 h-4 text-[#0B5D3B]" />
-          <span>১০০% ক্লায়েন্ট-সাইড ব্রাউজার ক্যালকুলেটর (কোনো তথ্য সার্ভারে যায় না)</span>
-        </div>
-      </div>
+      <ToolBreadcrumb
+        toolName="বয়স ক্যালকুলেটর"
+        categoryName="হিসাব ও ক্যালকুলেটর"
+        categoryPath="/age-calculator"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
+      />
 
       {/* Page Title & Intro */}
       <div className="space-y-2">

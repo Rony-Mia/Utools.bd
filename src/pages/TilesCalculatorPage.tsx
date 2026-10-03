@@ -7,6 +7,9 @@ import {
   Copy,
   Check,
   Share2,
+  Printer,
+  Download,
+  Loader2,
   HelpCircle,
   Plus,
   Trash2,
@@ -18,17 +21,20 @@ import {
   CheckCircle2,
   X,
   DoorOpen,
+  Globe,
 } from 'lucide-react';
 import {
   WALL_TILE_SIZES,
   FLOOR_TILE_SIZES,
   calculateWallCombo,
   calculateFloorTiles,
-  calculateMaterialAndCost,
 } from '../utils/tilesCalculator.ts';
 import { toBanglaNum } from '../utils/bnDigits.ts';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
+import pageContent from '../../content/pages/tiles-calculator.json';
 
 interface RoomRecord {
   id: string;
@@ -86,23 +92,23 @@ export const TilesCalculatorPage: React.FC = () => {
   const [sandPricePerCft, setSandPricePerCft] = useState<number>(45);
   const [groutPricePerKg, setGroutPricePerKg] = useState<number>(130);
 
-  // Success Notification state
+  // Notifications
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // ── Form Input State ──
   const [roomName, setRoomName] = useState<string>('মাস্টার বাথরুম');
 
   // Wall Tile State
-  const [hasWall, setHasWall] = useState<boolean>(true);
   const [wallInputMode, setWallInputMode] = useState<'direct' | 'dimensions'>('direct');
-  const [wallPerimeterFt, setWallPerimeterFt] = useState<number>(50); // four walls perimeter
+  const [wallPerimeterFt, setWallPerimeterFt] = useState<number>(50);
   const [wallDirectSft, setWallDirectSft] = useState<number>(350);
   const [wallHeightFt, setWallHeightFt] = useState<number>(7);
-  const [wallDeductionSft, setWallDeductionSft] = useState<number>(20); // door 3x7=21
+  const [wallDeductionSft, setWallDeductionSft] = useState<number>(20);
   const [wallRatePerSft, setWallRatePerSft] = useState<number>(65);
 
   const [hasSeparateDecorRate, setHasSeparateDecorRate] = useState<boolean>(true);
-  const [decorRatePerPcs, setDecorRatePerPcs] = useState<number>(180); // separate rate per piece for decor
+  const [decorRatePerPcs, setDecorRatePerPcs] = useState<number>(180);
 
   const [selectedWallSizeId, setSelectedWallSizeId] = useState<string>('8x12');
   const [isCustomWallSize, setIsCustomWallSize] = useState<boolean>(false);
@@ -115,7 +121,6 @@ export const TilesCalculatorPage: React.FC = () => {
   const [lightLines, setLightLines] = useState<number>(4);
 
   // Floor Tile State
-  const [hasFloor, setHasFloor] = useState<boolean>(true);
   const [floorInputMode, setFloorInputMode] = useState<'direct' | 'dimensions'>('dimensions');
   const [floorLengthFt, setFloorLengthFt] = useState<number>(8);
   const [floorWidthFt, setFloorWidthFt] = useState<number>(6);
@@ -133,57 +138,20 @@ export const TilesCalculatorPage: React.FC = () => {
   // ── Edit State for Multi-Room ──
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
 
-  // ── Multi-Room House List ──
-  const [houseRooms, setHouseRooms] = useState<RoomRecord[]>([
-    {
-      id: '1',
-      name: 'মাস্টার বাথরুম',
-      hasWall: true,
-      wallAreaSft: 350,
-      wallHeightFt: 7,
-      wallTileSizeName: '৮" × ১২"',
-      wallTileW: 12,
-      wallTileH: 8,
-      wallPcsPerBox: 25,
-      wallRatePerSft: 65,
-      hasSeparateDecorRate: true,
-      decorRatePerPcs: 180,
-      deepLines: 5.5,
-      decorLines: 1,
-      lightLines: 4,
-      deepBoxes: 11,
-      decorBoxes: 2,
-      lightBoxes: 8,
-      deepPcs: 275,
-      decorPcs: 50,
-      lightPcs: 200,
-      wallTotalBoxes: 21,
-      wallTotalPcs: 525,
-      wallCost: (275 + 200) * 0.667 * 65 + 50 * 180,
+  // ── Initial House Rooms (Empty by default) ──
+  const [houseRooms, setHouseRooms] = useState<RoomRecord[]>([]);
 
-      hasFloor: true,
-      floorAreaSft: 48,
-      floorTileSizeName: '১২" × ১২" (বাথরুম ফ্লোর)',
-      floorTileW: 12,
-      floorTileH: 12,
-      floorPcsPerBox: 16,
-      floorRatePerSft: 75,
-      skirtingInches: 4,
-      floorWastagePercent: 5,
-      floorTotalBoxes: 4,
-      floorTotalPcs: 55,
-      floorCost: 48 * 75,
-
-      combinedAreaSft: 398,
-      totalRoomCost: (275 + 200) * 0.667 * 65 + 50 * 180 + 48 * 75,
-      cementBags: Math.round((398 / 100) * 3.2 * 10) / 10,
-      sandCft: Math.round((398 / 100) * 11),
-      groutKg: Math.round((398 / 150) * 10) / 10,
-    },
-  ]);
+  // ── PDF Generation Loading State ──
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState<boolean>(false);
 
   // Copy feedback
   const [copied, setCopied] = useState<boolean>(false);
+
+  const currentlyEditingRoom = useMemo(
+    () => houseRooms.find((r) => r.id === editingRoomId),
+    [houseRooms, editingRoomId]
+  );
 
   // ── Wall Size Handler ──
   const handleWallSizeChange = (id: string) => {
@@ -200,7 +168,6 @@ export const TilesCalculatorPage: React.FC = () => {
       setCustomWallTileH(preset.heightInches);
       setWallPcsPerBox(preset.defaultPcsPerBox);
 
-      // Line breakdown based on height
       const totalLines = (wallHeightFt * 12) / preset.heightInches;
       const defaultDecor = 1;
       const remaining = Math.max(0, totalLines - defaultDecor);
@@ -230,29 +197,29 @@ export const TilesCalculatorPage: React.FC = () => {
   // ── Computed Gross Wall Area ──
   const calculatedWallGrossSft = useMemo(() => {
     if (wallInputMode === 'dimensions') {
-      return wallPerimeterFt * wallHeightFt;
+      return (wallPerimeterFt || 0) * (wallHeightFt || 0);
     }
-    return wallDirectSft;
+    return wallDirectSft || 0;
   }, [wallInputMode, wallPerimeterFt, wallHeightFt, wallDirectSft]);
 
-  const effectiveWallAreaSft = Math.max(0, calculatedWallGrossSft - wallDeductionSft);
+  const effectiveWallAreaSft = Math.max(0, calculatedWallGrossSft - (wallDeductionSft || 0));
 
   // ── Computed Gross Floor Area ──
   const calculatedFloorAreaSft = useMemo(() => {
     if (floorInputMode === 'dimensions') {
-      return floorLengthFt * floorWidthFt;
+      return (floorLengthFt || 0) * (floorWidthFt || 0);
     }
-    return floorDirectSft;
+    return floorDirectSft || 0;
   }, [floorInputMode, floorLengthFt, floorWidthFt, floorDirectSft]);
 
   // ── Live Wall Combo Calculation ──
   const currentWallCombo = useMemo(() => {
     return calculateWallCombo({
       wallAreaSft: effectiveWallAreaSft,
-      wallHeightFt,
-      tileHeightInches: customWallTileH,
-      tileWidthInches: customWallTileW,
-      pcsPerBox: wallPcsPerBox,
+      wallHeightFt: wallHeightFt || 7,
+      tileHeightInches: customWallTileH || 8,
+      tileWidthInches: customWallTileW || 12,
+      pcsPerBox: wallPcsPerBox || 25,
       deepLines,
       decorLines,
       lightLines,
@@ -274,9 +241,9 @@ export const TilesCalculatorPage: React.FC = () => {
   const currentFloorResult = useMemo(() => {
     return calculateFloorTiles({
       directAreaSft: calculatedFloorAreaSft,
-      tileLengthInches: customFloorTileW,
-      tileWidthInches: customFloorTileH,
-      pcsPerBox: floorPcsPerBox,
+      tileLengthInches: customFloorTileW || 12,
+      tileWidthInches: customFloorTileH || 12,
+      pcsPerBox: floorPcsPerBox || 16,
       skirtingHeightInches,
       wastagePercent: floorWastagePercent,
     });
@@ -291,30 +258,29 @@ export const TilesCalculatorPage: React.FC = () => {
 
   // ── Live Cost for Current Room ──
   const currentRoomWallCost = useMemo(() => {
-    if (!hasWall) return 0;
+    if (effectiveWallAreaSft <= 0) return 0;
     if (hasSeparateDecorRate) {
       const nonDecorPieces = currentWallCombo.deep.pieces + currentWallCombo.light.pieces;
       const nonDecorSft = nonDecorPieces * currentWallCombo.sqftPerPiece;
       const nonDecorCost = nonDecorSft * wallRatePerSft;
-      const decorCost = currentWallCombo.decor.pieces * decorRatePerPcs;
+      const decorCost = currentWallCombo.decor.pieces * (decorRatePerPcs || 0);
       return Math.round(nonDecorCost + decorCost);
     }
     return Math.round(effectiveWallAreaSft * wallRatePerSft);
   }, [
-    hasWall,
+    effectiveWallAreaSft,
     hasSeparateDecorRate,
     currentWallCombo,
     wallRatePerSft,
     decorRatePerPcs,
-    effectiveWallAreaSft,
   ]);
 
   const currentRoomFloorCost = useMemo(() => {
-    if (!hasFloor) return 0;
-    return Math.round(currentFloorResult.totalGrossAreaSft * floorRatePerSft);
-  }, [hasFloor, currentFloorResult, floorRatePerSft]);
+    if (calculatedFloorAreaSft <= 0) return 0;
+    return Math.round(currentFloorResult.totalGrossAreaSft * (floorRatePerSft || 0));
+  }, [calculatedFloorAreaSft, currentFloorResult, floorRatePerSft]);
 
-  const currentRoomTotalArea = (hasWall ? effectiveWallAreaSft : 0) + (hasFloor ? currentFloorResult.totalGrossAreaSft : 0);
+  const currentRoomTotalArea = (effectiveWallAreaSft > 0 ? effectiveWallAreaSft : 0) + (calculatedFloorAreaSft > 0 ? currentFloorResult.totalGrossAreaSft : 0);
   const currentRoomTotalCost = currentRoomWallCost + currentRoomFloorCost;
 
   // 150 sft = 1 kg putting / grout
@@ -322,10 +288,15 @@ export const TilesCalculatorPage: React.FC = () => {
   const currentRoomSandCft = Math.round((currentRoomTotalArea / 100) * 11);
   const currentRoomGroutKg = Math.round((currentRoomTotalArea / 150) * 10) / 10;
 
-  // ── Save or Update Room ──
+  // ── Save or Update Room with Flexible SFT Validation ──
   const handleSaveRoom = () => {
-    if (!hasWall && !hasFloor) {
-      alert('অনুগ্রহ করে ওয়াল বা ফ্লোরের মধ্যে অন্তত একটি অপশন নির্বাচন করুন।');
+    setValidationError(null);
+
+    const isWallActive = effectiveWallAreaSft > 0;
+    const isFloorActive = calculatedFloorAreaSft > 0;
+
+    if (!isWallActive && !isFloorActive) {
+      setValidationError('ওয়াল অথবা ফ্লোর টাইলসের অন্তত একটির পরিমাপ (SFT) দিন। দুটোই খালি রেখে রুম যোগ করা যাবে না।');
       return;
     }
 
@@ -337,50 +308,60 @@ export const TilesCalculatorPage: React.FC = () => {
       ? `${customFloorTileH}" × ${customFloorTileW}" (কাস্টম)`
       : FLOOR_TILE_SIZES.find((s) => s.id === selectedFloorSizeId)?.name || '২৪" × ২৪"';
 
+    const roomArea =
+      (isWallActive ? effectiveWallAreaSft : 0) +
+      (isFloorActive ? currentFloorResult.totalGrossAreaSft : 0);
+    const roomCost =
+      (isWallActive ? currentRoomWallCost : 0) +
+      (isFloorActive ? currentRoomFloorCost : 0);
+    const roomCementBags = Math.round((roomArea / 100) * 3.2 * 10) / 10;
+    const roomSandCft = Math.round((roomArea / 100) * 11);
+    const roomGroutKg = Math.round((roomArea / 150) * 10) / 10;
+
     const newRoom: RoomRecord = {
       id: editingRoomId || Date.now().toString(),
       name: roomName.trim() || `রুম ${houseRooms.length + 1}`,
-      hasWall,
-      wallAreaSft: hasWall ? Math.round(effectiveWallAreaSft) : 0,
-      wallHeightFt: hasWall ? wallHeightFt : 0,
-      wallTileSizeName: wallSizeLabel,
+      hasWall: isWallActive,
+      wallAreaSft: isWallActive ? Math.round(effectiveWallAreaSft) : 0,
+      wallHeightFt: isWallActive ? wallHeightFt : 0,
+      wallTileSizeName: isWallActive ? wallSizeLabel : '',
       wallTileW: customWallTileW,
       wallTileH: customWallTileH,
       wallPcsPerBox,
       wallRatePerSft,
       hasSeparateDecorRate,
       decorRatePerPcs,
-      deepLines: hasWall ? deepLines : 0,
-      decorLines: hasWall ? decorLines : 0,
-      lightLines: hasWall ? lightLines : 0,
-      deepBoxes: hasWall ? currentWallCombo.deep.boxes : 0,
-      decorBoxes: hasWall ? currentWallCombo.decor.boxes : 0,
-      lightBoxes: hasWall ? currentWallCombo.light.boxes : 0,
-      deepPcs: hasWall ? currentWallCombo.deep.pieces : 0,
-      decorPcs: hasWall ? currentWallCombo.decor.pieces : 0,
-      lightPcs: hasWall ? currentWallCombo.light.pieces : 0,
-      wallTotalBoxes: hasWall ? currentWallCombo.grandTotalBoxes : 0,
-      wallTotalPcs: hasWall ? currentWallCombo.totalPieces : 0,
-      wallCost: currentRoomWallCost,
+      deepLines: isWallActive ? deepLines : 0,
+      decorLines: isWallActive ? decorLines : 0,
+      lightLines: isWallActive ? lightLines : 0,
+      deepBoxes: isWallActive ? currentWallCombo.deep.boxes : 0,
+      decorBoxes: isWallActive ? currentWallCombo.decor.boxes : 0,
+      lightBoxes: isWallActive ? currentWallCombo.light.boxes : 0,
+      deepPcs: isWallActive ? currentWallCombo.deep.pieces : 0,
+      decorPcs: isWallActive ? currentWallCombo.decor.pieces : 0,
+      lightPcs: isWallActive ? currentWallCombo.light.pieces : 0,
+      wallTotalBoxes: isWallActive ? currentWallCombo.grandTotalBoxes : 0,
+      wallTotalPcs: isWallActive ? currentWallCombo.totalPieces : 0,
+      wallCost: isWallActive ? currentRoomWallCost : 0,
 
-      hasFloor,
-      floorAreaSft: hasFloor ? Math.round(currentFloorResult.totalGrossAreaSft) : 0,
-      floorTileSizeName: floorSizeLabel,
+      hasFloor: isFloorActive,
+      floorAreaSft: isFloorActive ? Math.round(currentFloorResult.totalGrossAreaSft) : 0,
+      floorTileSizeName: isFloorActive ? floorSizeLabel : '',
       floorTileW: customFloorTileW,
       floorTileH: customFloorTileH,
       floorPcsPerBox,
       floorRatePerSft,
       skirtingInches: skirtingHeightInches,
       floorWastagePercent,
-      floorTotalBoxes: hasFloor ? currentFloorResult.totalBoxesNeeded : 0,
-      floorTotalPcs: hasFloor ? currentFloorResult.totalPieces : 0,
-      floorCost: currentRoomFloorCost,
+      floorTotalBoxes: isFloorActive ? currentFloorResult.totalBoxesNeeded : 0,
+      floorTotalPcs: isFloorActive ? currentFloorResult.totalPieces : 0,
+      floorCost: isFloorActive ? currentRoomFloorCost : 0,
 
-      combinedAreaSft: Math.round(currentRoomTotalArea),
-      totalRoomCost: currentRoomTotalCost,
-      cementBags: currentRoomCementBags,
-      sandCft: currentRoomSandCft,
-      groutKg: currentRoomGroutKg,
+      combinedAreaSft: Math.round(roomArea),
+      totalRoomCost: roomCost,
+      cementBags: roomCementBags,
+      sandCft: roomSandCft,
+      groutKg: roomGroutKg,
     };
 
     if (editingRoomId) {
@@ -392,8 +373,8 @@ export const TilesCalculatorPage: React.FC = () => {
       setSuccessMessage(`✓ "${newRoom.name}" সফলভাবে পুরো বাড়ির তালিকায় যোগ হয়েছে!`);
     }
 
-    // ── Clean / Reset Form to default placeholders ──
-    setRoomName(`রুম ${houseRooms.length + 2}`);
+    // ── Form Reset with clean placeholders ──
+    setRoomName('');
     setWallDirectSft(0);
     setWallPerimeterFt(0);
     setWallDeductionSft(0);
@@ -401,7 +382,6 @@ export const TilesCalculatorPage: React.FC = () => {
     setFloorLengthFt(0);
     setFloorWidthFt(0);
 
-    // Auto-scroll to summary after small delay
     setTimeout(() => {
       setSuccessMessage(null);
     }, 4000);
@@ -411,8 +391,6 @@ export const TilesCalculatorPage: React.FC = () => {
   const handleEditRoom = (room: RoomRecord) => {
     setEditingRoomId(room.id);
     setRoomName(room.name);
-    setHasWall(room.hasWall);
-    setHasFloor(room.hasFloor);
 
     if (room.hasWall) {
       setWallInputMode('direct');
@@ -427,6 +405,11 @@ export const TilesCalculatorPage: React.FC = () => {
       setDeepLines(room.deepLines);
       setDecorLines(room.decorLines);
       setLightLines(room.lightLines);
+    } else {
+      setWallInputMode('direct');
+      setWallDirectSft(0);
+      setWallPerimeterFt(0);
+      setWallDeductionSft(0);
     }
 
     if (room.hasFloor) {
@@ -438,6 +421,11 @@ export const TilesCalculatorPage: React.FC = () => {
       setFloorPcsPerBox(room.floorPcsPerBox);
       setSkirtingHeightInches(room.skirtingInches);
       setFloorWastagePercent(room.floorWastagePercent);
+    } else {
+      setFloorInputMode('direct');
+      setFloorDirectSft(0);
+      setFloorLengthFt(0);
+      setFloorWidthFt(0);
     }
 
     window.scrollTo({ top: 120, behavior: 'smooth' });
@@ -492,115 +480,288 @@ export const TilesCalculatorPage: React.FC = () => {
     };
   }, [houseRooms, cementBagPrice, sandPricePerCft, groutPricePerKg, laborCostPerSft]);
 
-  // ── Copy Memo for WhatsApp ──
-  const handleCopyMemo = () => {
-    let message = `📋 *Utools.bd — পুরো বাড়ির টাইলস ও খরচ মেমো*\n\n`;
+  // ── Full Room-by-Room Memo Generator for WhatsApp ──
+  const generateFullMemoText = () => {
+    let message = `📋 *Utools.bd — পুরো বাড়ির টাইলস ও খরচ মেমো*\n`;
+    message += `🔗 *ক্যালকুলেটর টুল লিঙ্ক:* https://utools.bd/tiles-calculator\n`;
+    message += `📅 তারিখ: ${new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}\n`;
+    message += `🏠 মোট রুম: ${toBanglaNum(houseRooms.length)} টি | মোট এরিয়া: ${toBanglaNum(grandTotal.totalArea)} SFT\n`;
+    message += `------------------------------------------\n\n`;
 
     houseRooms.forEach((r, idx) => {
       message += `*${toBanglaNum(idx + 1)}. ${r.name}* (মোট ${toBanglaNum(r.combinedAreaSft)} SFT)\n`;
       if (r.hasWall) {
-        message += `   🧱 ওয়াল টাইলস: ${toBanglaNum(r.wallTotalBoxes)} কার্টন (${r.wallTileSizeName})\n`;
-        message += `      • ডিপ: ${toBanglaNum(r.deepBoxes)} ctn | ডেকোর: ${toBanglaNum(r.decorBoxes)} ctn | লাইট: ${toBanglaNum(r.lightBoxes)} ctn\n`;
+        message += `   🧱 *ওয়াল টাইলস:* ${toBanglaNum(r.wallAreaSft)} SFT [সাইজ: ${r.wallTileSizeName}]\n`;
+        message += `      • মোট কার্টন: ${toBanglaNum(r.wallTotalBoxes)} টি (${toBanglaNum(r.wallTotalPcs)} পিস)\n`;
+        message += `      • ডিপ: ${toBanglaNum(r.deepBoxes)} কার্টন (${toBanglaNum(r.deepPcs)} পিস)\n`;
+        message += `      • ডেকোর: ${toBanglaNum(r.decorBoxes)} কার্টন (${toBanglaNum(r.decorPcs)} পিস)\n`;
+        message += `      • লাইট: ${toBanglaNum(r.lightBoxes)} কার্টন (${toBanglaNum(r.lightPcs)} পিস)\n`;
+        message += `      • ওয়াল টাইলসের দাম: ৳${toBanglaNum(r.wallCost.toLocaleString('bn-BD'))}\n`;
       }
       if (r.hasFloor) {
-        message += `   🏠 ফ্লোর টাইলস: ${toBanglaNum(r.floorTotalBoxes)} কার্টন (${r.floorTileSizeName})\n`;
+        message += `   🏠 *ফ্লোর টাইলস:* ${toBanglaNum(r.floorAreaSft)} SFT [সাইজ: ${r.floorTileSizeName}]\n`;
+        message += `      • মোট কার্টন: ${toBanglaNum(r.floorTotalBoxes)} টি (${toBanglaNum(r.floorTotalPcs)} পিস)\n`;
+        message += `      • ফ্লোর টাইলসের দাম: ৳${toBanglaNum(r.floorCost.toLocaleString('bn-BD'))}\n`;
       }
-      message += `   💰 রুমের টাইলসের দাম: ৳${toBanglaNum(r.totalRoomCost.toLocaleString('bn-BD'))}\n`;
-      message += `   🧱 সিমেন্ট: ${toBanglaNum(r.cementBags)} বস্তা | বালু: ${toBanglaNum(r.sandCft)} CFT\n\n`;
+      message += `   🧱 সিমেন্ট: ${toBanglaNum(r.cementBags)} বস্তা | বালু: ${toBanglaNum(r.sandCft)} CFT | পুটিং: ${toBanglaNum(r.groutKg)} কেজি\n`;
+      message += `   💰 রুমের টাইলসের মোট দাম: ৳${toBanglaNum(r.totalRoomCost.toLocaleString('bn-BD'))}\n\n`;
     });
 
-    message += `---------------------------------\n`;
-    message += `📦 *মোট টাইলস দরকার:* ${toBanglaNum(grandTotal.totalBoxes)} কার্টন\n`;
-    message += `   • ওয়াল টাইলস: ${toBanglaNum(grandTotal.totalWallBoxes)} কার্টন\n`;
-    message += `   • ফ্লোর টাইলস: ${toBanglaNum(grandTotal.totalFloorBoxes)} কার্টন\n`;
-    message += `💰 *টাইলসের মোট দাম:* ৳${toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}\n`;
-    message += `🧱 *প্রয়োজনীয় সিমেন্ট:* ${toBanglaNum(grandTotal.totalCementBags)} বস্তা (৳${toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))})\n`;
-    message += `⏳ *প্রয়োজনীয় বালু:* ${toBanglaNum(grandTotal.totalSandCft)} CFT (৳${toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))})\n`;
-    message += `✨ *পুটিং পাউডার (Grout):* ${toBanglaNum(grandTotal.totalGroutKg)} কেজি (১৫০ SFT-তে ১ কেজি হারে)\n`;
-    message += `🛠️ *মিস্ত্রি মজুরি:* ৳${toBanglaNum(grandTotal.totalLaborCost.toLocaleString('bn-BD'))}\n`;
-    message += `---------------------------------\n`;
-    message += `🏷️ *সর্বমোট প্রজেক্ট বাজেট:* ৳${toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}\n\n`;
-    message += `হিসাবটি তৈরি করা হয়েছে: https://utools.bd/tiles-calculator`;
+    message += `==========================================\n`;
+    message += `📊 *পুরো বাড়ির সর্বমোট হিসাব ও বাজেট:*\n`;
+    message += `📦 মোট টাইলস দরকার: ${toBanglaNum(grandTotal.totalBoxes)} কার্টন`;
+    if (grandTotal.totalWallBoxes > 0 || grandTotal.totalFloorBoxes > 0) {
+      message += ` (ওয়াল ${toBanglaNum(grandTotal.totalWallBoxes)} + ফ্লোর ${toBanglaNum(grandTotal.totalFloorBoxes)})`;
+    }
+    message += `\n`;
+    message += `💰 টাইলসের মোট দাম: ৳${toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}\n`;
+    message += `🧱 প্রয়োজনীয় সিমেন্ট: ${toBanglaNum(grandTotal.totalCementBags)} বস্তা (৳${toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))})\n`;
+    message += `⏳ প্রয়োজনীয় বালু: ${toBanglaNum(grandTotal.totalSandCft)} CFT (৳${toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))})\n`;
+    message += `✨ পুটিং পাউডার: ${toBanglaNum(grandTotal.totalGroutKg)} কেজি (৳${toBanglaNum(grandTotal.totalGroutCost.toLocaleString('bn-BD'))})\n`;
+    message += `🛠️ মিস্ত্রি মজুরি: ৳${toBanglaNum(grandTotal.totalLaborCost.toLocaleString('bn-BD'))}\n`;
+    message += `------------------------------------------\n`;
+    message += `🏷️ *সর্বমোট প্রজেক্ট বাজেট: ৳${toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}*\n\n`;
+    message += `🌐 অনলাইনে এই মেমো বিস্তারিত দেখতে বা এডিট করতে লিংকে যান:\nhttps://utools.bd/tiles-calculator`;
 
-    navigator.clipboard.writeText(message);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    return message;
   };
 
-  const handleWhatsAppShare = () => {
-    handleCopyMemo();
-    const encoded = encodeURIComponent(
-      `Utools.bd টাইলস ও পুরো বাড়ির হিসাব মেমো দেখতে লিংকে যান: https://utools.bd/tiles-calculator`
+  // ── High-Resolution Vector/Canvas PDF Generator ──
+  const generatePdfBlob = async () => {
+    const memoEl = document.getElementById('tiles-memo-print-area');
+    if (!memoEl) throw new Error('Memo element not found');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const html2canvasModule: any = await import('html2canvas-pro');
+    const html2canvas = html2canvasModule.default || html2canvasModule;
+    const { jsPDF } = await import('jspdf');
+
+    // Position clean export container temporarily at top-left behind page to avoid html2canvas negative offset clipping
+    memoEl.style.left = '0px';
+    memoEl.style.top = '0px';
+    memoEl.style.opacity = '1';
+    memoEl.style.zIndex = '-9999';
+
+    try {
+      const canvas = await html2canvas(memoEl, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        width: 794,
+        windowWidth: 794,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true,
+      });
+
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 8; // 8mm safe margin prevents any border clipping
+      const printWidth = pageWidth - margin * 2; // 194mm printable width
+      const maxPageContentHeight = pageHeight - margin * 2; // 281mm printable height
+      const imgHeight = (canvas.height * printWidth) / canvas.width;
+
+      if (imgHeight <= maxPageContentHeight) {
+        pdf.addImage(imgData, 'JPEG', margin, margin, printWidth, imgHeight, undefined, 'FAST');
+      } else {
+        let position = margin;
+        let remainingHeight = imgHeight;
+        let pageIdx = 0;
+        while (remainingHeight > 0) {
+          if (pageIdx > 0) {
+            pdf.addPage([pageWidth, pageHeight], 'portrait');
+          }
+          pdf.addImage(imgData, 'JPEG', margin, position, printWidth, imgHeight, undefined, 'FAST');
+          remainingHeight -= maxPageContentHeight;
+          position -= maxPageContentHeight;
+          pageIdx++;
+        }
+      }
+
+      // Add clickable tool link annotation on the PDF header area
+      try {
+        pdf.link(margin + 5, margin + 12, 100, 8, { url: 'https://utools.bd/tiles-calculator' });
+      } catch {
+        // Safe fallback
+      }
+
+      const filename = `Utools_Tiles_Memo_${Date.now().toString().slice(-6)}.pdf`;
+      const blob = pdf.output('blob');
+      return { blob, filename, pdf, canvas };
+    } finally {
+      memoEl.style.left = '-9999px';
+      memoEl.style.top = '0px';
+      memoEl.style.opacity = '0';
+      memoEl.style.zIndex = '-9999';
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (houseRooms.length === 0) {
+      setValidationError('PDF ডাউনলোডের আগে অনুগ্রহ করে কমপক্ষে একটি রুম যোগ করুন।');
+      return;
+    }
+    setIsGeneratingPdf(true);
+    try {
+      const { pdf, filename } = await generatePdfBlob();
+      pdf.save(filename);
+      setSuccessMessage('✓ A4 সাইজ PDF মেমো সফলভাবে ডাউনলোড হয়েছে!');
+      setTimeout(() => setSuccessMessage(null), 4000);
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      setValidationError('PDF মেমো তৈরিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  // ── WhatsApp Share Routing (Mobile vs Desktop) ──
+  const handleWhatsAppButtonClick = () => {
+    if (houseRooms.length === 0) {
+      setValidationError('WhatsApp এ মেমো পাঠানোর আগে অনুগ্রহ করে কমপক্ষে একটি রুম যোগ করুন।');
+      return;
+    }
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
     );
-    window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+    if (isMobileDevice) {
+      handleNativePdfShare();
+    } else {
+      setShowWhatsAppModal(true);
+    }
   };
 
-  // SEO FAQs
-  const seoFaqs = [
-    {
-      question: '১০০ স্কয়ার ফিট টাইলস বসাতে কত বস্তা সিমেন্ট ও বালু লাগে?',
-      answer:
-        'বাংলাদেশে পিডব্লিউডি (PWD) ও অভিজ্ঞ রাজমিস্ত্রিদের হিসাব অনুযায়ী প্রতি ১০০ স্কয়ার ফিট টাইলসের বেড মসলা (১:৪ অনুপাতে ১ ইঞ্চি পুরু) এবং টাইলসের নিচে সিমেন্টের পেস্টের জন্য গড়ে ৩.০ থেকে ৩.৫ বস্তা সিমেন্ট এবং ১০ থেকে ১২ সিএফটি (CFT) সিলেট বা প্লাস্টারিং বালু প্রয়োজন হয়।',
-    },
-    {
-      question: 'টাইলসের পুটিং বা গ্রাউট পাউডার কত স্কয়ার ফিটে ১ কেজি লাগে?',
-      answer:
-        'প্রমিত হিসাব অনুযায়ী প্রতি ১৫০ স্কয়ার ফিট টাইলসের জোড়া বা গ্রাউটিং লাইনের ফাঁকা ভরতে গড়ে প্রায় ১ কেজি পুটিং পাউডার (Tile Grout) প্রয়োজন হয়। বড় সাইজের টাইলস (যেমন ২৪"×২৪") হলে জয়েন্ট কম থাকায় ১৫০ থেকে ১৭০ স্কয়ার ফিট এবং ছোট টাইলস হলে প্রায় ১২০ থেকে ১৫০ স্কয়ার ফিটে ১ কেজি পুটিং লাগে।',
-    },
-    {
-      question: 'ওয়াল টাইলসে ডেকোর (Décor) টাইলসের দাম কেন আলাদা হিসাব করা হয়?',
-      answer:
-        'সাধারণ ওয়াল টাইলস (ডিপ ও লাইট) স্কয়ার ফিট বা কার্টন হিসেবে বিক্রি হলেও ডেকোর/বর্ডার টাইলস আলাদা ডিজাইনার আইটেম হওয়ায় অধিকাংশ শোরুমে পিস হিসেবে (যেমন ১৫০ থেকে ৩০০ টাকা প্রতি পিস) বিক্রি হয়। তাই সাধারণ টাইলসের রেটের সাথে ডেকোরের আলাদা দর গুণ করে সঠিক বাজেট বের করা জরুরি।',
-    },
-    {
-      question: 'ওয়াল টাইলসে দরজা ও জানালার মাপ কীভাবে বাদ দেওয়া হয়?',
-      answer:
-        'চার দেয়ালের মোট ক্ষেত্রফল (দৈর্ঘ্য × উচ্চতা) বের করার পর বাথরুমের দরজা (সাধারণত ২.৫\' × ৭\' = ১৭.৫ SFT) এবং ভেন্টিলেটর বা জানালা (২\' × ২\' = ৪ SFT) থাকলে সেই মাপটুকু মোট ক্ষেত্রফল থেকে বিয়োগ করে নিট ওয়াল এরিয়া বের করতে হয়। এতে অপ্রয়োজনীয় বাড়তি টাইলস কেনা এড়ানো যায়।',
-    },
-    {
-      question: '১ কার্টন টাইলসে কত স্কয়ার ফিট থাকে?',
-      answer:
-        'বাংলাদেশে টাইলসের সাইজ অনুযায়ী প্রতি কার্টনের ক্ষেত্রফল নির্ধারিত হয়। যেমন: ৮"×১২" বাথরুম টাইলসে ২৫ পিস (১৬.৬৭ স্কয়ার ফিট), ১০"×১৬" সাইজে ১৫ পিস (১৬.৬৭ স্কয়ার ফিট), ১২"×১৮" সাইজে ১০ পিস (১৫ স্কয়ার ফিট), এবং জনপ্রিয় ২×২ ফিট (২৪"×২৪") ফ্লোর টাইলসের প্রতি বক্সে ৪ পিস অর্থাৎ ঠিক ১৬ স্কয়ার ফিট থাকে।',
-    },
-  ];
+  // ── WhatsApp Web Sharing (Desktop Browser) ──
+  const handleWhatsAppWebShare = async () => {
+    setShowWhatsAppModal(false);
+    setIsGeneratingPdf(true);
+    try {
+      const { filename, pdf, canvas } = await generatePdfBlob();
+
+      // 1. Download PDF directly to user's computer
+      pdf.save(filename);
+
+      // 2. Copy visual memo image to clipboard for instant Ctrl+V in WhatsApp Web
+      try {
+        canvas.toBlob(async (pngBlob) => {
+          if (pngBlob && typeof navigator.clipboard?.write === 'function') {
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': pngBlob }),
+              ]);
+            } catch (err) {
+              console.log('Clipboard copy skipped:', err);
+            }
+          }
+        }, 'image/png');
+      } catch {}
+
+      // 3. Compact message focusing on tool link and PDF memo
+      const toolUrl = 'https://utools.bd/tiles-calculator';
+      let compactMessage = `📋 *Utools.bd — পুরো বাড়ির টাইলস ও খরচ মেমো*\n`;
+      compactMessage += `🔗 *ক্যালকুলেটর লিঙ্ক:* ${toolUrl}\n\n`;
+      compactMessage += `📅 তারিখ: ${new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}\n`;
+      compactMessage += `🏠 মোট রুম: ${toBanglaNum(houseRooms.length)} টি | মোট এরিয়া: ${toBanglaNum(grandTotal.totalArea)} SFT\n`;
+      compactMessage += `📦 মোট টাইলস দরকার: ${toBanglaNum(grandTotal.totalBoxes)} কার্টন\n`;
+      compactMessage += `🏷️ *সর্বমোট প্রজেক্ট বাজেট: ৳${toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}*\n\n`;
+      compactMessage += `📎 *রুমভিত্তিক পূর্ণাঙ্গ হিসাব বিবরণী বিস্তারিত PDF ফাইলে ডাউনলোড হয়েছে।* চ্যাটে ডাউনলোড হওয়া PDF ফাইলটি যুক্ত (📎) করুন অথবা সরাসরি Ctrl+V চেপে পেস্ট করে দিন।`;
+
+      const encoded = encodeURIComponent(compactMessage);
+      window.open(`https://web.whatsapp.com/send?text=${encoded}`, '_blank');
+
+      setSuccessMessage(
+        '✓ A4 PDF মেমোটি ডাউনলোড হয়েছে এবং WhatsApp Web ওপেন হচ্ছে! চ্যাটে ডাউনলোড হওয়া PDF ফাইলটি ড্র্যাগ/সংযুক্ত করুন অথবা Ctrl+V চাপুন।'
+      );
+      setTimeout(() => setSuccessMessage(null), 8000);
+    } catch (err) {
+      console.error('WhatsApp Web share error:', err);
+      setValidationError('মেমো তৈরিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  // ── WhatsApp App Direct PDF File Share (Mobile / Windows Native Share) ──
+  const handleNativePdfShare = async () => {
+    setShowWhatsAppModal(false);
+    setIsGeneratingPdf(true);
+    try {
+      const { blob, filename } = await generatePdfBlob();
+      const pdfFile = new File([blob], filename, { type: 'application/pdf' });
+      const toolUrl = 'https://utools.bd/tiles-calculator';
+      const shareText = `📋 *Utools.bd — পুরো বাড়ির টাইলস ও খরচ মেমো*\n🔗 *ক্যালকুলেটর লিঙ্ক:* ${toolUrl}\n\n(রুমভিত্তিক পূর্ণাঙ্গ হিসাব মেমো এই PDF ফাইলে সংযুক্ত)`;
+
+      if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        await navigator.share({
+          files: [pdfFile],
+          title: 'টাইলস ও নির্মাণ মেমো (Utools.bd)',
+          text: shareText,
+        });
+        setSuccessMessage('✓ WhatsApp / অ্যাপে সরাসরি PDF মেমো ফাইল সংযুক্ত করে শেয়ার করা হয়েছে!');
+        setTimeout(() => setSuccessMessage(null), 4000);
+      } else {
+        handleWhatsAppWebShare();
+      }
+    } catch (err: any) {
+      if (err?.name === 'AbortError') return;
+      console.error('Native share error:', err);
+      handleWhatsAppWebShare();
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  const handlePrint = () => {
+    if (houseRooms.length === 0) {
+      setValidationError('প্রিন্ট করার আগে অনুগ্রহ করে কমপক্ষে একটি রুম যোগ করুন।');
+      return;
+    }
+    window.print();
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+    <>
+      <div className="no-print max-w-6xl mx-auto px-4 py-8 sm:py-12">
       <ToolSeoHead
-        title="টাইলস ক্যালকুলেটর — ওয়াল কম্বো, ফ্লোর টাইলস কার্টন ও পুরো বাড়ির খরচ হিসাব | Utools.bd"
-        description="ওয়াল টাইলসের ডিপ-ডেকোর-লাইট কম্বো, ডেকোর আলাদা রেট, ফ্লোর টাইলস, দরজা-জানালা বাদ, সিমেন্ট-বালু ও পুটিংয়ের সঠিক হিসাব।"
+        title={pageContent.metaTitle}
+        description={pageContent.metaDescription}
         canonicalUrl="https://utools.bd/tiles-calculator"
-        toolName="টাইলস ক্যালকুলেটর (Tiles Calculator BD)"
+        toolName={pageContent.title}
         categoryName="ক্যালকুলেটর"
-        categoryPath="/calculator"
-        faqs={seoFaqs}
+        categoryPath="/"
+        faqs={pageContent.faqs}
+        ratingValue="4.9"
+        reviewCount="1480"
       />
 
-      {/* Back button */}
-      <div className="mb-6">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#4A5A52] hover:text-[#0B5D3B] transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> সকল টুলসে ফিরে যান
-        </Link>
-      </div>
+      {/* Standard Tool Breadcrumb & Privacy Badge */}
+      <ToolBreadcrumb
+        toolName="টাইলস ক্যালকুলেটর"
+        categoryName="ক্যালকুলেটর"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
+      />
 
       {/* Hero Header */}
       <div className="text-center max-w-3xl mx-auto mb-8">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#E6F4EC] text-[#0B5D3B] border border-[#0B5D3B]/20 mb-3">
           <Grid className="w-4 h-4" />
-          <span>ওয়াল কম্বো • ফ্লোর • ডেকোর রেট • সিমেন্ট-বালু • পুরো বাড়ি</span>
+          <span>ওয়াল কম্বো • ফ্লোর • ডেকোর রেট • সিমেন্ট-বালু • পুটিং • পুরো বাড়ি</span>
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0F1F17] tracking-tight mb-3">
-          টাইলস ক্যালকুলেটর <span className="text-[#0B5D3B]">(Tiles Calculator BD)</span>
+          {pageContent.title}
         </h1>
         <p className="text-base text-[#4A5A52] leading-relaxed">
-          প্রতিটি রুমের ওয়াল ও ফ্লোর টাইলস একসাথে হিসাব করুন, ডেকোরের আলাদা দর দিন এবং এক ক্লিকে পুরো বাড়ির সিমেন্ট-বালুসহ পূর্ণাঙ্গ মেমো তৈরি করুন।
+          {pageContent.subtitle}
         </p>
       </div>
 
-      {/* Success Toast / Notification */}
+      {/* Success Notification */}
       {successMessage && (
         <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-300 flex items-center justify-between gap-3 text-emerald-900 shadow-sm animate-fade-in">
           <div className="flex items-center gap-2 text-sm font-bold">
@@ -617,21 +778,40 @@ export const TilesCalculatorPage: React.FC = () => {
         </div>
       )}
 
+      {/* Validation Error Message */}
+      {validationError && (
+        <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-300 flex items-center justify-between gap-3 text-red-900 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-2 text-sm font-bold">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+            <span>{validationError}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setValidationError(null)}
+            className="p-1 hover:bg-red-100 rounded-lg text-red-700"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Edit Mode Banner */}
       {editingRoomId && (
         <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-amber-900 text-sm font-semibold">
             <Edit2 className="w-4 h-4 text-amber-700 shrink-0" />
             <span>
-              আপনি <strong>"{houseRooms.find((r) => r.id === editingRoomId)?.name}"</strong> এডিট করছেন।
-              মাপ পরিবর্তন করে নিচের <strong>"✓ পরিবর্তন সংরক্ষণ করুন"</strong> বাটনে চাপুন।
+              আপনি <strong>"{currentlyEditingRoom?.name}"</strong> এডিট করছেন।
+              পূর্বের মাপ পরিবর্তন করতে পারেন, অথবা পূর্বে না থাকা ওয়াল/ফ্লোরের মাপ লিখে নতুন করে যুক্ত করে নিচের <strong>"✓ পরিবর্তন সংরক্ষণ করুন"</strong> বাটনে চাপুন।
             </span>
           </div>
           <button
             type="button"
             onClick={() => {
               setEditingRoomId(null);
-              setRoomName(`রুম ${houseRooms.length + 1}`);
+              setRoomName('');
+              setWallDirectSft(0);
+              setFloorDirectSft(0);
             }}
             className="text-xs px-3 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-lg font-bold"
           >
@@ -643,47 +823,29 @@ export const TilesCalculatorPage: React.FC = () => {
       {/* ── UNIFIED ROOM BUILDER FORM (Wall + Floor Together) ── */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-8 mb-12">
         {/* Room Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-          <div className="flex-1 min-w-[240px]">
-            <label className="block text-xs font-bold text-[#0F1F17] mb-1.5 uppercase tracking-wider">
-              ১. রুমের নাম নির্ধারণ করুন:
-            </label>
-            <input
-              type="text"
-              value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-base text-[#0F1F17] focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
-              placeholder="যেমন: মাস্টার বাথরুম, কিচেন, ড্রয়িং রুম"
-            />
-          </div>
-          <div className="flex items-center gap-4 pt-4 sm:pt-0">
-            <label className="flex items-center gap-2 text-sm font-bold text-[#0F1F17] cursor-pointer">
-              <input
-                type="checkbox"
-                checked={hasWall}
-                onChange={(e) => setHasWall(e.target.checked)}
-                className="w-4 h-4 text-[#0B5D3B] rounded-sm focus:ring-[#0B5D3B]"
-              />
-              🧱 ওয়াল টাইলস আছে
-            </label>
-            <label className="flex items-center gap-2 text-sm font-bold text-[#0F1F17] cursor-pointer">
-              <input
-                type="checkbox"
-                checked={hasFloor}
-                onChange={(e) => setHasFloor(e.target.checked)}
-                className="w-4 h-4 text-[#0B5D3B] rounded-sm focus:ring-[#0B5D3B]"
-              />
-              🏠 ফ্লোর টাইলস আছে
-            </label>
-          </div>
+        <div className="pb-4 border-b border-[#D5E4DB]">
+          <label className="block text-xs font-bold text-[#0F1F17] mb-1.5 uppercase tracking-wider">
+            ১. রুমের নাম নির্ধারণ করুন:
+          </label>
+          <input
+            type="text"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+            className="w-full px-4 py-2.5 rounded-xl border border-[#D5E4DB] bg-[#FAFAF7] font-bold text-base text-[#0F1F17] focus:outline-hidden focus:ring-2 focus:ring-[#0B5D3B]"
+            placeholder="রুমের নাম লিখুন (যেমন: মাস্টার বাথরুম, কিচেন, বেডরুম ১)"
+          />
         </div>
 
         {/* ── SECTION A: WALL TILES COMBO ── */}
-        {hasWall && (
-          <div className="p-6 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#0F1F17] flex items-center gap-2">
+        <div className="p-6 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h3 className="text-base font-bold text-[#0F1F17] flex items-center gap-2 flex-wrap">
                 <Layers className="w-5 h-5 text-[#0B5D3B]" /> ওয়াল টাইলস কম্বো (Wall Tiles Combo)
+                {currentlyEditingRoom && !currentlyEditingRoom.hasWall && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                    + নতুন ওয়াল যোগ করতে মাপ দিন
+                  </span>
+                )}
               </h3>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#E6F4EC] text-[#0B5D3B]">
                 ডিপ-ডেকোর-লাইট অনুপাত
@@ -728,7 +890,7 @@ export const TilesCalculatorPage: React.FC = () => {
                       value={wallDirectSft || ''}
                       onChange={(e) => setWallDirectSft(Math.max(0, Number(e.target.value)))}
                       className="w-full pl-3 pr-12 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-[#0B5D3B] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      placeholder="৩৫০"
+                      placeholder="ওয়ালের SFT লিখুন (যেমন: ৩৫০)"
                     />
                     <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
                       SFT
@@ -747,7 +909,7 @@ export const TilesCalculatorPage: React.FC = () => {
                       value={wallPerimeterFt || ''}
                       onChange={(e) => setWallPerimeterFt(Math.max(0, Number(e.target.value)))}
                       className="w-full pl-3 pr-12 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      placeholder="৫০"
+                      placeholder="চার দেয়ালের পরিধি (ফিট)"
                     />
                     <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
                       ফিট
@@ -768,7 +930,7 @@ export const TilesCalculatorPage: React.FC = () => {
                     value={wallHeightFt || ''}
                     onChange={(e) => setWallHeightFt(Math.max(1, Number(e.target.value)))}
                     className="w-full pl-3 pr-12 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    placeholder="৭"
+                    placeholder="উচ্চতা (যেমন: ৭)"
                   />
                   <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
                     ফিট
@@ -789,7 +951,7 @@ export const TilesCalculatorPage: React.FC = () => {
                     value={wallDeductionSft || ''}
                     onChange={(e) => setWallDeductionSft(Math.max(0, Number(e.target.value)))}
                     className="w-full pl-3 pr-12 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-red-600 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    placeholder="২০"
+                    placeholder="বাদ দেওয়ার মাপ (যেমন: ২০)"
                   />
                   <span className="absolute right-3 text-xs font-bold text-[#4A5A52] pointer-events-none">
                     SFT
@@ -810,7 +972,7 @@ export const TilesCalculatorPage: React.FC = () => {
                     value={wallRatePerSft || ''}
                     onChange={(e) => setWallRatePerSft(Math.max(0, Number(e.target.value)))}
                     className="w-full pl-3 pr-14 py-2 rounded-lg border border-[#D5E4DB] font-bold text-[#0B5D3B] text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    placeholder="৬৫"
+                    placeholder="যেমন: ৬৫"
                   />
                   <span className="absolute right-3 text-xs font-semibold text-[#4A5A52]">৳/SFT</span>
                 </div>
@@ -838,7 +1000,7 @@ export const TilesCalculatorPage: React.FC = () => {
                       value={decorRatePerPcs || ''}
                       onChange={(e) => setDecorRatePerPcs(Math.max(0, Number(e.target.value)))}
                       className="w-full pl-3 pr-16 py-2 rounded-lg border border-amber-300 bg-amber-50/50 font-bold text-amber-900 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      placeholder="১৮০"
+                      placeholder="যেমন: ১৮০"
                     />
                     <span className="absolute right-3 text-xs font-semibold text-amber-800">৳/পিস</span>
                   </div>
@@ -999,21 +1161,24 @@ export const TilesCalculatorPage: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
 
         {/* ── SECTION B: FLOOR TILES ── */}
-        {hasFloor && (
-          <div className="p-6 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#0F1F17] flex items-center gap-2">
+        <div className="p-6 rounded-2xl bg-[#F8FAF9] border border-[#D5E4DB] space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h3 className="text-base font-bold text-[#0F1F17] flex items-center gap-2 flex-wrap">
                 <Grid className="w-5 h-5 text-[#0B5D3B]" /> ফ্লোর টাইলস পরিমাপ (Floor Tiles)
+                {currentlyEditingRoom && !currentlyEditingRoom.hasFloor && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                    + নতুন ফ্লোর যোগ করতে মাপ দিন
+                  </span>
+                )}
               </h3>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#E6F4EC] text-[#0B5D3B]">
                 ফ্লোর ও স্কার্টিং
               </span>
             </div>
 
-            {/* Input Mode: SFT or Dimensions */}
+            {/* Input Mode: Dimensions or SFT */}
             <div className="flex gap-4 text-xs font-semibold">
               <label className="flex items-center gap-2 cursor-pointer text-[#0F1F17]">
                 <input
@@ -1048,7 +1213,7 @@ export const TilesCalculatorPage: React.FC = () => {
                       value={floorLengthFt || ''}
                       onChange={(e) => setFloorLengthFt(Math.max(0, Number(e.target.value)))}
                       className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      placeholder="৮"
+                      placeholder="দৈর্ঘ্য লিখুন (ফিট)"
                     />
                   </div>
                   <div>
@@ -1059,7 +1224,7 @@ export const TilesCalculatorPage: React.FC = () => {
                       value={floorWidthFt || ''}
                       onChange={(e) => setFloorWidthFt(Math.max(0, Number(e.target.value)))}
                       className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      placeholder="৬"
+                      placeholder="প্রস্থ লিখুন (ফিট)"
                     />
                   </div>
                 </>
@@ -1072,7 +1237,7 @@ export const TilesCalculatorPage: React.FC = () => {
                     value={floorDirectSft || ''}
                     onChange={(e) => setFloorDirectSft(Math.max(0, Number(e.target.value)))}
                     className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    placeholder="৪৮"
+                    placeholder="ফ্লোরের SFT লিখুন (যেমন: ৪৮)"
                   />
                 </div>
               )}
@@ -1084,7 +1249,7 @@ export const TilesCalculatorPage: React.FC = () => {
                   value={floorRatePerSft || ''}
                   onChange={(e) => setFloorRatePerSft(Math.max(0, Number(e.target.value)))}
                   className="w-full px-3 py-2 rounded-xl border border-[#D5E4DB] bg-white font-bold text-[#0B5D3B] text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  placeholder="৮০"
+                  placeholder="যেমন: ৮০"
                 />
               </div>
             </div>
@@ -1193,7 +1358,6 @@ export const TilesCalculatorPage: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
 
         {/* ── Action Button: Save Room ── */}
         <div className="pt-2">
@@ -1321,10 +1485,10 @@ export const TilesCalculatorPage: React.FC = () => {
                   </div>
 
                   <div className="mt-3 space-y-2 text-xs">
-                    {/* Wall breakdown if room has wall */}
+                    {/* Wall breakdown ONLY if room has wall */}
                     {room.hasWall && (
                       <div className="p-2.5 rounded-xl bg-white border border-[#D5E4DB]/70 space-y-1">
-                        <div className="flex justify-between font-bold text-[#0F1F17]">
+                        <div className="flex justify-between items-center font-bold text-[#0F1F17]">
                           <span>🧱 ওয়াল টাইলস ({room.wallTileSizeName}):</span>
                           <span className="text-[#0B5D3B]">{toBanglaNum(room.wallTotalBoxes)} কার্টন</span>
                         </div>
@@ -1339,10 +1503,10 @@ export const TilesCalculatorPage: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Floor breakdown if room has floor */}
+                    {/* Floor breakdown ONLY if room has floor */}
                     {room.hasFloor && (
                       <div className="p-2.5 rounded-xl bg-white border border-[#D5E4DB]/70 space-y-1">
-                        <div className="flex justify-between font-bold text-[#0F1F17]">
+                        <div className="flex justify-between items-center font-bold text-[#0F1F17]">
                           <span>🏠 ফ্লোর টাইলস ({room.floorTileSizeName}):</span>
                           <span className="text-[#0B5D3B]">{toBanglaNum(room.floorTotalBoxes)} কার্টন</span>
                         </div>
@@ -1353,18 +1517,22 @@ export const TilesCalculatorPage: React.FC = () => {
                     )}
 
                     {/* Materials for this room (150 sft = 1kg grout) */}
-                    <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                      <div className="p-2 bg-white rounded-lg border border-[#D5E4DB]/60">
-                        <div className="text-[10px] text-[#4A5A52]">টাইলস মোট দাম</div>
-                        <div className="font-bold text-[#0F1F17]">৳{toBanglaNum(room.totalRoomCost.toLocaleString('bn-BD'))}</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
+                      <div className="p-2 bg-white rounded-xl border border-[#D5E4DB]/80 shadow-2xs">
+                        <div className="text-[10px] text-[#4A5A52] font-medium">টাইলস মোট দাম</div>
+                        <div className="font-bold text-xs text-[#0F1F17] mt-0.5">৳{toBanglaNum(room.totalRoomCost.toLocaleString('bn-BD'))}</div>
                       </div>
-                      <div className="p-2 bg-white rounded-lg border border-[#D5E4DB]/60">
-                        <div className="text-[10px] text-[#4A5A52]">সিমেন্ট দরকার</div>
-                        <div className="font-bold text-[#0B5D3B]">{toBanglaNum(room.cementBags)} বস্তা</div>
+                      <div className="p-2 bg-white rounded-xl border border-[#D5E4DB]/80 shadow-2xs">
+                        <div className="text-[10px] text-[#4A5A52] font-medium">সিমেন্ট দরকার</div>
+                        <div className="font-bold text-xs text-[#0B5D3B] mt-0.5">{toBanglaNum(room.cementBags)} বস্তা</div>
                       </div>
-                      <div className="p-2 bg-white rounded-lg border border-[#D5E4DB]/60">
-                        <div className="text-[10px] text-[#4A5A52]">বালু দরকার</div>
-                        <div className="font-bold text-[#0B5D3B]">{toBanglaNum(room.sandCft)} CFT</div>
+                      <div className="p-2 bg-white rounded-xl border border-[#D5E4DB]/80 shadow-2xs">
+                        <div className="text-[10px] text-[#4A5A52] font-medium">বালু দরকার</div>
+                        <div className="font-bold text-xs text-[#0B5D3B] mt-0.5">{toBanglaNum(room.sandCft)} CFT</div>
+                      </div>
+                      <div className="p-2 bg-white rounded-xl border border-[#D5E4DB]/80 shadow-2xs">
+                        <div className="text-[10px] text-[#4A5A52] font-medium">পুটিং দরকার</div>
+                        <div className="font-bold text-xs text-emerald-700 mt-0.5">{toBanglaNum(room.groutKg)} কেজি</div>
                       </div>
                     </div>
                   </div>
@@ -1375,83 +1543,184 @@ export const TilesCalculatorPage: React.FC = () => {
         )}
 
         {/* ── Grand Total Memo Card ── */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#0B5D3B] text-white shadow-lg space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-emerald-600/60">
-            <div>
-              <div className="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
-                পুরো বাড়ির সর্বমোট হিসাব ও বাজেট
+        {houseRooms.length > 0 && (
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#0B5D3B] text-white shadow-lg space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-emerald-600/60">
+              <div>
+                <div className="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+                  পুরো বাড়ির সর্বমোট হিসাব ও বাজেট
+                </div>
+                <div className="text-3xl sm:text-4xl font-black mt-1">
+                  {toBanglaNum(grandTotal.totalBoxes)} কার্টন টাইলস
+                </div>
+                <div className="text-xs text-emerald-100 mt-1">
+                  {grandTotal.totalWallBoxes > 0 && `ওয়াল: ${toBanglaNum(grandTotal.totalWallBoxes)} কার্টন • `}
+                  {grandTotal.totalFloorBoxes > 0 && `ফ্লোর: ${toBanglaNum(grandTotal.totalFloorBoxes)} কার্টন • `}
+                  মোট এরিয়া: {toBanglaNum(grandTotal.totalArea)} SFT
+                </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-black mt-1">
-                {toBanglaNum(grandTotal.totalBoxes)} কার্টন টাইলস
-              </div>
-              <div className="text-xs text-emerald-100 mt-1">
-                ওয়াল: {toBanglaNum(grandTotal.totalWallBoxes)} কার্টন • ফ্লোর: {toBanglaNum(grandTotal.totalFloorBoxes)} কার্টন • মোট এরিয়া: {toBanglaNum(grandTotal.totalArea)} SFT
+              <div className="text-right">
+                <div className="text-xs text-emerald-200">সর্বমোট প্রজেক্ট বাজেট:</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">
+                  ৳{toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-xs text-emerald-200">সর্বমোট প্রজেক্ট বাজেট:</div>
-              <div className="text-2xl sm:text-3xl font-black text-amber-300">
-                ৳{toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}
+
+            {/* Material Totals Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+                <div className="text-emerald-200">টাইলসের মোট দাম</div>
+                <div className="text-base sm:text-lg font-bold text-white mt-1">
+                  ৳{toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}
+                </div>
               </div>
+              <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+                <div className="text-emerald-200">মোট সিমেন্ট দরকার</div>
+                <div className="text-base sm:text-lg font-bold text-white mt-1">
+                  {toBanglaNum(grandTotal.totalCementBags)} বস্তা
+                </div>
+                <div className="text-[10px] text-emerald-200 mt-0.5">
+                  (৳{toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))})
+                </div>
+              </div>
+              <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+                <div className="text-emerald-200">মোট বালু দরকার</div>
+                <div className="text-base sm:text-lg font-bold text-white mt-1">
+                  {toBanglaNum(grandTotal.totalSandCft)} CFT
+                </div>
+                <div className="text-[10px] text-emerald-200 mt-0.5">
+                  (৳{toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))})
+                </div>
+              </div>
+              <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
+                <div className="text-emerald-200">পুটিং পাউডার (১৫০ SFT/১kg)</div>
+                <div className="text-base sm:text-lg font-bold text-white mt-1">
+                  {toBanglaNum(grandTotal.totalGroutKg)} কেজি
+                </div>
+                <div className="text-[10px] text-emerald-200 mt-0.5">
+                  (৳{toBanglaNum(grandTotal.totalGroutCost.toLocaleString('bn-BD'))})
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons: PDF, Print, WhatsApp */}
+            <div className="pt-2 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={isGeneratingPdf}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-white text-[#0B5D3B] text-sm font-bold hover:bg-emerald-50 transition-colors shadow-sm active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                title="সরাসরি A4 PDF মেমো ফাইল ডাউনলোড করুন"
+              >
+                {isGeneratingPdf ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-[#0B5D3B]" />
+                ) : (
+                  <Download className="w-4 h-4 text-[#0B5D3B]" />
+                )}
+                {isGeneratingPdf ? 'PDF তৈরি হচ্ছে...' : 'PDF ডাউনলোড'}
+              </button>
+              <button
+                type="button"
+                onClick={handlePrint}
+                disabled={isGeneratingPdf}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-white text-[#0B5D3B] text-sm font-bold hover:bg-emerald-50 transition-colors shadow-sm active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                <Printer className="w-4 h-4 text-[#0B5D3B]" /> প্রিন্ট মেমো
+              </button>
+              <button
+                type="button"
+                onClick={handleWhatsAppButtonClick}
+                disabled={isGeneratingPdf}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#20BD5A] transition-colors shadow-sm active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isGeneratingPdf ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                ) : (
+                  <Share2 className="w-4 h-4" />
+                )}
+                {isGeneratingPdf ? 'প্রসেসিং হচ্ছে...' : 'WhatsApp এ মেমো পাঠান'}
+              </button>
             </div>
           </div>
+        )}
 
-          {/* Material Totals Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
-              <div className="text-emerald-200">টাইলসের মোট দাম</div>
-              <div className="text-base sm:text-lg font-bold text-white mt-1">
-                ৳{toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}
-              </div>
+      {/* ── WhatsApp Sharing Choice Modal (Desktop) ── */}
+      {showWhatsAppModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl border border-emerald-200 space-y-5 animate-scale-in">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+              <h3 className="font-bold text-base text-[#0F1F17] flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-[#25D366]" /> WhatsApp এ মেমো পাঠানোর মাধ্যম
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowWhatsAppModal(false)}
+                className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
-              <div className="text-emerald-200">মোট সিমেন্ট দরকার</div>
-              <div className="text-base sm:text-lg font-bold text-white mt-1">
-                {toBanglaNum(grandTotal.totalCementBags)} বস্তা
-              </div>
-              <div className="text-[10px] text-emerald-200 mt-0.5">
-                (৳{toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))})
-              </div>
-            </div>
-            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
-              <div className="text-emerald-200">মোট বালু দরকার</div>
-              <div className="text-base sm:text-lg font-bold text-white mt-1">
-                {toBanglaNum(grandTotal.totalSandCft)} CFT
-              </div>
-              <div className="text-[10px] text-emerald-200 mt-0.5">
-                (৳{toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))})
-              </div>
-            </div>
-            <div className="p-3.5 bg-white/10 rounded-2xl backdrop-blur-xs">
-              <div className="text-emerald-200">পুটিং পাউডার (১৫০ SFT/১kg)</div>
-              <div className="text-base sm:text-lg font-bold text-white mt-1">
-                {toBanglaNum(grandTotal.totalGroutKg)} কেজি
-              </div>
-              <div className="text-[10px] text-emerald-200 mt-0.5">
-                (৳{toBanglaNum(grandTotal.totalGroutCost.toLocaleString('bn-BD'))})
-              </div>
-            </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="pt-2 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleCopyMemo}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-white text-[#0B5D3B] text-sm font-bold hover:bg-emerald-50 transition-colors shadow-sm"
-            >
-              {copied ? <Check className="w-4 h-4 text-[#0B5D3B]" /> : <Copy className="w-4 h-4" />}
-              {copied ? 'মেমো কপি হয়েছে!' : 'দোকান মেমো কপি করুন'}
-            </button>
-            <button
-              type="button"
-              onClick={handleWhatsAppShare}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#20BD5A] transition-colors shadow-sm"
-            >
-              <Share2 className="w-4 h-4" /> WhatsApp এ মেমো পাঠান
-            </button>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              আপনি আপনার কম্পিউটারে কোন মাধ্যমে মেমোটি পাঠাতে চান তা নির্বাচন করুন:
+            </p>
+
+            <div className="space-y-3">
+              {/* Option 1: WhatsApp Web */}
+              <button
+                type="button"
+                onClick={handleWhatsAppWebShare}
+                className="w-full p-4 rounded-2xl border-2 border-[#25D366] bg-emerald-50/60 hover:bg-emerald-50 flex items-start gap-3.5 text-left transition-all group shadow-xs active:scale-[0.99]"
+              >
+                <div className="p-3 bg-[#25D366] text-white rounded-xl group-hover:scale-105 transition-transform shadow-xs shrink-0">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="font-bold text-sm text-[#0F1F17] flex items-center gap-1.5">
+                    WhatsApp Web (ব্রাউজারে)
+                    <span className="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-bold">
+                      পিসির জন্য সেরা
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                    ব্রাউজারে সরাসরি WhatsApp Web ওপেন হবে। PDF মেমোটি স্বয়ংক্রিয়ভাবে ডাউনলোড হবে, চ্যাটে ক্যালকুলেটর লিঙ্ক যুক্ত হবে এবং মেমোর ছবি ক্লিপবোর্ডে কপি থাকবে।
+                  </p>
+                </div>
+              </button>
+
+              {/* Option 2: WhatsApp Desktop App via Windows Share */}
+              <button
+                type="button"
+                onClick={handleNativePdfShare}
+                className="w-full p-4 rounded-2xl border border-gray-200 hover:border-emerald-400 bg-gray-50/60 hover:bg-white flex items-start gap-3.5 text-left transition-all group shadow-xs active:scale-[0.99]"
+              >
+                <div className="p-3 bg-[#0B5D3B] text-white rounded-xl group-hover:scale-105 transition-transform shadow-xs shrink-0">
+                  <Share2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="font-bold text-sm text-[#0F1F17]">
+                    WhatsApp App (সরাসরি PDF ফাইল)
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                    Windows Share উইন্ডো ওপেন হবে এবং সবুজ WhatsApp আইকনে চাপ দিলে সরাসরি PDF ফাইলটি WhatsApp অ্যাপে এটাচ হয়ে যাবে।
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => setShowWhatsAppModal(false)}
+                className="text-xs text-gray-400 hover:text-gray-600 font-medium"
+              >
+                বাতিল করুন (Close)
+              </button>
+            </div>
           </div>
         </div>
+      )}
       </div>
 
       {/* ── Brand Reference Guide & Specifications ── */}
@@ -1481,19 +1750,42 @@ export const TilesCalculatorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* ── SEO FAQ Section (Includes 3 Cement, Sand, Putting Calculation FAQs) ── */}
-      <div className="mt-12 bg-[#F8FAF9] p-6 sm:p-8 rounded-3xl border border-[#D5E4DB]">
-        <h2 className="text-xl font-bold text-[#0F1F17] mb-6 flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-[#0B5D3B]" /> টাইলস, সিমেন্ট, বালু ও পুটিং হিসাবের সাধারণ প্রশ্নোত্তর (FAQ)
-        </h2>
-        <div className="space-y-4">
-          {seoFaqs.map((faq, i) => (
-            <div key={i} className="p-4 rounded-2xl bg-white border border-[#D5E4DB]">
-              <h3 className="font-bold text-base text-[#0F1F17] mb-1.5">{faq.question}</h3>
-              <p className="text-sm text-[#4A5A52] leading-relaxed">{faq.answer}</p>
-            </div>
-          ))}
+      {/* ── Educational Guide & Technical Formulas ── */}
+      <section className="mt-12 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-6">
+        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
+          <Info className="w-5 h-5 text-[#0B5D3B]" />
+          <h2 className="text-xl font-bold text-[#0F1F17]">
+            টাইলস ও নির্মাণ সামগ্রী হিসাবের প্রমিত নির্দেশিকা (Tiles Calculation Guide BD)
+          </h2>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div className="border border-[#D5E4DB] bg-[#FAFAF7] p-5 rounded-2xl space-y-2">
+            <span className="font-bold text-[#0B5D3B] text-base block">🧱 কার্টন ও SFT রূপান্তর</span>
+            <p className="text-[#4A5A52] leading-relaxed text-xs">
+              ১ কার্টনে মোট স্কয়ার ফিট = (দৈর্ঘ্য" × প্রস্থ" × প্রতি বক্সের পিস) ÷ ১৪৪। মোট স্কয়ার ফিটকে ১ বক্সের স্কয়ার ফিট দিয়ে ভাগ করলেই মোট কার্টন সংখ্যা বের হয়ে যায়।
+            </p>
+          </div>
+
+          <div className="border border-[#D5E4DB] bg-[#FAFAF7] p-5 rounded-2xl space-y-2">
+            <span className="font-bold text-[#0B5D3B] text-base block">🏗️ সিমেন্ট ও বালুর অনুপাত (১:৪)</span>
+            <p className="text-[#4A5A52] leading-relaxed text-xs">
+              প্রতি ১০০ স্কয়ার ফিট টাইলসের বেড মসলা ও পেস্টিং ঘোলার জন্য গড়ে ৩.২ বস্তা সিমেন্ট এবং ১১ সিএফটি (CFT) সিলেট বা প্লাস্টারিং বালু প্রয়োজন হয়।
+            </p>
+          </div>
+
+          <div className="border border-[#D5E4DB] bg-[#FAFAF7] p-5 rounded-2xl space-y-2">
+            <span className="font-bold text-[#0B5D3B] text-base block">✨ পুটিং পাউডার (Grout)</span>
+            <p className="text-[#4A5A52] leading-relaxed text-xs">
+              প্রতি ১৫০ স্কয়ার ফিট টাইলসের জয়েন্ট বা ফাঁকা অংশ ভরার জন্য গড়ে ১ কেজি পুটিং পাউডার লাগে। বাথরুম ও ভেজা মেঝের জন্য ওয়াটারপ্রুফ পুটিং আবশ্যক।
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CMS Dynamic FAQs & How-To Content ── */}
+      <div className="mt-12">
+        <CmsDynamicContent content={pageContent} />
       </div>
 
       {/* Related Tools */}
@@ -1501,5 +1793,243 @@ export const TilesCalculatorPage: React.FC = () => {
         <RelatedTools currentToolId="tiles-calculator" />
       </div>
     </div>
-  );
+
+    {/* ── DEDICATED A4 PRINT & PDF MEMO VOUCHER (Clean A4 layout with room-by-room details) ── */}
+    <div
+      id="tiles-memo-print-area"
+      className="text-[#0F1F17] font-sans"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: '-9999px',
+        width: '794px',
+        boxSizing: 'border-box',
+        padding: '24px 28px',
+        zIndex: -9999,
+        pointerEvents: 'none',
+        opacity: 0,
+        backgroundColor: '#ffffff',
+      }}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-start pb-4 border-b-2 border-[#0B5D3B]">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-black text-[#0B5D3B] tracking-tight">
+              Utools.bd
+            </h1>
+            <span className="text-[11px] bg-[#E6F4EC] text-[#0B5D3B] font-bold px-2 py-0.5 rounded border border-[#0B5D3B]/30">
+              ডিজিটাল টাইলস ও নির্মাণ মেমো
+            </span>
+          </div>
+          <p className="text-xs text-gray-600 mt-1">
+            পুরো বাড়ির কক্ষভিত্তিক টাইলস, সিমেন্ট, বালু ও পুটিং খরচের খসড়া বিবরণী
+          </p>
+          <div className="flex items-center gap-1.5 mt-1.5">
+            <span className="text-[10px] text-gray-500 font-bold">অনলাইন টুল লিংক:</span>
+            <a
+              href="https://utools.bd/tiles-calculator"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[10px] text-[#0B5D3B] font-bold underline bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300"
+            >
+              https://utools.bd/tiles-calculator
+            </a>
+          </div>
+        </div>
+        <div className="text-right text-xs space-y-1">
+          <div>
+            <span className="font-bold text-gray-700">তারিখ:</span>{' '}
+            {new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
+          <div>
+            <span className="font-bold text-gray-700">মোট রুম:</span> {toBanglaNum(houseRooms.length)} টি
+          </div>
+          <div>
+            <span className="font-bold text-gray-700">মোট এরিয়া:</span> {toBanglaNum(grandTotal.totalArea)} SFT
+          </div>
+        </div>
+      </div>
+
+      {/* Applied Rates Banner */}
+      <div className="my-3 py-2 px-3 bg-gray-50 rounded border border-gray-200 grid grid-cols-4 gap-2 text-[11px] text-center">
+        <div>
+          <span className="text-gray-500 block">মিস্ত্রি মজুরি রেট</span>
+          <span className="font-bold text-[#0B5D3B]">৳{toBanglaNum(laborCostPerSft)}/SFT</span>
+        </div>
+        <div>
+          <span className="text-gray-500 block">সিমেন্ট রেট</span>
+          <span className="font-bold text-[#0B5D3B]">৳{toBanglaNum(cementBagPrice)}/বস্তা</span>
+        </div>
+        <div>
+          <span className="text-gray-500 block">বালু রেট</span>
+          <span className="font-bold text-[#0B5D3B]">৳{toBanglaNum(sandPricePerCft)}/CFT</span>
+        </div>
+        <div>
+          <span className="text-gray-500 block">পুটিং/গ্রাউট রেট</span>
+          <span className="font-bold text-[#0B5D3B]">৳{toBanglaNum(groutPricePerKg)}/কেজি</span>
+        </div>
+      </div>
+
+      {/* Room-by-Room Detailed Table */}
+      <div className="my-4">
+        <h2 className="text-sm font-bold text-[#0B5D3B] mb-2 pb-1 border-b border-gray-200">
+          ১. কক্ষভিত্তিক বিস্তারিত হিসাব বিবরণী (Room-by-Room Breakdown)
+        </h2>
+        <table className="w-full text-[11px] border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100 text-gray-800 font-bold border-b border-gray-300">
+              <th className="border border-gray-300 p-1.5 text-center w-8">নং</th>
+              <th className="border border-gray-300 p-1.5 text-left">রুমের নাম ও মোট মাপ</th>
+              <th className="border border-gray-300 p-1.5 text-left">ওয়াল টাইলস (কার্টন ও পিস)</th>
+              <th className="border border-gray-300 p-1.5 text-left">ফ্লোর টাইলস (কার্টন ও পিস)</th>
+              <th className="border border-gray-300 p-1.5 text-left">প্রয়োজনীয় মালামাল</th>
+              <th className="border border-gray-300 p-1.5 text-right">টাইলসের দাম</th>
+            </tr>
+          </thead>
+          <tbody>
+            {houseRooms.map((room, idx) => (
+              <tr key={room.id} className="border-b border-gray-200">
+                <td className="border border-gray-300 p-1.5 text-center font-bold">{toBanglaNum(idx + 1)}</td>
+                <td className="border border-gray-300 p-1.5">
+                  <div className="font-bold text-gray-900">{room.name}</div>
+                  <div className="text-[10px] text-gray-500">মোট: {toBanglaNum(room.combinedAreaSft)} SFT</div>
+                </td>
+                <td className="border border-gray-300 p-1.5">
+                  {room.hasWall ? (
+                    <div className="space-y-0.5">
+                      <div className="font-semibold text-gray-800">
+                        {room.wallTileSizeName}: {toBanglaNum(room.wallTotalBoxes)} কার্টন ({toBanglaNum(room.wallTotalPcs)} পিস)
+                      </div>
+                      <div className="text-[10px] text-gray-600">
+                        ডিপ: {toBanglaNum(room.deepBoxes)} ctn ({toBanglaNum(room.deepPcs)} পিস) • ডেকোর: {toBanglaNum(room.decorBoxes)} ctn ({toBanglaNum(room.decorPcs)} পিস) • লাইট: {toBanglaNum(room.lightBoxes)} ctn ({toBanglaNum(room.lightPcs)} পিস)
+                      </div>
+                      <div className="text-[10px] text-emerald-800 font-bold">
+                        দাম: ৳{toBanglaNum(room.wallCost.toLocaleString('bn-BD'))}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 italic">প্রযোজ্য নয়</span>
+                  )}
+                </td>
+                <td className="border border-gray-300 p-1.5">
+                  {room.hasFloor ? (
+                    <div className="space-y-0.5">
+                      <div className="font-semibold text-gray-800">
+                        {room.floorTileSizeName}: {toBanglaNum(room.floorTotalBoxes)} কার্টন ({toBanglaNum(room.floorTotalPcs)} পিস)
+                      </div>
+                      <div className="text-[10px] text-gray-600">
+                        এরিয়া: {toBanglaNum(room.floorAreaSft)} SFT
+                      </div>
+                      <div className="text-[10px] text-emerald-800 font-bold">
+                        দাম: ৳{toBanglaNum(room.floorCost.toLocaleString('bn-BD'))}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 italic">প্রযোজ্য নয়</span>
+                  )}
+                </td>
+                <td className="border border-gray-300 p-1.5 text-[10px]">
+                  <div>সিমেন্ট: <strong className="text-gray-800">{toBanglaNum(room.cementBags)}</strong> বস্তা</div>
+                  <div>বালু: <strong className="text-gray-800">{toBanglaNum(room.sandCft)}</strong> CFT</div>
+                  <div>পুটিং: <strong className="text-gray-800">{toBanglaNum(room.groutKg)}</strong> কেজি</div>
+                </td>
+                <td className="border border-gray-300 p-1.5 text-right font-bold text-gray-900">
+                  ৳{toBanglaNum(room.totalRoomCost.toLocaleString('bn-BD'))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* House Grand Total Summary Block */}
+      <div className="my-4 p-4 rounded-lg bg-emerald-50 border-2 border-[#0B5D3B]">
+        <h2 className="text-sm font-bold text-[#0B5D3B] mb-2 pb-1 border-b border-emerald-200">
+          ২. পুরো বাড়ির সর্বমোট সারসংক্ষেপ ও চূড়ান্ত বাজেট (Whole House Grand Summary)
+        </h2>
+        <div className="grid grid-cols-2 gap-4 text-xs">
+          <div className="space-y-1.5 border-r border-emerald-200 pr-3">
+            <div className="flex justify-between">
+              <span className="text-gray-600">মোট এরিয়া:</span>
+              <span className="font-bold">{toBanglaNum(grandTotal.totalArea)} SFT</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">ওয়াল টাইলস কার্টন:</span>
+              <span className="font-bold">{toBanglaNum(grandTotal.totalWallBoxes)} কার্টন</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">ফ্লোর টাইলস কার্টন:</span>
+              <span className="font-bold">{toBanglaNum(grandTotal.totalFloorBoxes)} কার্টন</span>
+            </div>
+            <div className="flex justify-between pt-1 border-t border-emerald-200 text-sm font-bold text-[#0B5D3B]">
+              <span>সর্বমোট টাইলস দরকার:</span>
+              <span>{toBanglaNum(grandTotal.totalBoxes)} কার্টন</span>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex justify-between">
+              <span className="text-gray-600">টাইলসের মোট দাম:</span>
+              <span className="font-bold text-gray-900">৳{toBanglaNum(grandTotal.totalTileCost.toLocaleString('bn-BD'))}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">মোট সিমেন্ট ({toBanglaNum(grandTotal.totalCementBags)} বস্তা):</span>
+              <span className="font-bold text-gray-900">৳{toBanglaNum(grandTotal.totalCementCost.toLocaleString('bn-BD'))}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">মোট বালু ({toBanglaNum(grandTotal.totalSandCft)} CFT):</span>
+              <span className="font-bold text-gray-900">৳{toBanglaNum(grandTotal.totalSandCost.toLocaleString('bn-BD'))}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">পুটিং পাউডার ({toBanglaNum(grandTotal.totalGroutKg)} কেজি):</span>
+              <span className="font-bold text-gray-900">৳{toBanglaNum(grandTotal.totalGroutCost.toLocaleString('bn-BD'))}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">মিস্ত্রি মজুরি ({toBanglaNum(grandTotal.totalArea)} SFT):</span>
+              <span className="font-bold text-gray-900">৳{toBanglaNum(grandTotal.totalLaborCost.toLocaleString('bn-BD'))}</span>
+            </div>
+            <div className="flex justify-between pt-1 border-t-2 border-[#0B5D3B] text-base font-black text-[#0B5D3B]">
+              <span>সর্বমোট প্রজেক্ট বাজেট:</span>
+              <span>৳{toBanglaNum(grandTotal.grandProjectCost.toLocaleString('bn-BD'))}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tool Link Banner & Online Verification */}
+      <div className="mt-4 p-2.5 rounded-lg bg-emerald-50 border border-emerald-300 flex items-center justify-between text-[11px] text-emerald-950">
+        <div>
+          <span className="font-bold">🌐 অনলাইনে এই হিসাবটি দেখতে, এডিট করতে বা নতুন রুম যুক্ত করতে ভিজিট করুন:</span>{' '}
+          <a
+            href="https://utools.bd/tiles-calculator"
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold underline text-[#0B5D3B]"
+          >
+            https://utools.bd/tiles-calculator
+          </a>
+        </div>
+        <div className="font-mono text-[10px] text-emerald-800 font-bold bg-white px-2 py-0.5 rounded border border-emerald-200">
+          Utools.bd
+        </div>
+      </div>
+
+      {/* Terms & Signatures */}
+      <div className="mt-4 pt-3 border-t border-gray-300 text-[10px] text-gray-500">
+        <p>• নোট: টাইলসে ৫% কাটিং ও ভেঙে যাওয়ার অপচয় এবং সিমেন্ট-বালুতে ৩% অপচয় যুক্ত রয়েছে। প্রতি ১৫০ SFT টাইলসে ১ কেজি পুটিং পাউডার ও ১:৪ সিমেন্ট-বালু মসলা অনুপাত প্রমিত হিসাব হিসেবে ধরা হয়েছে।</p>
+        <p className="mt-0.5">• এটি Utools.bd ক্লায়েন্ট-সাইড প্রযুক্তি দ্বারা তৈরি কম্পিউটার জেনারেটেড ডিজিটাল হিসাব ভাউচার।</p>
+      </div>
+
+      <div className="mt-10 pt-4 flex justify-between items-center text-xs text-gray-700">
+        <div className="text-center w-48 border-t border-gray-400 pt-1.5 font-bold">
+          হিসাব প্রস্তুতকারীর স্বাক্ষর
+        </div>
+        <div className="text-center w-48 border-t border-gray-400 pt-1.5 font-bold">
+          গ্রাহক / বাড়ির মালিকের স্বাক্ষর
+        </div>
+      </div>
+    </div>
+  </>
+);
 };

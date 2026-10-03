@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
-  ArrowLeft,
   Upload,
   Download,
   Trash2,
@@ -436,19 +436,12 @@ export const HeicConverterPage: React.FC = () => {
       />
 
       {/* Top Breadcrumb & Navigation */}
-      <div className="flex items-center justify-between border-b border-[#D5E4DB] pb-4">
-        <Link
-          to="/"
-          className="inline-flex items-center space-x-2 text-xs font-semibold text-[#084A2E] hover:text-[#0B5D3B] transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>টুলবক্সে ফিরে যান</span>
-        </Link>
-        <div className="flex items-center space-x-2 text-xs text-[#0B5D3B] font-medium bg-[#F8FAF9] border border-[#D5E4DB] px-3 py-1 rounded-lg">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>১০০% অন-ডিভাইস কনভার্শন • প্রাইভেসি সুরক্ষিত</span>
-        </div>
-      </div>
+      <ToolBreadcrumb
+        toolName="HEIC → JPG/PNG কনভার্টার"
+        categoryName="ইমেজ টুলস"
+        categoryPath="/heic-converter"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
+      />
 
       {/* Hero Header */}
       <div className="space-y-3">

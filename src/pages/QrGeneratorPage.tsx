@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import QRCode from 'qrcode';
 import {
-  ArrowLeft,
   QrCode,
   Download,
   Copy,
@@ -331,22 +331,12 @@ export const QrGeneratorPage: React.FC = () => {
       />
 
       {/* Top Navigation & Guarantee */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-        <div className="flex items-center space-x-3">
-          <Link
-            to="/"
-            className="border border-[#D5E4DB] bg-[#FFFFFF] hover:bg-[#F0F4F2] px-3 py-1.5 text-xs text-[#084A2E] flex items-center space-x-1.5 transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>হোমপেজে ফিরুন</span>
-          </Link>
-        </div>
-
-        <div className="flex items-center space-x-2 text-xs font-medium text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3 py-1.5 shadow-xs rounded-lg">
-          <ShieldCheck className="w-4 h-4 text-[#0B5D3B]" />
-          <span>১০০% অন-ডিভাইস স্ট্যাটিক QR • আজীবন কার্যকর • নো ট্র্যাকিং</span>
-        </div>
-      </div>
+      <ToolBreadcrumb
+        toolName="কাস্টম কিউআর কোড জেনারেটর"
+        categoryName="ইমেজ টুলস"
+        categoryPath="/qr-generator"
+        privacyText="১০০% অন-ডিভাইস স্ট্যাটিক QR • আজীবন কার্যকর • নো ট্র্যাকিং"
+      />
 
       {/* Hero Header */}
       <div className="space-y-3">

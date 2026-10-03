@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
-  ArrowLeft,
   ShieldCheck,
   PenTool,
   Download,
@@ -164,22 +164,12 @@ export const TextToHandwritingPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
         {/* Navigation Breadcrumb bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-          <div className="flex items-center space-x-3">
-            <Link
-              to="/"
-              className="border border-[#D5E4DB] bg-[#FFFFFF] hover:bg-[#F0F4F2] px-3 py-1.5 text-xs text-[#084A2E] flex items-center space-x-1.5 transition-colors cursor-pointer rounded-lg"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>হোমপেজে ফিরুন</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3.5 py-1.5 shadow-xs rounded-lg">
-            <ShieldCheck className="w-4 h-4 text-[#0B5D3B]" />
-            <span>১০০% ক্লায়েন্ট-সাইড • আপনার লেখা সম্পূর্ণ প্রাইভেট</span>
-          </div>
-        </div>
+        <ToolBreadcrumb
+          toolName="টেক্সট টু হ্যান্ডরাইটিং কনভার্টার"
+          categoryName="টেক্সট টুলস"
+          categoryPath="/text-to-handwriting"
+          privacyText="১০০% ক্লায়েন্ট-সাইড • আপনার লেখা সম্পূর্ণ প্রাইভেট"
+        />
 
         {/* Heading Section */}
         <div className="space-y-2">

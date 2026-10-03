@@ -2,8 +2,8 @@ import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ToolSeoHead } from '../ToolSeoHead.tsx';
+import { ToolBreadcrumb } from '../ToolBreadcrumb.tsx';
 import {
-  ArrowLeft,
   ShieldCheck,
   HelpCircle,
   Sparkles,
@@ -102,22 +102,12 @@ export const PdfToolLayout: React.FC<PdfToolLayoutProps> = ({
       )}
 
       {/* Top Breadcrumb & Privacy Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-        <div className="flex items-center space-x-3">
-          <Link
-            to="/"
-            className="border border-[#D5E4DB] bg-[#FFFFFF] hover:bg-[#F0F4F2] px-3 py-1.5 text-xs text-[#084A2E] flex items-center space-x-1.5 transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>হোমপেজে ফিরুন</span>
-          </Link>
-        </div>
-
-        <div className="flex items-center space-x-2 text-xs font-semibold text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3.5 py-1.5 shadow-xs rounded-lg">
-          <ShieldCheck className="w-4 h-4 text-[#0B5D3B]" />
-          <span>১০০% ক্লায়েন্ট-সাইড • কোনো আপলোড নেই • সম্পূর্ণ বিনামূল্যে</span>
-        </div>
-      </div>
+      <ToolBreadcrumb
+        toolName={badgeText || h1.split('(')[0].trim()}
+        categoryName="পিডিএফ টুলস"
+        categoryPath="/pdf-merger"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো আপলোড নেই • সম্পূর্ণ বিনামূল্যে"
+      />
 
       {/* Page Heading & Intro */}
       <div className="space-y-3">

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
-  ArrowLeft,
   ShieldCheck,
   ChefHat,
   ArrowRightLeft,
@@ -98,22 +98,12 @@ export const CookingConverterPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
         {/* Navigation Breadcrumb bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#D5E4DB]">
-          <div className="flex items-center space-x-3">
-            <Link
-              to="/"
-              className="border border-[#D5E4DB] bg-[#FFFFFF] hover:bg-[#F0F4F2] px-3 py-1.5 text-xs text-[#084A2E] flex items-center space-x-1.5 transition-colors cursor-pointer rounded-lg"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>হোমপেজে ফিরুন</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#084A2E] bg-[#FFFFFF] border border-[#D5E4DB] px-3.5 py-1.5 shadow-xs rounded-lg">
-            <ShieldCheck className="w-4 h-4 text-[#0B5D3B]" />
-            <span>১০০% ক্লায়েন্ট-সাইড • দ্রুত ও নির্ভুল রেসিপি হিসাব</span>
-          </div>
-        </div>
+        <ToolBreadcrumb
+          toolName="রান্নার পরিমাপ ও রেসিপি কনভার্টার"
+          categoryName="হিসাব ও ক্যালকুলেটর"
+          categoryPath="/cooking-converter"
+          privacyText="১০০% ক্লায়েন্ট-সাইড • দ্রুত ও নির্ভুল রেসিপি হিসাব"
+        />
 
         {/* Heading Section */}
         <div className="space-y-2">

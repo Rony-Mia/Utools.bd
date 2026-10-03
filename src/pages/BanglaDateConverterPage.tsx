@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import {
   Calendar,
@@ -296,13 +297,12 @@ export const BanglaDateConverterPage: React.FC = () => {
       <main className="min-h-screen bg-[#FAFAF7] text-[#0F1F17] py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Breadcrumb */}
-          <nav className="text-xs text-[#4A5A52] flex items-center space-x-2">
-            <Link to="/" className="hover:text-[#0B5D3B] transition-colors">
-              হোম
-            </Link>
-            <span>/</span>
-            <span className="text-[#0B5D3B] font-medium">{pageContent.title}</span>
-          </nav>
+          <ToolBreadcrumb
+            toolName="বাংলা তারিখ কনভার্টার"
+            categoryName="হিসাব ও ক্যালকুলেটর"
+            categoryPath="/bangla-date-converter"
+            privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
+          />
 
           {/* 1. Header / Hero Section */}
           <section className="text-center space-y-2">

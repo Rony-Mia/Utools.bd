@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useMemo, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
-  ArrowLeft,
   ShieldCheck,
   Upload,
   FileText,
@@ -323,15 +323,12 @@ export const ImageToTextPage: React.FC = () => {
       />
 
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center space-x-2 text-xs text-[#4A5A52]">
-        <Link to="/" className="hover:text-[#084A2E] underline-offset-2 hover:underline">
-          হোম
-        </Link>
-        <span>&gt;</span>
-        <span className="text-[#4A5A52]">টেক্সট টুলস</span>
-        <span>&gt;</span>
-        <span className="text-[#084A2E] font-medium">ছবি ও PDF থেকে বাংলা টেক্সট (OCR)</span>
-      </nav>
+      <ToolBreadcrumb
+        toolName="ছবি ও PDF থেকে বাংলা টেক্সট (OCR)"
+        categoryName="টেক্সট টুলস"
+        categoryPath="/image-to-text"
+        privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
+      />
 
       {/* Page Header matching standard Utools design */}
       <section className="space-y-3">

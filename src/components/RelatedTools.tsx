@@ -132,6 +132,14 @@ export const ALL_RELATED_TOOLS: RelatedToolItem[] = [
     description: 'কাপ ⇄ গ্রাম, চামচ ⇄ মিলিলিটার ও ওভেন তাপমাত্রা (°F ⇄ °C) নিখুঁতভাবে রূপান্তর করুন।',
     buttonText: 'রান্নার কনভার্টারে যান',
   },
+  {
+    id: 'tiles-calculator',
+    to: '/tiles-calculator',
+    badge: 'ক্যালকুলেটর',
+    title: 'টাইলস ক্যালকুলেটর (Tiles Calculator BD)',
+    description: 'রুম ও পুরো বাড়ির ওয়াল ও ফ্লোর টাইলসের কার্টন, সিমেন্ট, বালু, পুটিং পাউডার ও খরচের হিসাব।',
+    buttonText: 'টাইলস ক্যালকুলেটরে যান',
+  },
 ];
 
 interface RelatedToolsProps {

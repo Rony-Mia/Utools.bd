@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
+import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
   FileText,
   Printer,
@@ -884,6 +885,13 @@ export const CvBuilderPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <ToolBreadcrumb
+          toolName="সিভি ও জীবনবৃত্তান্ত মেকার"
+          categoryName="সিভি ও ডকুমেন্ট"
+          categoryPath="/cv-builder"
+          privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
+        />
+
         {/* Top Header: Title, Actions & Language toggle */}
         <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 border-b border-[#D5E4DB] gap-4">
           <div>
