@@ -138,10 +138,11 @@ async function prerender() {
     // Extract meta tags from rendered output
     const metaMatches = renderedHtml.match(/<meta\s+[^>]*\/?>/g) || [];
 
-    // Extract body by stripping title and meta tags from rendered output
+    // Extract body by stripping title, meta, and canonical link tags from rendered output
     const bodyHtml = renderedHtml
       .replace(/<title>[\s\S]*?<\/title>/g, '')
       .replace(/<meta\s+[^>]*\/?>/g, '')
+      .replace(/<link\s+rel="canonical"[^>]*\/?>/gi, '')
       .trim();
 
     // Inject into template
