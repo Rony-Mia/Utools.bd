@@ -1744,29 +1744,79 @@ export const TilesCalculatorPage: React.FC = () => {
       </div>
 
       {/* ── Brand Reference Guide & Specifications ── */}
-      <div className="mt-12 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs">
-        <h2 className="text-xl font-bold text-[#0F1F17] mb-4 flex items-center gap-2">
-          <Info className="w-5 h-5 text-[#0B5D3B]" /> কোন সাইজের টাইলস বক্সে কত পিস থাকে? (BD Standard Chart)
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-          <div>
-            <h3 className="font-bold text-[#0B5D3B] mb-2">🧱 ওয়াল টাইলস (Wall Tiles):</h3>
-            <ul className="space-y-1.5 text-[#4A5A52]">
-              <li>• <strong>৮" × ১২" (8"×12"):</strong> প্রতি বক্সে ২৫ পিস = ১৬.৬৭ স্কয়ার ফিট (DBL/Akij)</li>
-              <li>• <strong>১০" × ১৬" (10"×16"):</strong> প্রতি বক্সে ১৫ পিস = ১৬.৬৭ স্কয়ার ফিট</li>
-              <li>• <strong>১২" × ১৮" (12"×18"):</strong> প্রতি বক্সে ১০ পিস = ১৫.০০ স্কয়ার ফিট</li>
-              <li>• <strong>১২" × ২৪" (12"×24"):</strong> প্রতি বক্সে ৮ পিস = ১৬.০০ স্কয়ার ফিট</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-bold text-[#0B5D3B] mb-2">🏠 ফ্লোর টাইলস (Floor Tiles):</h3>
-            <ul className="space-y-1.5 text-[#4A5A52]">
-              <li>• <strong>২৪" × ২৪" (2x2 ft):</strong> প্রতি বক্সে ৪ পিস = ১৬.০০ স্কয়ার ফিট (সবচেয়ে বেশি বিক্রিত)</li>
-              <li>• <strong>১৬" × ১৬" (16"×16"):</strong> প্রতি বক্সে ৯ পিস = ১৬.০০ স্কয়ার ফিট</li>
-              <li>• <strong>১২" × ১২" (1x1 ft):</strong> প্রতি বক্সে ১৬ পিস = ১৬.০০ স্কয়ার ফিট (বাথরুম ফ্লোর)</li>
-              <li>• <strong>৩২" × ৩২" (32"×32"):</strong> প্রতি বক্সে ৩ পিস = ২১.৩৩ স্কয়ার ফিট</li>
-            </ul>
-          </div>
+      <div className="mt-12 bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E4DB] shadow-xs space-y-6">
+        <div className="flex items-center space-x-2 border-b border-[#D5E4DB] pb-3">
+          <Info className="w-5 h-5 text-[#0B5D3B]" />
+          <h2 className="text-xl font-bold text-[#0F1F17]">
+            কোন সাইজের টাইলস ১ কার্টনে কত স্কয়ার ফিট থাকে? (BD Tiles Carton & Size Chart)
+          </h2>
+        </div>
+        <p className="text-sm text-[#4A5A52] leading-relaxed">
+          বাংলাদেশে প্রস্তুতকৃত ডিবিএল (DBL), আকিজ (Akij), আরএকে (RAK), মীর (Mir) ও গ্রেটওয়াল (Great Wall) সহ শীর্ষ ব্র্যান্ডগুলোর স্ট্যান্ডার্ড কার্টন সাইজ ও কভারেজ চার্ট নিচে দেওয়া হলো। আপনার কেনা টাইলসের বক্সের তথ্যের সাথে এটি মিলিয়ে নিতে পারেন:
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse border border-[#D5E4DB]">
+            <thead>
+              <tr className="bg-[#E6F4EC] text-[#0B5D3B] font-bold">
+                <th className="p-3 border border-[#D5E4DB]">টাইলসের সাইজ (ইঞ্চি/ফিট)</th>
+                <th className="p-3 border border-[#D5E4DB]">টাইলসের ধরন</th>
+                <th className="p-3 border border-[#D5E4DB] text-center">১ কার্টনে পিস</th>
+                <th className="p-3 border border-[#D5E4DB] text-center">১ কার্টনে কভারেজ (SFT)</th>
+                <th className="p-3 border border-[#D5E4DB]">সাধারণ ব্যবহার</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#D5E4DB] text-[#4A5A52]">
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">৮" × ১২" (8"×12")</td>
+                <td className="p-3 border border-[#D5E4DB]">ওয়াল টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">২৫ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">১৬.৬৭ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">বাথরুম ও কিচেনের দেওয়াল</td>
+              </tr>
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">১০" × ১৬" (10"×16")</td>
+                <td className="p-3 border border-[#D5E4DB]">ওয়াল টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">১৫ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">১৬.৬৭ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">আধুনিক বাথরুমের দেওয়াল</td>
+              </tr>
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">১২" × ২৪" (12"×24")</td>
+                <td className="p-3 border border-[#D5E4DB]">ওয়াল টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">৮ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">১৬.০০ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">মডার্ন লাক্সারি বাথরুম ও কিচেন</td>
+              </tr>
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">২৪" × ২৪" (2x2 ft)</td>
+                <td className="p-3 border border-[#D5E4DB]">ফ্লোর টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">৪ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">১৬.০০ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">বেডরুম, ড্রয়িং ও ডাইনিং ফ্লোর</td>
+              </tr>
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">১২" × ১২" (1x1 ft)</td>
+                <td className="p-3 border border-[#D5E4DB]">ফ্লোর টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">১৬ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">১৬.০০ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">বাথরুম ও বারান্দার অ্যান্টি-স্কিড মেঝে</td>
+              </tr>
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">১৬" × ১৬" (16"×16")</td>
+                <td className="p-3 border border-[#D5E4DB]">ফ্লোর টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">৯ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">১৬.০০ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">সিঁড়ির ল্যান্ডিং ও মাঝারি রুম</td>
+              </tr>
+              <tr className="hover:bg-gray-50">
+                <td className="p-3 border border-[#D5E4DB] font-bold text-[#0F1F17]">৩২" × ৩২" (32"×32")</td>
+                <td className="p-3 border border-[#D5E4DB]">লার্জ ফ্লোর টাইলস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold">৩ পিস</td>
+                <td className="p-3 border border-[#D5E4DB] text-center font-bold text-[#0B5D3B]">২১.৩৩ SFT</td>
+                <td className="p-3 border border-[#D5E4DB]">বড় ড্রয়িং রুম ও প্রিমিয়াম অ্যাপার্টমেন্ট</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1795,10 +1845,37 @@ export const TilesCalculatorPage: React.FC = () => {
           </div>
 
           <div className="border border-[#D5E4DB] bg-[#FAFAF7] p-5 rounded-2xl space-y-2">
-            <span className="font-bold text-[#0B5D3B] text-base block">✨ পুটিং পাউডার (Grout)</span>
+            <span className="font-bold text-[#0B5D3B] text-base block">✨ পুটিং পাউডার ও ওয়াটারপ্রুফিং</span>
             <p className="text-[#4A5A52] leading-relaxed text-xs">
-              প্রতি ১৫০ স্কয়ার ফিট টাইলসের জয়েন্ট বা ফাঁকা অংশ ভরার জন্য গড়ে ১ কেজি পুটিং পাউডার লাগে। বাথরুম ও ভেজা মেঝের জন্য ওয়াটারপ্রুফ পুটিং আবশ্যক।
+              প্রতি ১৫০ স্কয়ার ফিট টাইলসের জয়েন্ট ভরার জন্য ১ কেজি পুটিং পাউডার লাগে। বাথরুমে পানি চুইয়ে পড়া রোধ করতে ওয়াটারপ্রুফ পুটিং আবশ্যক।
             </p>
+          </div>
+        </div>
+
+        {/* Labour Cost & Fitting Rates in Bangladesh */}
+        <div className="p-5 rounded-2xl bg-[#E6F4EC]/60 border border-[#0B5D3B]/20 space-y-3">
+          <h3 className="font-bold text-[#0B5D3B] text-base">
+            💰 প্রতি স্কয়ার ফিট টাইলস লাগানোর খরচ ও মিস্ত্রি মজুরি রেট (২০২৬)
+          </h3>
+          <p className="text-xs sm:text-sm text-[#4A5A52] leading-relaxed">
+            বাংলাদেশে বর্তমান বাজার অনুযায়ী টাইলস ফিটিংয়ের মিস্ত্রি খরচ মূলত কাজের জটিলতার ওপর নির্ভর করে:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="p-3 bg-white rounded-xl border border-[#D5E4DB]">
+              <span className="font-bold text-[#0F1F17] block mb-1">সাধারণ ফ্লোর টাইলস</span>
+              <span className="text-[#0B5D3B] font-bold text-sm block">৳ ৩৫ – ৫০ / SFT</span>
+              <span className="text-gray-500 text-[11px]">২৪"×২৪" সাইজের বেডরুম ও ড্রয়িং ফ্লোর</span>
+            </div>
+            <div className="p-3 bg-white rounded-xl border border-[#D5E4DB]">
+              <span className="font-bold text-[#0F1F17] block mb-1">ওয়াল ও বাথরুম টাইলস</span>
+              <span className="text-[#0B5D3B] font-bold text-sm block">৳ ৪৫ – ৬৫ / SFT</span>
+              <span className="text-gray-500 text-[11px]">বাথরুম ও কিচেনের দেওয়ালের ডিপ-ডেকোর</span>
+            </div>
+            <div className="p-3 bg-white rounded-xl border border-[#D5E4DB]">
+              <span className="font-bold text-[#0F1F17] block mb-1">লার্জ স্ল্যাব ও প্রিমিয়াম</span>
+              <span className="text-[#0B5D3B] font-bold text-sm block">৳ ৬০ – ৯০ / SFT</span>
+              <span className="text-gray-500 text-[11px]">৩২"×৩২" বা বড় সাইজের স্ল্যাব টাইলস</span>
+            </div>
           </div>
         </div>
       </section>
