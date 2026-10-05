@@ -416,6 +416,150 @@ export async function exportCanvasToFormat(
 }
 
 /**
+ * Calculates optimal grid columns and rows for a given image count and orientation.
+ */
+export function calculateOptimalGrid(
+  count: number,
+  orientation: PageOrientation = 'portrait'
+): { columns: number; rows: number } {
+  if (count <= 1) return { columns: 1, rows: 1 };
+  if (count === 2) {
+    return orientation === 'portrait' ? { columns: 1, rows: 2 } : { columns: 2, rows: 1 };
+  }
+  if (count === 3) {
+    return orientation === 'portrait' ? { columns: 1, rows: 3 } : { columns: 3, rows: 1 };
+  }
+  if (count === 4) return { columns: 2, rows: 2 };
+  if (count <= 6) {
+    return orientation === 'portrait' ? { columns: 2, rows: 3 } : { columns: 3, rows: 2 };
+  }
+  if (count <= 8) {
+    return orientation === 'portrait' ? { columns: 2, rows: 4 } : { columns: 4, rows: 2 };
+  }
+  if (count <= 9) return { columns: 3, rows: 3 };
+  if (count <= 12) {
+    return orientation === 'portrait' ? { columns: 3, rows: 4 } : { columns: 4, rows: 3 };
+  }
+  if (count <= 16) {
+    return orientation === 'portrait' ? { columns: 4, rows: 4 } : { columns: 4, rows: 4 };
+  }
+  if (count <= 20) {
+    return orientation === 'portrait' ? { columns: 4, rows: 5 } : { columns: 5, rows: 4 };
+  }
+
+  // General fallback for large counts
+  const sqrt = Math.sqrt(count);
+  let cols = orientation === 'portrait' ? Math.floor(sqrt) : Math.ceil(sqrt);
+  cols = Math.max(1, cols);
+  const rows = Math.ceil(count / cols);
+  return { columns: cols, rows };
+}
+
+/**
+ * Exports multiple page canvases to a single multi-page PDF or individual files (optionally bundled in ZIP).
+ */
+export async function exportMultiPageCanvasToFormat(
+  canvases: HTMLCanvasElement[],
+  format: 'image/png' | 'image/jpeg' | 'application/pdf',
+  quality = 0.92,
+  filename = 'utools-merged-image',
+  exportMode: 'all' | 'current' = 'all',
+  activePageIndex = 0
+): Promise<void> {
+  if (typeof document === 'undefined' || canvases.length === 0) return;
+
+  const cleanQuality = Math.min(Math.max(quality, 0.2), 1.0);
+
+  // If only 1 canvas, or user selected 'current' page only
+  if (canvases.length === 1 || exportMode === 'current') {
+    const targetCanvas = canvases[activePageIndex] || canvases[0];
+    const pageSuffix = canvases.length > 1 ? `-page-${activePageIndex + 1}` : '';
+    await exportCanvasToFormat(targetCanvas, format, cleanQuality, `${filename}${pageSuffix}`);
+    return;
+  }
+
+  // Multi-page PDF Export
+  if (format === 'application/pdf') {
+    const pdfDoc = await PDFDocument.create();
+
+    for (let i = 0; i < canvases.length; i++) {
+      const canvas = canvases[i];
+      let exportCanvas = canvas;
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      if (tempCtx) {
+        tempCtx.fillStyle = '#ffffff';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.drawImage(canvas, 0, 0);
+        exportCanvas = tempCanvas;
+      }
+
+      const dataUrl = exportCanvas.toDataURL('image/jpeg', cleanQuality);
+      const res = await fetch(dataUrl);
+      const imageBytes = await res.arrayBuffer();
+      const embeddedImage = await pdfDoc.embedJpg(imageBytes);
+
+      const ptWidth = Math.round(canvas.width * (72 / 150));
+      const ptHeight = Math.round(canvas.height * (72 / 150));
+
+      const page = pdfDoc.addPage([ptWidth, ptHeight]);
+      page.drawImage(embeddedImage, {
+        x: 0,
+        y: 0,
+        width: ptWidth,
+        height: ptHeight,
+      });
+    }
+
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    triggerDownload(url, `${filename}.pdf`);
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    return;
+  }
+
+  // Multi-page Images (PNG / JPEG) -> bundle into ZIP using JSZip
+  const mimeType = format === 'image/jpeg' ? 'image/jpeg' : 'image/png';
+  const ext = format === 'image/jpeg' ? 'jpg' : 'png';
+
+  const JSZipModule = await import('jszip');
+  const JSZip = JSZipModule.default;
+  const zip = new JSZip();
+
+  for (let i = 0; i < canvases.length; i++) {
+    const canvas = canvases[i];
+    let exportCanvas = canvas;
+    if (format === 'image/jpeg') {
+      exportCanvas = document.createElement('canvas');
+      exportCanvas.width = canvas.width;
+      exportCanvas.height = canvas.height;
+      const ctx = exportCanvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
+      }
+    }
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      exportCanvas.toBlob((b) => resolve(b), mimeType, cleanQuality);
+    });
+
+    if (blob) {
+      zip.file(`${filename}-page-${i + 1}.${ext}`, blob);
+    }
+  }
+
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(zipBlob);
+  triggerDownload(url, `${filename}-all-pages.zip`);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+/**
  * Format bytes to readable string in Bengali.
  */
 export function formatBytesBengali(bytes: number): string {

@@ -18,6 +18,7 @@ import {
   Printer,
   Eye,
   Info,
+  ChevronLeft,
   ChevronRight,
   ShieldCheck,
   Zap,
@@ -36,6 +37,8 @@ import {
   MergedCanvasConfig,
   createMergedCanvas,
   exportCanvasToFormat,
+  exportMultiPageCanvasToFormat,
+  calculateOptimalGrid,
   loadImageElement,
   formatBytesBengali,
   toBanglaDigits
@@ -54,6 +57,13 @@ export const ImageMergerPage: React.FC = () => {
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('grid');
   const [columns, setColumns] = useState<number>(2);
   const [rows, setRows] = useState<number>(2);
+
+  // Images Per Page State (Customizable)
+  const [imagesPerPageMode, setImagesPerPageMode] = useState<'preset' | 'custom' | 'all'>('preset');
+  const [imagesPerPage, setImagesPerPage] = useState<number>(4);
+  const [customImagesPerPageInput, setCustomImagesPerPageInput] = useState<number>(4);
+  const [activePageIndex, setActivePageIndex] = useState<number>(0);
+  const [exportScope, setExportScope] = useState<'all' | 'current'>('all');
 
   // Spacing & Border
   const [padding, setPadding] = useState<number>(16);
@@ -83,6 +93,19 @@ export const ImageMergerPage: React.FC = () => {
     width: 1240,
     height: 1754,
   });
+
+  // Effective number of images to place on each page
+  const targetImagesPerPage =
+    imagesPerPageMode === 'all'
+      ? Math.max(1, items.length || 1)
+      : Math.max(1, imagesPerPage || 1);
+
+  // Total pages needed for the current items list
+  const totalPages =
+    items.length === 0 ? 1 : Math.max(1, Math.ceil(items.length / targetImagesPerPage));
+
+  // Safe active page index
+  const safePageIndex = Math.min(activePageIndex, totalPages - 1);
 
   // Unique IDs for accessibility
   const paddingInputId = useId();
@@ -121,7 +144,12 @@ export const ImageMergerPage: React.FC = () => {
         customHeightPx: customHeight,
       };
 
-      const htmlImages = items.map((it) => it.imgElement);
+      const startIdx = safePageIndex * targetImagesPerPage;
+      const pageItems = imagesPerPageMode === 'all'
+        ? items
+        : items.slice(startIdx, startIdx + targetImagesPerPage);
+
+      const htmlImages = pageItems.map((it) => it.imgElement);
       const canvas = await createMergedCanvas(htmlImages, config);
       previewCanvasRef.current = canvas;
       setCanvasDimensions({ width: canvas.width, height: canvas.height });
@@ -131,6 +159,9 @@ export const ImageMergerPage: React.FC = () => {
     }
   }, [
     items,
+    safePageIndex,
+    targetImagesPerPage,
+    imagesPerPageMode,
     pageSize,
     orientation,
     layoutMode,
@@ -271,12 +302,28 @@ export const ImageMergerPage: React.FC = () => {
 
   // Quick Preset Handlers
   const applyPreset = (presetName: string) => {
-    if (presetName === 'a4_2x2') {
+    setActivePageIndex(0);
+    if (presetName === 'a4_1x2') {
+      setPageSize('A4');
+      setOrientation('portrait');
+      setLayoutMode('grid');
+      setColumns(1);
+      setRows(2);
+      setImagesPerPageMode('preset');
+      setImagesPerPage(2);
+      setCustomImagesPerPageInput(2);
+      setPadding(16);
+      setMargin(24);
+      setImageFit('contain');
+    } else if (presetName === 'a4_2x2') {
       setPageSize('A4');
       setOrientation('portrait');
       setLayoutMode('grid');
       setColumns(2);
       setRows(2);
+      setImagesPerPageMode('preset');
+      setImagesPerPage(4);
+      setCustomImagesPerPageInput(4);
       setPadding(16);
       setMargin(24);
       setImageFit('contain');
@@ -286,6 +333,9 @@ export const ImageMergerPage: React.FC = () => {
       setLayoutMode('grid');
       setColumns(2);
       setRows(3);
+      setImagesPerPageMode('preset');
+      setImagesPerPage(6);
+      setCustomImagesPerPageInput(6);
       setPadding(12);
       setMargin(20);
       setImageFit('contain');
@@ -295,24 +345,93 @@ export const ImageMergerPage: React.FC = () => {
     } else if (presetName === 'vertical_strip') {
       setPageSize('AutoFit');
       setLayoutMode('vertical');
+      setImagesPerPageMode('all');
       setPadding(10);
       setMargin(15);
       setImageFit('cover');
     } else if (presetName === 'horizontal_row') {
       setPageSize('AutoFit');
       setLayoutMode('horizontal');
+      setImagesPerPageMode('all');
       setPadding(10);
       setMargin(15);
       setImageFit('cover');
+    } else if (presetName === 'grid_2x4') {
+      setPageSize('A4');
+      setOrientation('portrait');
+      setLayoutMode('grid');
+      setColumns(2);
+      setRows(4);
+      setImagesPerPageMode('preset');
+      setImagesPerPage(8);
+      setCustomImagesPerPageInput(8);
+      setPadding(12);
+      setMargin(20);
+      setImageFit('contain');
     } else if (presetName === 'grid_3x3') {
       setPageSize('A4');
       setOrientation('portrait');
       setLayoutMode('grid');
       setColumns(3);
       setRows(3);
+      setImagesPerPageMode('preset');
+      setImagesPerPage(9);
+      setCustomImagesPerPageInput(9);
       setPadding(10);
       setMargin(20);
       setImageFit('cover');
+    }
+  };
+
+  // Handle Images Per Page Preset selection
+  const handleSelectImagesPerPagePreset = (id: string) => {
+    setActivePageIndex(0);
+    if (id === 'all') {
+      setImagesPerPageMode('all');
+      if (layoutMode === 'grid' && items.length > 0) {
+        const opt = calculateOptimalGrid(items.length, orientation);
+        setColumns(opt.columns);
+        setRows(opt.rows);
+      }
+      return;
+    }
+
+    if (id === 'custom') {
+      setImagesPerPageMode('custom');
+      const count = Math.max(1, customImagesPerPageInput);
+      setImagesPerPage(count);
+      if (layoutMode === 'grid') {
+        const opt = calculateOptimalGrid(count, orientation);
+        setColumns(opt.columns);
+        setRows(opt.rows);
+      }
+      return;
+    }
+
+    const num = Number(id);
+    if (!isNaN(num) && num > 0) {
+      setImagesPerPageMode('preset');
+      setImagesPerPage(num);
+      setCustomImagesPerPageInput(num);
+      if (layoutMode === 'grid') {
+        const opt = calculateOptimalGrid(num, orientation);
+        setColumns(opt.columns);
+        setRows(opt.rows);
+      }
+    }
+  };
+
+  // Handle direct numeric input for custom images per page
+  const handleCustomImagesPerPageInputChange = (num: number) => {
+    const valid = Math.max(1, Math.min(50, num || 1));
+    setCustomImagesPerPageInput(valid);
+    setImagesPerPage(valid);
+    setImagesPerPageMode('custom');
+    setActivePageIndex(0);
+    if (layoutMode === 'grid') {
+      const opt = calculateOptimalGrid(valid, orientation);
+      setColumns(opt.columns);
+      setRows(opt.rows);
     }
   };
 
@@ -344,11 +463,50 @@ export const ImageMergerPage: React.FC = () => {
         customHeightPx: customHeight,
       };
 
-      const htmlImages = items.map((it) => it.imgElement);
-      const canvas = await createMergedCanvas(htmlImages, config);
       const cleanFilename = (exportFilename || 'utools-merged-image').trim().replace(/\.[^/.]+$/, '');
 
-      await exportCanvasToFormat(canvas, exportFormat, exportQuality, cleanFilename);
+      // Generate canvases for all pages if exporting all pages
+      if (totalPages > 1 && exportScope === 'all') {
+        const canvases: HTMLCanvasElement[] = [];
+        for (let p = 0; p < totalPages; p++) {
+          const start = p * targetImagesPerPage;
+          const pItems = items.slice(start, start + targetImagesPerPage);
+          const pCanvas = await createMergedCanvas(
+            pItems.map((it) => it.imgElement),
+            config
+          );
+          canvases.push(pCanvas);
+        }
+
+        await exportMultiPageCanvasToFormat(
+          canvases,
+          exportFormat,
+          exportQuality,
+          cleanFilename,
+          'all',
+          safePageIndex
+        );
+      } else {
+        // Single page or active page only
+        const start = safePageIndex * targetImagesPerPage;
+        const pItems = imagesPerPageMode === 'all'
+          ? items
+          : items.slice(start, start + targetImagesPerPage);
+
+        const canvas = await createMergedCanvas(
+          pItems.map((it) => it.imgElement),
+          config
+        );
+
+        await exportMultiPageCanvasToFormat(
+          [canvas],
+          exportFormat,
+          exportQuality,
+          cleanFilename,
+          'current',
+          safePageIndex
+        );
+      }
     } catch (err: unknown) {
       setErrorMessage(
         err instanceof Error ? `এক্সপোর্ট ব্যর্থ হয়েছে: ${err.message}` : 'ছবি তৈরি করতে সমস্যা হয়েছে।'
@@ -459,11 +617,13 @@ export const ImageMergerPage: React.FC = () => {
                 <span className="text-xs font-bold text-[#084A2E] block">জনপ্রিয় প্রিসেট (Quick Presets)</span>
                 <div className="flex flex-wrap gap-2">
                   {[
+                    { id: 'a4_1x2', label: 'A4 পেজে ২টি ছবি (এপিঠ-ওপিঠ)' },
                     { id: 'a4_2x2', label: 'A4 পেজে ৪টি ছবি (২×২)' },
                     { id: 'passport_sheet', label: 'পাসপোর্ট ছবি শিট (৬টি)' },
+                    { id: 'grid_2x4', label: '৮টি ছবির শিট (২×৪)' },
+                    { id: 'grid_3x3', label: '৯টি ছবির গ্রিড (৩×৩)' },
                     { id: 'vertical_strip', label: 'লম্বালম্বি স্ট্রিপ (Vertical)' },
                     { id: 'horizontal_row', label: 'পাশাপাশি সারি (Row)' },
-                    { id: 'grid_3x3', label: '৯টি ছবির গ্রিড (৩×৩)' },
                   ].map((p) => (
                     <button
                       key={p.id}
@@ -475,6 +635,83 @@ export const ImageMergerPage: React.FC = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* 1 পেজে ছবির সংখ্যা (Images per Page) - Custom & Quick Options */}
+              <div className="space-y-2.5 p-3.5 sm:p-4 bg-[#E6F4EC]/50 border-2 border-[#0B5D3B]/25 rounded-2xl shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex items-center space-x-2">
+                    <Grid className="w-4 h-4 text-[#0B5D3B]" />
+                    <label className="text-xs font-bold text-[#084A2E]">
+                      ১ পেজে কয়টি ছবি থাকবে? (Images Per Page)
+                    </label>
+                  </div>
+                  {items.length > 0 && (
+                    <span className="text-[11px] font-semibold text-[#0B5D3B] bg-[#FFFFFF] px-2.5 py-0.5 rounded-full border border-[#0B5D3B]/20">
+                      মোট {toBanglaDigits(items.length)}টি ছবি • পেজ হবে: {toBanglaDigits(totalPages)}টি
+                    </span>
+                  )}
+                </div>
+
+                {/* Pill Buttons */}
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {[
+                    { id: 'all', label: 'সব ছবি ১ পেজে' },
+                    { id: '1', label: '১টি ছবি' },
+                    { id: '2', label: '২টি (এপিঠ-ওপিঠ)' },
+                    { id: '4', label: '৪টি (২×২)' },
+                    { id: '6', label: '৬টি (পাসপোর্ট)' },
+                    { id: '8', label: '৮টি (২×৪)' },
+                    { id: '9', label: '৯টি (৩×৩)' },
+                    { id: '12', label: '১২টি' },
+                    { id: 'custom', label: 'কাস্টম সংখ্যা ✎' },
+                  ].map((opt) => {
+                    const isSelected =
+                      opt.id === 'all'
+                        ? imagesPerPageMode === 'all'
+                        : opt.id === 'custom'
+                        ? imagesPerPageMode === 'custom'
+                        : imagesPerPageMode === 'preset' && imagesPerPage === Number(opt.id);
+
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => handleSelectImagesPerPagePreset(opt.id)}
+                        className={`px-3 py-1.5 text-xs font-semibold border text-center transition-all cursor-pointer rounded-lg ${
+                          isSelected
+                            ? 'bg-[#0B5D3B] text-[#FFFFFF] border-[#0B5D3B] shadow-xs'
+                            : 'bg-[#FFFFFF] text-[#084A2E] border-[#D5E4DB] hover:bg-[#E6F4EC]'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Custom Number Input Row when 'custom' is active */}
+                {imagesPerPageMode === 'custom' && (
+                  <div className="flex flex-wrap items-center gap-2 pt-2.5 border-t border-[#0B5D3B]/15">
+                    <span className="text-xs font-semibold text-[#084A2E]">
+                      প্রতি পেজে নির্দিষ্ট সংখ্যা:
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        min="1"
+                        max="50"
+                        value={customImagesPerPageInput}
+                        onChange={(e) => handleCustomImagesPerPageInputChange(Number(e.target.value))}
+                        className="w-20 px-2.5 py-1 bg-white border-2 border-[#0B5D3B] rounded-lg text-xs font-mono font-bold text-[#0B5D3B] text-center focus:outline-none"
+                      />
+                      <span className="text-xs font-medium text-[#4A5A52]">টি ছবি</span>
+                    </div>
+                    <span className="text-[11px] text-[#4A5A52]">
+                      (গ্রিড কলাম ও সারি স্বয়ংক্রিয়ভাবে হিসাব করা হবে)
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Page Size & Orientation */}
@@ -619,7 +856,16 @@ export const ImageMergerPage: React.FC = () => {
                         min="1"
                         max="6"
                         value={columns}
-                        onChange={(e) => setColumns(Number(e.target.value))}
+                        onChange={(e) => {
+                          const newCols = Number(e.target.value);
+                          setColumns(newCols);
+                          if (imagesPerPageMode !== 'all') {
+                            const newCount = newCols * rows;
+                            setImagesPerPage(newCount);
+                            setCustomImagesPerPageInput(newCount);
+                            setActivePageIndex(0);
+                          }
+                        }}
                         className="w-full accent-[#0B5D3B]"
                       />
                       <div className="flex justify-between text-[10px] text-[#4A5A52]">
@@ -640,7 +886,16 @@ export const ImageMergerPage: React.FC = () => {
                         min="1"
                         max="8"
                         value={rows}
-                        onChange={(e) => setRows(Number(e.target.value))}
+                        onChange={(e) => {
+                          const newRows = Number(e.target.value);
+                          setRows(newRows);
+                          if (imagesPerPageMode !== 'all') {
+                            const newCount = columns * newRows;
+                            setImagesPerPage(newCount);
+                            setCustomImagesPerPageInput(newCount);
+                            setActivePageIndex(0);
+                          }
+                        }}
                         className="w-full accent-[#0B5D3B]"
                       />
                       <div className="flex justify-between text-[10px] text-[#4A5A52]">
@@ -832,6 +1087,36 @@ export const ImageMergerPage: React.FC = () => {
                 </span>
               </div>
 
+              {/* Multi-page Navigation Bar if totalPages > 1 */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between bg-white px-3 py-2 border border-[#0B5D3B]/20 rounded-xl shadow-xs">
+                  <button
+                    type="button"
+                    disabled={safePageIndex === 0}
+                    onClick={() => setActivePageIndex((p) => Math.max(0, p - 1))}
+                    className="px-2.5 py-1 text-xs font-bold text-[#0B5D3B] disabled:text-[#A0AEC0] hover:bg-[#E6F4EC] rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" /> আগের পেজ
+                  </button>
+                  <div className="text-center">
+                    <span className="text-xs font-bold text-[#084A2E]">
+                      পেজ {toBanglaDigits(safePageIndex + 1)} / {toBanglaDigits(totalPages)}
+                    </span>
+                    <span className="block text-[10px] text-[#4A5A52] font-mono">
+                      (ছবি {toBanglaDigits(safePageIndex * targetImagesPerPage + 1)} - {toBanglaDigits(Math.min(items.length, (safePageIndex + 1) * targetImagesPerPage))})
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={safePageIndex >= totalPages - 1}
+                    onClick={() => setActivePageIndex((p) => Math.min(totalPages - 1, p + 1))}
+                    className="px-2.5 py-1 text-xs font-bold text-[#0B5D3B] disabled:text-[#A0AEC0] hover:bg-[#E6F4EC] rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center gap-1"
+                  >
+                    পরের পেজ <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
               {/* Viewport Box */}
               <div className="border border-[#D5E4DB] bg-[#E4EEE8]/40 p-4 flex flex-col items-center justify-center min-h-[340px] max-h-[500px] overflow-hidden relative shadow-inner rounded-2xl">
                 {previewDataUrl ? (
@@ -934,6 +1219,48 @@ export const ImageMergerPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* Export Scope Selector when multiple pages exist */}
+                {totalPages > 1 && (
+                  <div className="space-y-1.5 p-3 bg-white border border-[#D5E4DB] rounded-xl">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold text-[#084A2E]">ডাউনলোড পরিধি (Export Scope):</span>
+                      <span className="text-[11px] text-[#0B5D3B] font-semibold bg-[#E6F4EC] px-2 py-0.5 rounded-full">
+                        মোট {toBanglaDigits(totalPages)}টি পেজ
+                      </span>
+                    </div>
+                    {exportFormat === 'application/pdf' ? (
+                      <p className="text-xs text-[#0B5D3B] font-medium pt-0.5">
+                        ✓ একটিমাত্র PDF ফাইলে সব {toBanglaDigits(totalPages)}টি পেজ পর পর সংরক্ষিত হবে।
+                      </p>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setExportScope('all')}
+                          className={`py-1.5 text-xs font-semibold border rounded-lg transition-colors cursor-pointer ${
+                            exportScope === 'all'
+                              ? 'bg-[#0B5D3B] text-white border-[#0B5D3B]'
+                              : 'bg-[#F0F4F2] text-[#084A2E] border-[#D5E4DB] hover:bg-[#E6F4EC]'
+                          }`}
+                        >
+                          সব পেজ (ZIP ফাইল)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setExportScope('current')}
+                          className={`py-1.5 text-xs font-semibold border rounded-lg transition-colors cursor-pointer ${
+                            exportScope === 'current'
+                              ? 'bg-[#0B5D3B] text-white border-[#0B5D3B]'
+                              : 'bg-[#F0F4F2] text-[#084A2E] border-[#D5E4DB] hover:bg-[#E6F4EC]'
+                          }`}
+                        >
+                          বর্তমান পেজ ({toBanglaDigits(safePageIndex + 1)})
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Filename Input */}
                 <div className="space-y-1">
                   <label htmlFor={filenameInputId} className="text-xs font-bold text-[#084A2E]">
@@ -962,15 +1289,19 @@ export const ImageMergerPage: React.FC = () => {
                   type="button"
                   onClick={handleExport}
                   disabled={isExporting || items.length === 0}
-                  className="w-full py-3 bg-[#0B5D3B] hover:bg-[#084A2E] disabled:bg-[#8A9E92] text-[#FFFFFF] font-bold text-sm tracking-wide transition-colors flex items-center justify-center space-x-2 shadow-sm cursor-pointer"
+                  className="w-full py-3 bg-[#0B5D3B] hover:bg-[#084A2E] disabled:bg-[#8A9E92] text-[#FFFFFF] font-bold text-sm tracking-wide transition-colors flex items-center justify-center space-x-2 shadow-sm cursor-pointer rounded-xl"
                 >
                   <Download className="w-4 h-4" />
                   <span>
                     {isExporting
                       ? 'তৈরি হচ্ছে...'
                       : exportFormat === 'application/pdf'
-                      ? 'PDF আকারে ডাউনলোড করুন'
-                      : 'মার্জ করা ছবি ডাউনলোড করুন'}
+                      ? totalPages > 1
+                        ? `PDF আকারে সব ${toBanglaDigits(totalPages)}টি পেজ ডাউনলোড করুন`
+                        : 'PDF আকারে ডাউনলোড করুন'
+                      : totalPages > 1 && exportScope === 'all'
+                      ? `সব (${toBanglaDigits(totalPages)}টি) পেজ ZIP আকারে ডাউনলোড`
+                      : `মার্জ করা ছবি ${totalPages > 1 ? `(পেজ ${toBanglaDigits(safePageIndex + 1)})` : ''} ডাউনলোড করুন`}
                   </span>
                 </button>
               </div>
