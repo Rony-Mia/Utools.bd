@@ -21,6 +21,18 @@ export interface BlogPost {
   metaDescription?: string;
   canonicalUrl?: string;
   updatedDate?: string;
+
+  // Optional modular sections (FAQ, Steps, Guidelines, Features, Selling Point)
+  faqHeading?: string;
+  faqs?: Array<{ question?: string; answer?: string }>;
+  stepsHeading?: string;
+  howToSteps?: Array<{ stepNum?: string; title?: string; desc?: string }>;
+  guidelinesHeading?: string;
+  guidelines?: Array<{ title?: string; desc?: string }>;
+  featuresHeading?: string;
+  features?: Array<{ title?: string; desc?: string } | string>;
+  sellingPointTitle?: string;
+  sellingPointDesc?: string;
 }
 
 // 6 fixed categories used across Decap CMS and archive routes

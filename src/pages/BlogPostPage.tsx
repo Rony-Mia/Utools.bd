@@ -30,6 +30,7 @@ import {
 } from '../utils/blog.ts';
 import { toBn } from '../utils/bnDigits.ts';
 import { BlogImage } from '../components/blog/BlogImage.tsx';
+import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 
 interface TocItem {
@@ -179,6 +180,25 @@ const SLUG_REDIRECTS: Record<string, string> = {
     ],
   };
 
+  // Optional FAQ schema if post has dynamic FAQs
+  const faqSchema =
+    post.faqs && post.faqs.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: post.faqs
+            .filter((f) => f && f.question && f.answer)
+            .map((f) => ({
+              '@type': 'Question',
+              name: f.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: f.answer,
+              },
+            })),
+        }
+      : null;
+
   // Track heading IDs inside markdown
   let renderedH2Count = 0;
 
@@ -199,6 +219,7 @@ const SLUG_REDIRECTS: Record<string, string> = {
         <meta name="twitter:image" content={ogImageUrl} />
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
       </Helmet>
 
       {/* Reading Progress Bar (Fixed Top) */}
@@ -517,6 +538,9 @@ const SLUG_REDIRECTS: Record<string, string> = {
                 >
                   {post.content}
                 </ReactMarkdown>
+
+                {/* Optional Dynamic CMS Content (Highlight, Features, Steps, Guidelines, FAQs) */}
+                <CmsDynamicContent content={post as any} className="mt-10 pt-8 border-t border-[#D5E4DB]" />
               </div>
 
               {/* Table of Contents - Desktop Sticky Sidebar */}

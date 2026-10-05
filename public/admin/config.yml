@@ -240,32 +240,32 @@ collections:
         widget: "select"
         options:
           - { label: "কোনোটি নয়", value: "" }
-          - { label: "বিজয় ↔ ইউনিকোড কনভার্টার (/converter)", value: "/converter" }
-          - { label: "টাইপিং স্পিড টেস্ট (/typing-test)", value: "/typing-test" }
-          - { label: "পাসপোর্ট ও সরকারি ছবি রিসাইজার (/photo-resizer)", value: "/photo-resizer" }
-          - { label: "বাল্ক ফটো রিসাইজার (/bulk-photo-resizer)", value: "/bulk-photo-resizer" }
+          - { label: "বিজয় ↔ ইউনিকোড টেক্সট কনভার্টার (/converter)", value: "/converter" }
+          - { label: "টাইপিং স্পিড টেস্ট (Typing Speed Test) (/typing-test)", value: "/typing-test" }
+          - { label: "সরকারি ও পাসপোর্ট ছবি রিসাইজার (/photo-resizer)", value: "/photo-resizer" }
+          - { label: "বাল্ক ফটো রিসাইজার (Bulk Resizer) (/bulk-photo-resizer)", value: "/bulk-photo-resizer" }
           - { label: "HEIC থেকে JPG/PNG কনভার্টার (/heic-converter)", value: "/heic-converter" }
           - { label: "ইমেজ মার্জার ও কোলাজ মেকার (/image-merger)", value: "/image-merger" }
-          - { label: "ছবি থেকে পিডিএফ কনভার্টার (/image-to-pdf)", value: "/image-to-pdf" }
+          - { label: "ছবি থেকে পিডিএফ কনভার্টার (Image to PDF) (/image-to-pdf)", value: "/image-to-pdf" }
           - { label: "কাস্টম QR কোড জেনারেটর (/qr-generator)", value: "/qr-generator" }
           - { label: "সরকারি চাকরির বয়স ক্যালকুলেটর (/age-calculator)", value: "/age-calculator" }
-          - { label: "টাকা → কথায় কনভার্টার (/amount-in-words)", value: "/amount-in-words" }
-          - { label: "বাংলা তারিখ কনভার্টার (/bangla-date-converter)", value: "/bangla-date-converter" }
-          - { label: "জিপিএ ও সিজিপিএ ক্যালকুলেটর (/gpa-calculator)", value: "/gpa-calculator" }
-          - { label: "জমির মাপ কনভার্টার (/land-converter)", value: "/land-converter" }
-          - { label: "স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর (/gold-calculator)", value: "/gold-calculator" }
-          - { label: "টাইলসের হিসাব ক্যালকুলেটর (/tiles-calculator)", value: "/tiles-calculator" }
-          - { label: "রান্নার পরিমাপ ও রেসিপি কনভার্টার (/cooking-converter)", value: "/cooking-converter" }
-          - { label: "সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার (/number-system-converter)", value: "/number-system-converter" }
-          - { label: "সিভি ও জীবনবৃত্তান্ত মেকার (/cv-builder)", value: "/cv-builder" }
-          - { label: "পিডিএফ মার্জার (/pdf-merger)", value: "/pdf-merger" }
-          - { label: "পিডিএফ স্প্লিটার (/pdf-split)", value: "/pdf-split" }
-          - { label: "পিডিএফ পেজ ডিলিট (/pdf-delete-pages)", value: "/pdf-delete-pages" }
-          - { label: "পিডিএফ রোটেট (/pdf-rotate)", value: "/pdf-rotate" }
+          - { label: "টাকা → কথায় কনভার্টার (Amount in Words) (/amount-in-words)", value: "/amount-in-words" }
+          - { label: "বাংলা তারিখ কনভার্টার (Bangla Date Converter) (/bangla-date-converter)", value: "/bangla-date-converter" }
+          - { label: "জিপিএ ও সিজিপিএ ক্যালকুলেটর (GPA & CGPA Calculator) (/gpa-calculator)", value: "/gpa-calculator" }
+          - { label: "জমির মাপ কনভার্টার (Land Area Converter) (/land-converter)", value: "/land-converter" }
+          - { label: "স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর (Gold Calculator) (/gold-calculator)", value: "/gold-calculator" }
+          - { label: "সংখ্যা পদ্ধতি ও আইসিটি কনভার্টার (Number System) (/number-system-converter)", value: "/number-system-converter" }
+          - { label: "সিভি ও জীবনবৃত্তান্ত মেকার (CV Builder) (/cv-builder)", value: "/cv-builder" }
+          - { label: "পিডিএফ মার্জার (PDF Merger) (/pdf-merger)", value: "/pdf-merger" }
+          - { label: "পিডিএফ স্প্লিটার (PDF Splitter) (/pdf-split)", value: "/pdf-split" }
+          - { label: "পিডিএফ পেজ ডিলিট (Delete Pages) (/pdf-delete-pages)", value: "/pdf-delete-pages" }
+          - { label: "পিডিএফ রোটেট (PDF Rotate) (/pdf-rotate)", value: "/pdf-rotate" }
           - { label: "পিডিএফ ওয়াটারমার্ক ও পেজ নম্বর (/pdf-watermark-page-number)", value: "/pdf-watermark-page-number" }
-          - { label: "ছবি ও PDF থেকে বাংলা টেক্সট OCR (/image-to-text)", value: "/image-to-text" }
-          - { label: "টেক্সট কেস কনভার্টার ও ক্লিনার (/case-converter)", value: "/case-converter" }
-          - { label: "টেক্সট টু হ্যান্ডরাইটিং কনভার্টার (/text-to-handwriting)", value: "/text-to-handwriting" }
+          - { label: "ছবি ও PDF থেকে বাংলা টেক্সট (OCR) (/image-to-text)", value: "/image-to-text" }
+          - { label: "টেক্সট কেস কনভার্টার ও ক্লিনার (Case Converter) (/case-converter)", value: "/case-converter" }
+          - { label: "টেক্সট টু হ্যান্ডরাইটিং কনভার্টার (Text to Handwriting) (/text-to-handwriting)", value: "/text-to-handwriting" }
+          - { label: "রান্নার পরিমাপ ও রেসিপি কনভার্টার (Cooking Converter) (/cooking-converter)", value: "/cooking-converter" }
+          - { label: "টাইলসের হিসাব ক্যালকুলেটর (Tiles Calculator BD) — ওয়াল ও ফ্লোর (/tiles-calculator)", value: "/tiles-calculator" }
         required: false
       - { name: "relatedToolLabel", label: "সম্পর্কিত টুলের নাম (Display Label)", widget: "string", required: false }
       - label: "সম্পর্কিত আর্টিকেল (Related Articles)"
@@ -280,6 +280,41 @@ collections:
           search_fields: ["title"]
           display_fields: ["title"]
           value_field: "slug"
+      - { name: "sellingPointTitle", label: "হাইলাইট টাইটেল (Key Highlight Title)", widget: "string", required: false }
+      - { name: "sellingPointDesc", label: "হাইলাইট বিবরণ (Key Highlight Desc)", widget: "text", required: false }
+      - { name: "faqHeading", label: "এফএকিউ হেডিং (FAQ Heading)", widget: "string", required: false, default: "প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী (FAQ)" }
+      - label: "প্রশ্নোত্তর তালিকা (FAQ)"
+        name: "faqs"
+        widget: "list"
+        required: false
+        fields:
+          - { name: "question", label: "প্রশ্ন", widget: "string" }
+          - { name: "answer", label: "উত্তর", widget: "text" }
+      - { name: "stepsHeading", label: "ব্যবহারের ধাপসমূহের হেডিং (Steps Heading)", widget: "string", required: false, default: "ধাপে ধাপে ব্যবহারের নিয়ম" }
+      - label: "ধাপসমূহ (How-To Steps)"
+        name: "howToSteps"
+        widget: "list"
+        required: false
+        fields:
+          - { name: "stepNum", label: "ধাপ নং (যেমন: ১, ২)", widget: "string", required: false }
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
+      - { name: "guidelinesHeading", label: "জরুরি নির্দেশিকা হেডিং (Guidelines Heading)", widget: "string", required: false, default: "জরুরি নির্দেশিকা ও চেকলিস্ট" }
+      - label: "নির্দেশিকা তালিকা (Guidelines)"
+        name: "guidelines"
+        widget: "list"
+        required: false
+        fields:
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
+      - { name: "featuresHeading", label: "ফিচার বা সুবিধাসমূহ হেডিং (Features Heading)", widget: "string", required: false, default: "মূল সুবিধাসমূহ" }
+      - label: "ফিচার তালিকা (Features)"
+        name: "features"
+        widget: "list"
+        required: false
+        fields:
+          - { name: "title", label: "শিরোনাম", widget: "string" }
+          - { name: "desc", label: "বিবরণ", widget: "text", required: false }
       - name: "seoTitle"
         label: "এসইও টাইটেল (SEO Title)"
         widget: "string"
