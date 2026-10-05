@@ -300,88 +300,7 @@ export const ImageMergerPage: React.FC = () => {
     setErrorMessage(null);
   };
 
-  // Quick Preset Handlers
-  const applyPreset = (presetName: string) => {
-    setActivePageIndex(0);
-    if (presetName === 'a4_1x2') {
-      setPageSize('A4');
-      setOrientation('portrait');
-      setLayoutMode('grid');
-      setColumns(1);
-      setRows(2);
-      setImagesPerPageMode('preset');
-      setImagesPerPage(2);
-      setCustomImagesPerPageInput(2);
-      setPadding(16);
-      setMargin(24);
-      setImageFit('contain');
-    } else if (presetName === 'a4_2x2') {
-      setPageSize('A4');
-      setOrientation('portrait');
-      setLayoutMode('grid');
-      setColumns(2);
-      setRows(2);
-      setImagesPerPageMode('preset');
-      setImagesPerPage(4);
-      setCustomImagesPerPageInput(4);
-      setPadding(16);
-      setMargin(24);
-      setImageFit('contain');
-    } else if (presetName === 'passport_sheet') {
-      setPageSize('A4');
-      setOrientation('portrait');
-      setLayoutMode('grid');
-      setColumns(2);
-      setRows(3);
-      setImagesPerPageMode('preset');
-      setImagesPerPage(6);
-      setCustomImagesPerPageInput(6);
-      setPadding(12);
-      setMargin(20);
-      setImageFit('contain');
-      setBackgroundColor('#ffffff');
-      setBorderWidth(1);
-      setBorderColor('#cccccc');
-    } else if (presetName === 'vertical_strip') {
-      setPageSize('AutoFit');
-      setLayoutMode('vertical');
-      setImagesPerPageMode('all');
-      setPadding(10);
-      setMargin(15);
-      setImageFit('cover');
-    } else if (presetName === 'horizontal_row') {
-      setPageSize('AutoFit');
-      setLayoutMode('horizontal');
-      setImagesPerPageMode('all');
-      setPadding(10);
-      setMargin(15);
-      setImageFit('cover');
-    } else if (presetName === 'grid_2x4') {
-      setPageSize('A4');
-      setOrientation('portrait');
-      setLayoutMode('grid');
-      setColumns(2);
-      setRows(4);
-      setImagesPerPageMode('preset');
-      setImagesPerPage(8);
-      setCustomImagesPerPageInput(8);
-      setPadding(12);
-      setMargin(20);
-      setImageFit('contain');
-    } else if (presetName === 'grid_3x3') {
-      setPageSize('A4');
-      setOrientation('portrait');
-      setLayoutMode('grid');
-      setColumns(3);
-      setRows(3);
-      setImagesPerPageMode('preset');
-      setImagesPerPage(9);
-      setCustomImagesPerPageInput(9);
-      setPadding(10);
-      setMargin(20);
-      setImageFit('cover');
-    }
-  };
+
 
   // Handle Images Per Page Preset selection
   const handleSelectImagesPerPagePreset = (id: string) => {
@@ -612,30 +531,6 @@ export const ImageMergerPage: React.FC = () => {
                 </h2>
               </div>
 
-              {/* Quick Preset Buttons */}
-              <div className="space-y-1.5">
-                <span className="text-xs font-bold text-[#084A2E] block">জনপ্রিয় প্রিসেট (Quick Presets)</span>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: 'a4_1x2', label: 'A4 পেজে ২টি ছবি (এপিঠ-ওপিঠ)' },
-                    { id: 'a4_2x2', label: 'A4 পেজে ৪টি ছবি (২×২)' },
-                    { id: 'passport_sheet', label: 'পাসপোর্ট ছবি শিট (৬টি)' },
-                    { id: 'grid_2x4', label: '৮টি ছবির শিট (২×৪)' },
-                    { id: 'grid_3x3', label: '৯টি ছবির গ্রিড (৩×৩)' },
-                    { id: 'vertical_strip', label: 'লম্বালম্বি স্ট্রিপ (Vertical)' },
-                    { id: 'horizontal_row', label: 'পাশাপাশি সারি (Row)' },
-                  ].map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => applyPreset(p.id)}
-                      className="text-xs px-2.5 py-1.5 border border-[#D5E4DB] bg-[#F0F4F2] hover:bg-[#0B5D3B] hover:text-[#FFFFFF] hover:border-[#0B5D3B] text-[#084A2E] transition-colors cursor-pointer rounded-lg"
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               {/* 1 পেজে ছবির সংখ্যা (Images per Page) - Custom & Quick Options */}
               <div className="space-y-2.5 p-3.5 sm:p-4 bg-[#E6F4EC]/50 border-2 border-[#0B5D3B]/25 rounded-2xl shadow-xs">
