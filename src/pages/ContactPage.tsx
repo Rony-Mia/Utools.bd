@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
+import { TOOLS } from '../data/tools.ts';
 import pageContent from '../../content/pages/contact.json';
 
 export const ContactPage: React.FC = () => {
@@ -278,14 +279,11 @@ export const ContactPage: React.FC = () => {
                     className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#D5E4DB] text-sm text-[#0F1F17] focus:outline-none focus:border-[#0B5D3B] rounded-lg"
                   >
                     <option value="none">কোনো নির্দিষ্ট টুল নয় / সাধারণ</option>
-                    <option value="converter">বিজয় ↔ ইউনিকোড কনভার্টার</option>
-                    <option value="photo-resizer">সরকারি ছবি ও স্বাক্ষর রিসাইজার</option>
-                    <option value="age-calculator">সরকারি চাকরির বয়স ক্যালকুলেটর</option>
-                    <option value="amount-in-words">টাকা কথায় কনভার্টার</option>
-                    <option value="gpa-calculator">জিপিএ ও সিজিপিএ ক্যালকুলেটর</option>
-                    <option value="land-converter">জমির মাপ কনভার্টার</option>
-                    <option value="gold-calculator">স্বর্ণের পরিমাপ ও দাম ক্যালকুলেটর</option>
-                    <option value="cv-builder">সিভি ও জীবনবৃত্তান্ত মেকার</option>
+                    {TOOLS.map((tool) => (
+                      <option key={tool.id} value={tool.link.replace('/', '')}>
+                        {tool.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
