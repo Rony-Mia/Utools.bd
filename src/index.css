@@ -179,7 +179,7 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   /* Soft corners for form controls. Lives in the base layer, so any explicit
@@ -202,7 +202,7 @@ body {
   color: #0F1F17;
   font-family: var(--font-sans);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
