@@ -13,9 +13,6 @@ import {
   Copy,
   Check,
   Clock,
-  List,
-  ChevronDown,
-  ChevronUp,
   RefreshCw,
   BookOpen,
 } from 'lucide-react';
@@ -33,17 +30,11 @@ import { BlogImage } from '../components/blog/BlogImage.tsx';
 import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard.ts';
 
-interface TocItem {
-  id: string;
-  text: string;
-}
-
 export const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = slug ? getBlogPostBySlug(slug) : undefined;
 
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [mobileTocOpen, setMobileTocOpen] = useState(false);
   const { copied, copy } = useCopyToClipboard();
 
   // Scroll reading progress
@@ -58,27 +49,6 @@ export const BlogPostPage: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Extract H2 headings for Table of Contents
-  const tocItems: TocItem[] = useMemo(() => {
-    if (!post?.content) return [];
-    const lines = post.content.split('\n');
-    const items: TocItem[] = [];
-    let h2Count = 0;
-
-    for (const line of lines) {
-      const match = line.match(/^##\s+(.+)$/);
-      if (match) {
-        h2Count += 1;
-        const rawText = match[1].trim();
-        // Remove markdown formatting like bold/links
-        const cleanText = rawText.replace(/[*_~`\[\]]|(\(.*\))/g, '');
-        const id = `heading-${h2Count}`;
-        items.push({ id, text: cleanText });
-      }
-    }
-    return items;
-  }, [post?.content]);
 
 // Redirect map for historical/renamed post slugs
 const SLUG_REDIRECTS: Record<string, string> = {
@@ -198,9 +168,6 @@ const SLUG_REDIRECTS: Record<string, string> = {
             })),
         }
       : null;
-
-  // Track heading IDs inside markdown
-  let renderedH2Count = 0;
 
   return (
     <>
@@ -372,198 +339,130 @@ const SLUG_REDIRECTS: Record<string, string> = {
               </div>
             )}
 
-            {/* Main Article Content & Table of Contents */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-              {/* Table of Contents - Mobile Accordion */}
-              {tocItems.length > 0 && (
-                <div className="lg:hidden">
-                  <div className="border border-[#D5E4DB] rounded-2xl p-4 bg-[#F8FAF9]">
-                    <button
-                      type="button"
-                      onClick={() => setMobileTocOpen(!mobileTocOpen)}
-                      className="w-full flex items-center justify-between text-xs font-bold text-[#0F1F17] cursor-pointer"
+            {/* Main Article Content (Full Width) */}
+            <div className="prose max-w-none pt-4 text-[#0F1F17]">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  h1: ({ node, children, ...props }) => (
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F1F17] mt-8 mb-4 tracking-tight" {...props}>
+                      {children}
+                    </h2>
+                  ),
+                  h2: ({ node, children, ...props }) => (
+                    <h2
+                      className="text-xl sm:text-2xl font-bold text-[#0F1F17] mt-10 mb-4 pt-4 border-b border-[#D5E4DB]/50 pb-2 scroll-mt-20"
+                      {...props}
                     >
-                      <span className="flex items-center gap-2">
-                        <List className="w-4 h-4 text-[#0B5D3B]" />
-                        <span>সূচিপত্র ({toBn(tocItems.length)} টি অনুচ্ছেদ)</span>
-                      </span>
-                      {mobileTocOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </button>
+                      {children}
+                    </h2>
+                  ),
+                  h3: ({ node, children, ...props }) => (
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0F1F17] mt-6 mb-2.5" {...props}>
+                      {children}
+                    </h3>
+                  ),
+                  h4: ({ node, children, ...props }) => (
+                    <h4 className="text-base sm:text-lg font-bold text-[#0F1F17] mt-4 mb-2" {...props}>
+                      {children}
+                    </h4>
+                  ),
+                  p: ({ node, children, ...props }) => (
+                    <p className="text-sm sm:text-base text-[#4A5A52] leading-relaxed my-3.5" {...props}>
+                      {children}
+                    </p>
+                  ),
+                  strong: ({ node, children, ...props }) => (
+                    <strong className="font-bold text-[#0F1F17]" {...props}>
+                      {children}
+                    </strong>
+                  ),
+                  em: ({ node, children, ...props }) => (
+                    <em className="italic" {...props}>
+                      {children}
+                    </em>
+                  ),
+                  ul: ({ node, children, ...props }) => (
+                    <ul className="list-disc list-outside ml-5 space-y-1.5 my-3.5 text-sm sm:text-base text-[#4A5A52] leading-relaxed" {...props}>
+                      {children}
+                    </ul>
+                  ),
+                  ol: ({ node, children, ...props }) => (
+                    <ol className="list-decimal list-outside ml-5 space-y-1.5 my-3.5 text-sm sm:text-base text-[#4A5A52] leading-relaxed" {...props}>
+                      {children}
+                    </ol>
+                  ),
+                  li: ({ node, children, ...props }) => (
+                    <li className="pl-1" {...props}>
+                      {children}
+                    </li>
+                  ),
+                  img: ({ node, src, alt, ...props }) => (
+                    <img
+                      src={src}
+                      alt={alt || 'ব্লগ ছবি'}
+                      loading="lazy"
+                      decoding="async"
+                      className="rounded-2xl max-w-full h-auto my-6 border border-[#D5E4DB] mx-auto shadow-xs"
+                      {...props}
+                    />
+                  ),
+                  a: ({ node, href, children, ...props }) => {
+                    const isInternal =
+                      href &&
+                      (href.startsWith('/') ||
+                        href.startsWith('https://utools.bd') ||
+                        href.startsWith('http://utools.bd'));
+                    const cleanHref = href
+                      ? href.replace(/^https?:\/\/utools\.bd/, '') || '/'
+                      : '#';
 
-                    {mobileTocOpen && (
-                      <nav className="mt-3 pt-3 border-t border-[#D5E4DB] space-y-2 text-xs">
-                        {tocItems.map((item, idx) => (
-                          <a
-                            key={item.id}
-                            href={`#${item.id}`}
-                            onClick={() => setMobileTocOpen(false)}
-                            className="block text-[#4A5A52] hover:text-[#0B5D3B] hover:underline transition-colors pl-2 border-l-2 border-[#D5E4DB] hover:border-[#0B5D3B]"
-                          >
-                            <span className="font-mono text-[#0B5D3B] mr-1.5">{toBn(idx + 1)}.</span>
-                            <span>{item.text}</span>
-                          </a>
-                        ))}
-                      </nav>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Markdown Body */}
-              <div className={`min-w-0 ${tocItems.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'} prose max-w-none`}>
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h1: ({ node, children, ...props }) => (
-                      <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F1F17] mt-8 mb-4 tracking-tight" {...props}>
-                        {children}
-                      </h2>
-                    ),
-                    h2: ({ node, children, ...props }) => {
-                      renderedH2Count += 1;
-                      const id = `heading-${renderedH2Count}`;
+                    if (isInternal) {
                       return (
-                        <h2
-                          id={id}
-                          className="text-xl sm:text-2xl font-bold text-[#0F1F17] mt-10 mb-4 pt-4 border-b border-[#D5E4DB]/50 pb-2 scroll-mt-20"
+                        <Link
+                          to={cleanHref}
+                          className="font-semibold text-[#0B5D3B] hover:text-[#084A2E] underline decoration-[#0B5D3B]/40 hover:decoration-[#084A2E] transition-colors"
                           {...props}
                         >
                           {children}
-                        </h2>
+                        </Link>
                       );
-                    },
-                    h3: ({ node, children, ...props }) => (
-                      <h3 className="text-lg sm:text-xl font-bold text-[#0F1F17] mt-6 mb-2.5" {...props}>
-                        {children}
-                      </h3>
-                    ),
-                    h4: ({ node, children, ...props }) => (
-                      <h4 className="text-base sm:text-lg font-bold text-[#0F1F17] mt-4 mb-2" {...props}>
-                        {children}
-                      </h4>
-                    ),
-                    p: ({ node, children, ...props }) => (
-                      <p className="text-sm sm:text-base text-[#4A5A52] leading-relaxed my-3.5" {...props}>
-                        {children}
-                      </p>
-                    ),
-                    strong: ({ node, children, ...props }) => (
-                      <strong className="font-bold text-[#0F1F17]" {...props}>
-                        {children}
-                      </strong>
-                    ),
-                    em: ({ node, children, ...props }) => (
-                      <em className="italic" {...props}>
-                        {children}
-                      </em>
-                    ),
-                    ul: ({ node, children, ...props }) => (
-                      <ul className="list-disc list-outside ml-5 space-y-1.5 my-3.5 text-sm sm:text-base text-[#4A5A52] leading-relaxed" {...props}>
-                        {children}
-                      </ul>
-                    ),
-                    ol: ({ node, children, ...props }) => (
-                      <ol className="list-decimal list-outside ml-5 space-y-1.5 my-3.5 text-sm sm:text-base text-[#4A5A52] leading-relaxed" {...props}>
-                        {children}
-                      </ol>
-                    ),
-                    li: ({ node, children, ...props }) => (
-                      <li className="pl-1" {...props}>
-                        {children}
-                      </li>
-                    ),
-                    img: ({ node, src, alt, ...props }) => (
-                      <img
-                        src={src}
-                        alt={alt || 'ব্লগ ছবি'}
-                        loading="lazy"
-                        decoding="async"
-                        className="rounded-2xl max-w-full h-auto my-6 border border-[#D5E4DB] mx-auto shadow-xs"
+                    }
+
+                    return (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="font-semibold text-[#0B5D3B] hover:text-[#084A2E] underline decoration-[#0B5D3B]/40 hover:decoration-[#084A2E] transition-colors inline-flex items-center gap-1"
                         {...props}
-                      />
-                    ),
-                    a: ({ node, href, children, ...props }) => {
-                      const isInternal =
-                        href &&
-                        (href.startsWith('/') ||
-                          href.startsWith('https://utools.bd') ||
-                          href.startsWith('http://utools.bd'));
-                      const cleanHref = href
-                        ? href.replace(/^https?:\/\/utools\.bd/, '') || '/'
-                        : '#';
-
-                      if (isInternal) {
-                        return (
-                          <Link
-                            to={cleanHref}
-                            className="font-semibold text-[#0B5D3B] hover:text-[#084A2E] underline decoration-[#0B5D3B]/40 hover:decoration-[#084A2E] transition-colors"
-                            {...props}
-                          >
-                            {children}
-                          </Link>
-                        );
-                      }
-
-                      return (
-                        <a
-                          href={href}
-                          target="_blank"
-                          rel="noopener noreferrer nofollow"
-                          className="font-semibold text-[#0B5D3B] hover:text-[#084A2E] underline decoration-[#0B5D3B]/40 hover:decoration-[#084A2E] transition-colors inline-flex items-center gap-1"
-                          {...props}
-                        >
-                          {children}
-                        </a>
-                      );
-                    },
-                    blockquote: ({ node, children, ...props }) => (
-                      <blockquote className="border-l-4 border-[#0B5D3B] bg-[#F8FAF9] pl-4 py-3 my-5 rounded-r-xl italic text-[#4A5A52]" {...props}>
+                      >
                         {children}
-                      </blockquote>
-                    ),
-                    pre: ({ node, children, ...props }) => (
-                      <pre className="bg-[#0F1F17] text-[#FAFAF7] p-4 rounded-xl overflow-x-auto my-4 text-xs sm:text-sm font-mono" {...props}>
-                        {children}
-                      </pre>
-                    ),
-                    code: ({ node, className, children, ...props }) => (
-                      <code className={className ? className : 'px-1.5 py-0.5 bg-[#F0F4F2] text-[#0B5D3B] rounded text-xs font-mono'} {...props}>
-                        {children}
-                      </code>
-                    ),
-                    hr: ({ node, ...props }) => (
-                      <hr className="my-8 border-[#D5E4DB]" {...props} />
-                    ),
-                  }}
-                >
-                  {post.content}
-                </ReactMarkdown>
-              </div>
-
-              {/* Table of Contents - Desktop Sticky Sidebar */}
-              {tocItems.length > 0 && (
-                <aside className="hidden lg:block lg:col-span-4">
-                  <div className="sticky top-24 border border-[#D5E4DB] rounded-2xl p-5 bg-[#F8FAF9]/80 space-y-3">
-                    <div className="flex items-center gap-2 pb-2 border-b border-[#D5E4DB] text-xs font-bold text-[#0F1F17]">
-                      <List className="w-4 h-4 text-[#0B5D3B]" />
-                      <span>সূচিপত্র (TOC)</span>
-                    </div>
-
-                    <nav className="space-y-2 text-xs max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
-                      {tocItems.map((item, idx) => (
-                        <a
-                          key={item.id}
-                          href={`#${item.id}`}
-                          className="block text-[#4A5A52] hover:text-[#0B5D3B] hover:underline transition-colors pl-2.5 border-l-2 border-[#D5E4DB] hover:border-[#0B5D3B] py-0.5 leading-snug"
-                        >
-                          <span className="font-mono text-[#0B5D3B] mr-1.5">{toBn(idx + 1)}.</span>
-                          <span>{item.text}</span>
-                        </a>
-                      ))}
-                    </nav>
-                  </div>
-                </aside>
-              )}
+                      </a>
+                    );
+                  },
+                  blockquote: ({ node, children, ...props }) => (
+                    <blockquote className="border-l-4 border-[#0B5D3B] bg-[#F8FAF9] pl-4 py-3 my-5 rounded-r-xl italic text-[#4A5A52]" {...props}>
+                      {children}
+                    </blockquote>
+                  ),
+                  pre: ({ node, children, ...props }) => (
+                    <pre className="bg-[#0F1F17] text-[#FAFAF7] p-4 rounded-xl overflow-x-auto my-4 text-xs sm:text-sm font-mono" {...props}>
+                      {children}
+                    </pre>
+                  ),
+                  code: ({ node, className, children, ...props }) => (
+                    <code className={className ? className : 'px-1.5 py-0.5 bg-[#F0F4F2] text-[#0B5D3B] rounded text-xs font-mono'} {...props}>
+                      {children}
+                    </code>
+                  ),
+                  hr: ({ node, ...props }) => (
+                    <hr className="my-8 border-[#D5E4DB]" {...props} />
+                  ),
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
             </div>
 
             {/* Optional Dynamic CMS Content (Highlight, Features, Steps, Guidelines, FAQs) */}
