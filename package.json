@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "sync:tools": "tsx scripts/sync-cms-tools.ts",
+    "predev": "npm run sync:tools",
+    "prebuild": "npm run sync:tools",
     "dev": "tsx server.ts",
     "build": "tsx scripts/optimize-images.ts && vite build && vite build --ssr src/entry-server.tsx --outDir dist/server && tsx prerender.ts && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
