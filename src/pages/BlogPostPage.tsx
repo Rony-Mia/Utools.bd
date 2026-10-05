@@ -538,9 +538,6 @@ const SLUG_REDIRECTS: Record<string, string> = {
                 >
                   {post.content}
                 </ReactMarkdown>
-
-                {/* Optional Dynamic CMS Content (Highlight, Features, Steps, Guidelines, FAQs) */}
-                <CmsDynamicContent content={post as any} className="mt-10 pt-8 border-t border-[#D5E4DB]" />
               </div>
 
               {/* Table of Contents - Desktop Sticky Sidebar */}
@@ -568,6 +565,13 @@ const SLUG_REDIRECTS: Record<string, string> = {
                 </aside>
               )}
             </div>
+
+            {/* Optional Dynamic CMS Content (Highlight, Features, Steps, Guidelines, FAQs) */}
+            <CmsDynamicContent
+              content={post as any}
+              excludeSections={['markdown', 'lastUpdated', 'contact']}
+              className="space-y-8 pt-8 border-t border-[#D5E4DB]"
+            />
 
             {/* Social Share Bar */}
             <div className="pt-6 border-t border-[#D5E4DB] flex flex-wrap items-center justify-between gap-4">
