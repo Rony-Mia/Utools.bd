@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
@@ -17,13 +17,22 @@ import {
   Plus,
   RefreshCw,
   Image as ImageIcon,
-  Check
+  Check,
+  Eye,
+  Maximize2,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  RotateCw,
+  RotateCcw,
+  X
 } from 'lucide-react';
 import { ToolSeoHead } from '../components/ToolSeoHead.tsx';
 import { RelatedTools } from '../components/RelatedTools.tsx';
 import { CmsDynamicContent } from '../components/CmsDynamicContent.tsx';
 import {
   generatePdfFromImages,
+  renderRotatedDataUrl,
   ImageToPdfItem,
   ImageToPdfOptions,
   PageSizeOption,
@@ -31,6 +40,7 @@ import {
   MarginOption,
   formatFileSize
 } from '../utils/imageToPdf.ts';
+import { toBanglaNum } from '../utils/bnDigits.ts';
 import pageContent from '../../content/pages/image-to-pdf.json';
 
 export const ImageToPdfPage: React.FC = () => {
@@ -40,12 +50,24 @@ export const ImageToPdfPage: React.FC = () => {
   const [margin, setMargin] = useState<MarginOption>('small');
   const [quality, setQuality] = useState<number>(0.92);
 
+  const [previewPageIndex, setPreviewPageIndex] = useState<number>(0);
+  const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
+
   const [isConverting, setIsConverting] = useState<boolean>(false);
   const [conversionProgress, setConversionProgress] = useState<{ current: number; total: number } | null>(null);
   const [pdfResult, setPdfResult] = useState<{ url: string; size: number; count: number } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Clean up Object URL on unmount or when new PDF is created
+  useEffect(() => {
+    return () => {
+      if (pdfResult?.url) {
+        URL.revokeObjectURL(pdfResult.url);
+      }
+    };
+  }, [pdfResult]);
 
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -71,6 +93,8 @@ export const ImageToPdfPage: React.FC = () => {
             name: file.name,
             sizeBytes: file.size,
             dataUrl,
+            originalDataUrl: dataUrl,
+            rotation: 0,
             width: img.naturalWidth,
             height: img.naturalHeight,
           };
@@ -98,26 +122,107 @@ export const ImageToPdfPage: React.FC = () => {
     const [moved] = updated.splice(index, 1);
     updated.splice(targetIndex, 0, moved);
     setImages(updated);
+    setPreviewPageIndex(targetIndex);
+  };
+
+  const rotateImage = async (index: number, deltaDegrees: number = 90) => {
+    const item = images[index];
+    if (!item) return;
+
+    const currentRotation = item.rotation || 0;
+    const newRotation = (((currentRotation + deltaDegrees) % 360) + 360) % 360;
+    const baseSource = item.originalDataUrl || item.dataUrl;
+
+    try {
+      const rotated = await renderRotatedDataUrl(baseSource, newRotation);
+      setImages((prev) => {
+        const updated = [...prev];
+        if (!updated[index]) return prev;
+        updated[index] = {
+          ...updated[index],
+          rotation: newRotation,
+          dataUrl: rotated.dataUrl,
+          originalDataUrl: baseSource,
+          width: rotated.width,
+          height: rotated.height,
+        };
+        return updated;
+      });
+
+      if (pdfResult?.url) {
+        URL.revokeObjectURL(pdfResult.url);
+        setPdfResult(null);
+      }
+    } catch (err) {
+      console.error('Error rotating image:', err);
+    }
+  };
+
+  const rotateAllImages = async (deltaDegrees: number = 90) => {
+    if (images.length === 0) return;
+
+    try {
+      const updated = await Promise.all(
+        images.map(async (item) => {
+          const currentRotation = item.rotation || 0;
+          const newRotation = (((currentRotation + deltaDegrees) % 360) + 360) % 360;
+          const baseSource = item.originalDataUrl || item.dataUrl;
+          const rotated = await renderRotatedDataUrl(baseSource, newRotation);
+          return {
+            ...item,
+            rotation: newRotation,
+            dataUrl: rotated.dataUrl,
+            originalDataUrl: baseSource,
+            width: rotated.width,
+            height: rotated.height,
+          };
+        })
+      );
+      setImages(updated);
+
+      if (pdfResult?.url) {
+        URL.revokeObjectURL(pdfResult.url);
+        setPdfResult(null);
+      }
+    } catch (err) {
+      console.error('Error rotating all images:', err);
+    }
   };
 
   const removeImage = (id: string) => {
-    setImages((prev) => prev.filter((img) => img.id !== id));
+    setImages((prev) => {
+      const updated = prev.filter((img) => img.id !== id);
+      if (previewPageIndex >= updated.length) {
+        setPreviewPageIndex(Math.max(0, updated.length - 1));
+      }
+      return updated;
+    });
     if (images.length <= 1) {
+      if (pdfResult?.url) URL.revokeObjectURL(pdfResult.url);
       setPdfResult(null);
     }
   };
 
   const clearAll = () => {
+    if (pdfResult?.url) {
+      URL.revokeObjectURL(pdfResult.url);
+    }
     setImages([]);
+    setPreviewPageIndex(0);
     setPdfResult(null);
     setErrorMessage(null);
+    setShowPreviewModal(false);
   };
 
   const convertToPdf = async () => {
     if (images.length === 0) return;
     setIsConverting(true);
     setErrorMessage(null);
-    setPdfResult(null);
+
+    if (pdfResult?.url) {
+      URL.revokeObjectURL(pdfResult.url);
+      setPdfResult(null);
+    }
 
     try {
       const options: ImageToPdfOptions = {
@@ -145,6 +250,37 @@ export const ImageToPdfPage: React.FC = () => {
       setIsConverting(false);
       setConversionProgress(null);
     }
+  };
+
+  const safePreviewIndex = Math.min(previewPageIndex, Math.max(0, images.length - 1));
+  const currentPreviewImage = images[safePreviewIndex];
+
+  // Helper to determine aspect ratio and styling of the live simulated page
+  const getPageAspectStyle = () => {
+    if (!currentPreviewImage) return { aspectRatio: '595.28 / 841.89' };
+
+    if (pageSize === 'fit') {
+      return { aspectRatio: `${currentPreviewImage.width} / ${currentPreviewImage.height}` };
+    }
+
+    const isImageLandscape = currentPreviewImage.width > currentPreviewImage.height;
+    let isLandscape = false;
+    if (orientation === 'landscape') {
+      isLandscape = true;
+    } else if (orientation === 'auto') {
+      isLandscape = isImageLandscape;
+    }
+
+    const baseDim = pageSize === 'letter' ? { w: 612, h: 792 } : { w: 595.28, h: 841.89 };
+    return isLandscape
+      ? { aspectRatio: `${baseDim.h} / ${baseDim.w}` }
+      : { aspectRatio: `${baseDim.w} / ${baseDim.h}` };
+  };
+
+  const getMarginPaddingClass = () => {
+    if (margin === 'none') return 'p-0';
+    if (margin === 'small') return 'p-2 sm:p-3';
+    return 'p-3.5 sm:p-5';
   };
 
   return (
@@ -235,74 +371,123 @@ export const ImageToPdfPage: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <ImageIcon className="w-4 h-4 text-[#0B5D3B]" />
                     <h2 className="font-bold text-[#084A2E] text-sm sm:text-base font-serif">
-                      নির্বাচিত ছবি ({images.length}টি পৃষ্ঠা)
+                      নির্বাচিত ছবি ({toBanglaNum(images.length)}টি পৃষ্ঠা)
                     </h2>
                   </div>
-                  <button
-                    type="button"
-                    onClick={clearAll}
-                    className="text-xs text-[#c8342a] hover:underline flex items-center space-x-1 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>সব মুছুন</span>
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => rotateAllImages(90)}
+                      title="সবগুলো ছবি ৯০° ডানে ঘোরান"
+                      className="text-xs text-[#0B5D3B] hover:text-[#084A2E] bg-[#0B5D3B]/10 hover:bg-[#0B5D3B]/20 px-2 py-1 rounded-lg flex items-center space-x-1 cursor-pointer transition-colors"
+                    >
+                      <RotateCw className="w-3 h-3" />
+                      <span>সব পেজ ঘোরান</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={clearAll}
+                      className="text-xs text-[#c8342a] hover:underline flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>সব মুছুন</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-2.5 max-h-[440px] overflow-y-auto pr-1">
-                  {images.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-3 bg-[#FAFAF7] border border-[#D5E4DB] rounded-xl hover:border-[#0B5D3B]/40 transition-colors gap-3"
-                    >
-                      <div className="flex items-center space-x-3 min-w-0">
-                        <span className="w-6 h-6 rounded-full bg-[#0B5D3B]/10 text-[#0B5D3B] text-xs font-bold font-mono flex items-center justify-center shrink-0">
-                          {index + 1}
-                        </span>
-                        <img
-                          src={item.dataUrl}
-                          alt={item.name}
-                          className="w-12 h-12 object-cover rounded-lg border border-[#D5E4DB] shrink-0 bg-white"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-[#084A2E] truncate font-mono">
-                            {item.name}
-                          </p>
-                          <p className="text-[11px] text-[#4A5A52] font-mono">
-                            {item.width} × {item.height} px • {formatFileSize(item.sizeBytes)}
-                          </p>
+                  {images.map((item, index) => {
+                    const isSelected = index === safePreviewIndex;
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setPreviewPageIndex(index)}
+                        className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#0B5D3B]/5 border-[#0B5D3B] ring-1 ring-[#0B5D3B]/40 shadow-xs'
+                            : 'bg-[#FAFAF7] border-[#D5E4DB] hover:border-[#0B5D3B]/40'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <span
+                            className={`w-6 h-6 rounded-full text-xs font-bold font-mono flex items-center justify-center shrink-0 ${
+                              isSelected
+                                ? 'bg-[#0B5D3B] text-white'
+                                : 'bg-[#0B5D3B]/10 text-[#0B5D3B]'
+                            }`}
+                          >
+                            {index + 1}
+                          </span>
+                          <img
+                            src={item.dataUrl}
+                            alt={item.name}
+                            className="w-12 h-12 object-cover rounded-lg border border-[#D5E4DB] shrink-0 bg-white"
+                          />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-[#084A2E] truncate font-mono">
+                              {item.name}
+                            </p>
+                            <p className="text-[11px] text-[#4A5A52] font-mono">
+                              {item.width} × {item.height} px • {formatFileSize(item.sizeBytes)}
+                              {item.rotation ? ` • ${item.rotation}°` : ''}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div
+                          className="flex items-center space-x-1 shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setPreviewPageIndex(index)}
+                            title="প্রিভিউ দেখুন"
+                            className={`p-1.5 rounded-md cursor-pointer transition-colors ${
+                              isSelected
+                                ? 'bg-[#0B5D3B] text-white'
+                                : 'hover:bg-[#D5E4DB] text-[#084A2E]'
+                            }`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => rotateImage(index, 90)}
+                            title="৯০° ডানে ঘোরান"
+                            className="p-1.5 rounded-md hover:bg-[#D5E4DB] text-[#084A2E] cursor-pointer transition-colors"
+                          >
+                            <RotateCw className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={index === 0}
+                            onClick={() => moveImage(index, 'up')}
+                            title="উপরে নিন"
+                            className="p-1.5 rounded-md hover:bg-[#D5E4DB] text-[#084A2E] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                          >
+                            <ArrowUp className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={index === images.length - 1}
+                            onClick={() => moveImage(index, 'down')}
+                            title="নিচে নিন"
+                            className="p-1.5 rounded-md hover:bg-[#D5E4DB] text-[#084A2E] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                          >
+                            <ArrowDown className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeImage(item.id)}
+                            title="মুছে ফেলুন"
+                            className="p-1.5 rounded-md hover:bg-[#fde8e8] text-[#c8342a] cursor-pointer transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
-
-                      <div className="flex items-center space-x-1 shrink-0">
-                        <button
-                          type="button"
-                          disabled={index === 0}
-                          onClick={() => moveImage(index, 'up')}
-                          title="উপরে নিন"
-                          className="p-1.5 rounded-md hover:bg-[#D5E4DB] text-[#084A2E] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                        >
-                          <ArrowUp className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={index === images.length - 1}
-                          onClick={() => moveImage(index, 'down')}
-                          title="নিচে নিন"
-                          className="p-1.5 rounded-md hover:bg-[#D5E4DB] text-[#084A2E] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                        >
-                          <ArrowDown className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeImage(item.id)}
-                          title="মুছে ফেলুন"
-                          className="p-1.5 rounded-md hover:bg-[#fde8e8] text-[#c8342a] cursor-pointer transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -468,6 +653,96 @@ export const ImageToPdfPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Live Page Layout Preview */}
+              {images.length > 0 && currentPreviewImage && (
+                <div className="pt-2 border-t border-[#D5E4DB] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5 text-xs font-bold text-[#084A2E]">
+                      <Eye className="w-3.5 h-3.5 text-[#0B5D3B]" />
+                      <span>পেজ লেআউট প্রিভিউ</span>
+                    </div>
+                    <span className="text-[11px] font-mono font-bold text-[#0B5D3B] bg-[#0B5D3B]/10 px-2 py-0.5 rounded-full">
+                      পৃষ্ঠা {toBanglaNum(safePreviewIndex + 1)} / {toBanglaNum(images.length)}
+                    </span>
+                  </div>
+
+                  {/* Simulated Paper Sheet */}
+                  <div className="bg-[#E5ECE8]/50 p-3 rounded-xl flex items-center justify-center min-h-[190px]">
+                    <div
+                      style={getPageAspectStyle()}
+                      className={`w-full max-w-[170px] bg-white rounded shadow-sm border border-[#C5D7CC] flex items-center justify-center transition-all overflow-hidden ${getMarginPaddingClass()}`}
+                    >
+                      <img
+                        src={currentPreviewImage.dataUrl}
+                        alt={currentPreviewImage.name}
+                        className="max-w-full max-h-full object-contain select-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Image Rotation Controls */}
+                  <div className="flex items-center justify-between gap-1.5 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => rotateImage(safePreviewIndex, -90)}
+                      title="এই পৃষ্ঠাটি ৯০° বামে ঘোরান"
+                      className="flex-1 inline-flex items-center justify-center space-x-1 py-1.5 px-2 text-xs font-semibold rounded-lg border border-[#D5E4DB] bg-[#FAFAF7] hover:bg-[#F0F4F2] text-[#084A2E] cursor-pointer transition-colors shadow-xs"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-[#0B5D3B]" />
+                      <span>বামে ৯০°</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => rotateImage(safePreviewIndex, 90)}
+                      title="এই পৃষ্ঠাটি ৯০° ডানে ঘোরান"
+                      className="flex-1 inline-flex items-center justify-center space-x-1 py-1.5 px-2 text-xs font-semibold rounded-lg border border-[#D5E4DB] bg-[#FAFAF7] hover:bg-[#F0F4F2] text-[#084A2E] cursor-pointer transition-colors shadow-xs"
+                    >
+                      <RotateCw className="w-3.5 h-3.5 text-[#0B5D3B]" />
+                      <span>ডানে ৯০°</span>
+                    </button>
+                    {images.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => rotateAllImages(90)}
+                        title="সবগুলো ছবি একসাথে ৯০° ডানে ঘোরান"
+                        className="inline-flex items-center justify-center space-x-1 py-1.5 px-2 text-xs font-semibold rounded-lg border border-[#0B5D3B]/30 bg-[#0B5D3B]/5 hover:bg-[#0B5D3B]/10 text-[#0B5D3B] cursor-pointer transition-colors"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span className="hidden sm:inline">সবগুলো</span>
+                        <span>৯০°</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Pagination / Page switch controls */}
+                  {images.length > 1 && (
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <button
+                        type="button"
+                        disabled={safePreviewIndex === 0}
+                        onClick={() => setPreviewPageIndex(Math.max(0, safePreviewIndex - 1))}
+                        className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg border border-[#D5E4DB] hover:bg-[#F0F4F2] disabled:opacity-30 disabled:cursor-not-allowed text-[#084A2E] cursor-pointer"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span>আগের পৃষ্ঠা</span>
+                      </button>
+                      <span className="text-[11px] text-[#4A5A52] font-mono">
+                        {safePreviewIndex + 1} / {images.length}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={safePreviewIndex === images.length - 1}
+                        onClick={() => setPreviewPageIndex(Math.min(images.length - 1, safePreviewIndex + 1))}
+                        className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg border border-[#D5E4DB] hover:bg-[#F0F4F2] disabled:opacity-30 disabled:cursor-not-allowed text-[#084A2E] cursor-pointer"
+                      >
+                        <span>পরের পৃষ্ঠা</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Convert Button */}
               <div className="pt-2">
                 <button
@@ -493,20 +768,30 @@ export const ImageToPdfPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Result Download Card */}
+            {/* Result & PDF Viewer Card */}
             {pdfResult && (
-              <div className="bg-[#FFFFFF] border-2 border-[#0B5D3B] p-6 rounded-2xl shadow-sm space-y-4 animate-fadeIn">
-                <div className="flex items-center space-x-2 text-[#0B5D3B]">
-                  <CheckCircle2 className="w-5 h-5" />
-                  <h3 className="font-bold text-base text-[#084A2E] font-serif">
-                    পিডিএফ সফলভাবে তৈরি হয়েছে!
-                  </h3>
+              <div className="bg-[#FFFFFF] border-2 border-[#0B5D3B] p-5 sm:p-6 rounded-2xl shadow-sm space-y-4 animate-fadeIn">
+                <div className="flex items-center justify-between text-[#0B5D3B]">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#0B5D3B]" />
+                    <h3 className="font-bold text-base text-[#084A2E] font-serif">
+                      পিডিএফ তৈরি সম্পন্ন!
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowPreviewModal(true)}
+                    className="inline-flex items-center space-x-1 text-xs font-semibold text-[#0B5D3B] hover:text-[#084A2E] bg-[#0B5D3B]/10 hover:bg-[#0B5D3B]/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>বড় পর্দায় দেখুন</span>
+                  </button>
                 </div>
 
                 <div className="bg-[#F0F4F2] p-3 rounded-xl border border-[#D5E4DB] space-y-1 text-xs font-mono">
                   <div className="flex justify-between">
                     <span className="text-[#4A5A52]">মোট পৃষ্ঠা:</span>
-                    <span className="font-bold text-[#084A2E]">{pdfResult.count}টি</span>
+                    <span className="font-bold text-[#084A2E]">{toBanglaNum(pdfResult.count)}টি</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#4A5A52]">পিডিএফ সাইজ:</span>
@@ -516,6 +801,33 @@ export const ImageToPdfPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Embedded PDF Viewer */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs text-[#4A5A52]">
+                    <span className="font-bold text-[#084A2E] flex items-center space-x-1">
+                      <FileText className="w-3.5 h-3.5 text-[#0B5D3B]" />
+                      <span>ডকুমেন্ট প্রিভিউ:</span>
+                    </span>
+                    <a
+                      href={pdfResult.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#0B5D3B] hover:underline flex items-center space-x-0.5"
+                    >
+                      <span>নতুন ট্যাবে খুলুন</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                  <div className="relative rounded-xl border border-[#D5E4DB] overflow-hidden bg-white shadow-inner h-72">
+                    <iframe
+                      src={`${pdfResult.url}#toolbar=0&navpanes=0`}
+                      title="PDF Preview"
+                      className="w-full h-full border-0"
+                    />
+                  </div>
+                </div>
+
+                {/* Download Button */}
                 <a
                   href={pdfResult.url}
                   download="utools-images.pdf"
@@ -528,6 +840,49 @@ export const ImageToPdfPage: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Fullscreen PDF Preview Modal */}
+        {showPreviewModal && pdfResult && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 sm:p-6 backdrop-blur-xs animate-fadeIn">
+            <div className="bg-white rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-[#D5E4DB]">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-5 py-3.5 bg-[#F0F4F2] border-b border-[#D5E4DB]">
+                <div className="flex items-center space-x-2">
+                  <FileText className="w-5 h-5 text-[#0B5D3B]" />
+                  <h3 className="font-bold text-[#084A2E] text-base font-serif">
+                    পিডিএফ প্রিভিউ ({toBanglaNum(pdfResult.count)}টি পৃষ্ঠা • {formatFileSize(pdfResult.size)})
+                  </h3>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <a
+                    href={pdfResult.url}
+                    download="utools-images.pdf"
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#0B5D3B] text-white text-xs font-semibold rounded-lg hover:bg-[#084A2E] transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>ডাউনলোড</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setShowPreviewModal(false)}
+                    className="p-1.5 rounded-lg hover:bg-[#D5E4DB] text-[#4A5A52] hover:text-[#084A2E] cursor-pointer transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Iframe Body */}
+              <div className="flex-1 w-full bg-[#FAFAF7]">
+                <iframe
+                  src={pdfResult.url}
+                  title="PDF Fullscreen Preview"
+                  className="w-full h-full border-0"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Feature Highlights Grid */}
         <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-8 space-y-6 rounded-2xl">

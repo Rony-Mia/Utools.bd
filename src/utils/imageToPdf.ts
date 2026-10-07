@@ -9,6 +9,8 @@ export interface ImageToPdfItem {
   name: string;
   sizeBytes: number;
   dataUrl: string;
+  originalDataUrl?: string;
+  rotation?: number;
   width: number;
   height: number;
 }
@@ -159,3 +161,60 @@ export function formatFileSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
+
+/**
+ * Renders an image dataURL rotated by specified degrees (0, 90, 180, 270)
+ * Always creates a clean rotated image on canvas with exact swapped width and height.
+ */
+export function renderRotatedDataUrl(
+  dataUrl: string,
+  degrees: number
+): Promise<{ dataUrl: string; width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const angle = ((degrees % 360) + 360) % 360;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      if (angle === 0) {
+        resolve({
+          dataUrl,
+          width: img.naturalWidth || img.width,
+          height: img.naturalHeight || img.height,
+        });
+        return;
+      }
+
+      const is90or270 = angle === 90 || angle === 270;
+      const naturalW = img.naturalWidth || img.width;
+      const naturalH = img.naturalHeight || img.height;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = is90or270 ? naturalH : naturalW;
+      canvas.height = is90or270 ? naturalW : naturalH;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas 2D context not available'));
+        return;
+      }
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((angle * Math.PI) / 180);
+      ctx.drawImage(img, -naturalW / 2, -naturalH / 2);
+      ctx.restore();
+
+      resolve({
+        dataUrl: canvas.toDataURL('image/jpeg', 0.95),
+        width: canvas.width,
+        height: canvas.height,
+      });
+    };
+    img.onerror = (err) => reject(err);
+    img.src = dataUrl;
+  });
+}
+
