@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { ToolBreadcrumb } from '../components/ToolBreadcrumb.tsx';
 import {
@@ -68,6 +69,23 @@ export const ImageToPdfPage: React.FC = () => {
       }
     };
   }, [pdfResult]);
+
+  // Close modal on Escape key and lock background scroll
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowPreviewModal(false);
+      }
+    };
+    if (showPreviewModal) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [showPreviewModal]);
 
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -841,48 +859,59 @@ export const ImageToPdfPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Fullscreen PDF Preview Modal */}
-        {showPreviewModal && pdfResult && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 sm:p-6 backdrop-blur-xs animate-fadeIn">
-            <div className="bg-white rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-[#D5E4DB]">
-              {/* Modal Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 bg-[#F0F4F2] border-b border-[#D5E4DB]">
-                <div className="flex items-center space-x-2">
-                  <FileText className="w-5 h-5 text-[#0B5D3B]" />
-                  <h3 className="font-bold text-[#084A2E] text-base font-serif">
-                    পিডিএফ প্রিভিউ ({toBanglaNum(pdfResult.count)}টি পৃষ্ঠা • {formatFileSize(pdfResult.size)})
-                  </h3>
+        {/* Fullscreen PDF Preview Modal (Portal to body so it sits above navbar and all site chrome) */}
+        {showPreviewModal &&
+          pdfResult &&
+          typeof document !== 'undefined' &&
+          createPortal(
+            <div
+              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 p-3 sm:p-5 md:p-8 backdrop-blur-sm animate-fadeIn"
+              onClick={() => setShowPreviewModal(false)}
+            >
+              <div
+                className="bg-white rounded-2xl w-full max-w-5xl h-[92vh] max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-[#D5E4DB]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Modal Header */}
+                <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 bg-[#F0F4F2] border-b border-[#D5E4DB] shrink-0">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    <FileText className="w-5 h-5 text-[#0B5D3B] shrink-0" />
+                    <h3 className="font-bold text-[#084A2E] text-sm sm:text-base font-serif truncate">
+                      পিডিএফ প্রিভিউ ({toBanglaNum(pdfResult.count)}টি পৃষ্ঠা • {formatFileSize(pdfResult.size)})
+                    </h3>
+                  </div>
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <a
+                      href={pdfResult.url}
+                      download="utools-images.pdf"
+                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#0B5D3B] text-white text-xs font-semibold rounded-lg hover:bg-[#084A2E] transition-colors shadow-xs"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>ডাউনলোড</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setShowPreviewModal(false)}
+                      title="বন্ধ করুন (Esc)"
+                      className="p-1.5 rounded-lg bg-white hover:bg-[#fde8e8] text-[#4A5A52] hover:text-[#c8342a] border border-[#D5E4DB] hover:border-[#f8b4b4] cursor-pointer transition-colors shadow-xs"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <a
-                    href={pdfResult.url}
-                    download="utools-images.pdf"
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#0B5D3B] text-white text-xs font-semibold rounded-lg hover:bg-[#084A2E] transition-colors"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>ডাউনলোড</span>
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setShowPreviewModal(false)}
-                    className="p-1.5 rounded-lg hover:bg-[#D5E4DB] text-[#4A5A52] hover:text-[#084A2E] cursor-pointer transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
 
-              {/* Modal Iframe Body */}
-              <div className="flex-1 w-full bg-[#FAFAF7]">
-                <iframe
-                  src={pdfResult.url}
-                  title="PDF Fullscreen Preview"
-                  className="w-full h-full border-0"
-                />
+                {/* Modal Iframe Body */}
+                <div className="flex-1 w-full bg-[#FAFAF7] relative overflow-hidden">
+                  <iframe
+                    src={pdfResult.url}
+                    title="PDF Fullscreen Preview"
+                    className="w-full h-full border-0"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </div>,
+            document.body
+          )}
 
         {/* Feature Highlights Grid */}
         <section className="bg-[#FFFFFF] border border-[#D5E4DB] p-6 sm:p-8 space-y-6 rounded-2xl">

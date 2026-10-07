@@ -56,7 +56,7 @@ export default function App({ helmetContext }: AppProps) {
         />
 
         {/* Main Content Area */}
-        <main className="flex-grow relative z-10">
+        <main className="flex-grow relative">
           <AppRoutes
             selectedCategory={selectedCategory}
             onSelectCategory={(cat) => setSelectedCategory(cat)}
