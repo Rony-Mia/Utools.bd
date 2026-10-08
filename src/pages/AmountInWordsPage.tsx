@@ -51,6 +51,8 @@ export const AmountInWordsPage: React.FC = () => {
   // Copy notification states
   const { copied: copiedPrimary, copy: copyPrimary } = useCopyToClipboard();
   const { copied: copiedColloquial, copy: copyColloquial } = useCopyToClipboard();
+  const { copied: copiedEnglish, copy: copyEnglish } = useCopyToClipboard();
+  const { copied: copiedEnglishIntl, copy: copyEnglishIntl } = useCopyToClipboard();
 
   // Active view style toggle for amounts with colloquial options
   const [useColloquialIfAvailable, setUseColloquialIfAvailable] = useState<boolean>(false);
@@ -81,14 +83,14 @@ export const AmountInWordsPage: React.FC = () => {
         title={pageContent.metaTitle}
         description={pageContent.metaDescription}
         canonicalUrl="https://utools.bd/amount-in-words"
-        toolName="টাকা → কথায় কনভার্টার"
+        toolName="টাকা → কথায় কনভার্টার (বাংলা ও English)"
         categoryName="ক্যালকুলেটর"
         faqs={pageContent.faqs || []}
       />
 
       {/* Top Breadcrumb & Privacy Guarantee */}
       <ToolBreadcrumb
-        toolName="টাকা কথায় রূপান্তরক"
+        toolName="টাকা কথায় রূপান্তরক (বাংলা ও English)"
         categoryName="হিসাব ও ক্যালকুলেটর"
         categoryPath="/amount-in-words"
         privacyText="১০০% ক্লায়েন্ট-সাইড • কোনো তথ্য সার্ভারে যায় না"
@@ -212,7 +214,7 @@ export const AmountInWordsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-[#D5E4DB]">
               <span className="text-xs font-bold text-[#084A2E] font-serif uppercase tracking-wider flex items-center space-x-1.5">
                 <FileCheck className="w-4 h-4 text-[#0B5D3B]" />
-                <span>কথায় রূপান্তর (In Words)</span>
+                <span>কথায় রূপান্তর (বাংলা ও English In Words)</span>
               </span>
 
               {result.isValid && result.words && (
@@ -283,6 +285,70 @@ export const AmountInWordsPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* English In Words Box */}
+                {result.englishWords && (
+                  <div className="p-4 sm:p-5 bg-[#F0F4F2]/50 border border-[#D5E4DB] space-y-2 rounded-2xl">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs font-semibold text-[#0B5D3B] uppercase tracking-wider font-mono">
+                          ইংরেজিতে রূপান্তর (In Words in English):
+                        </span>
+                        <span className="text-[10px] bg-[#0B5D3B]/10 text-[#0B5D3B] px-2 py-0.5 font-sans font-medium rounded">
+                          Bank Format
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => copyEnglish(result.englishWords || '')}
+                        className="text-[11px] border border-[#D5E4DB] bg-white hover:bg-[#F0F4F2] px-2.5 py-1 text-[#084A2E] flex items-center space-x-1 transition-colors cursor-pointer font-medium rounded-lg shadow-2xs"
+                      >
+                        {copiedEnglish ? (
+                          <>
+                            <Check className="w-3 h-3 text-[#0B5D3B]" />
+                            <span className="text-[#0B5D3B]">কপি হয়েছে</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>ইংরেজি কপি</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="text-lg sm:text-xl font-bold font-serif text-[#084A2E] leading-relaxed">
+                      {result.englishWords}
+                    </div>
+
+                    {/* International Million / Billion Variant (if different and >= 10 Lakh) */}
+                    {result.englishInternationalWords && result.englishInternationalWords !== result.englishWords && (
+                      <div className="pt-2 border-t border-[#D5E4DB]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <div>
+                          <span className="text-[11px] text-[#4A5A52] block font-mono">
+                            আন্তর্জাতিক রূপ (Million / Billion):
+                          </span>
+                          <span className="font-semibold text-[#0F1F17]">
+                            {result.englishInternationalWords}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => copyEnglishIntl(result.englishInternationalWords || '')}
+                          className="self-start sm:self-center text-[11px] border border-[#D5E4DB] bg-white hover:bg-[#F0F4F2] px-2 py-0.5 text-[#084A2E] flex items-center space-x-1 cursor-pointer rounded shrink-0"
+                        >
+                          {copiedEnglishIntl ? (
+                            <span className="text-[#0B5D3B]">কপি হয়েছে</span>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3" />
+                              <span>কপি</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Numbers Comparison Breakdown Bar */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
                   <div className="bg-[#F0F4F2]/40 border border-[#D5E4DB] p-3 space-y-1 rounded-2xl">
@@ -306,7 +372,7 @@ export const AmountInWordsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Quick Copy Variations (With Matra / Without Matra) */}
+                {/* Quick Copy Variations (With Matra / Without Matra / English) */}
                 <div className="pt-2 border-t border-[#D5E4DB] flex flex-wrap items-center gap-2 text-xs">
                   <span className="text-[#4A5A52] font-medium">কুইক কপি অপশন:</span>
                   <button
@@ -323,6 +389,24 @@ export const AmountInWordsPage: React.FC = () => {
                       className="border border-[#D5E4DB] bg-[#F0F4F2] hover:bg-[#D5E4DB]/60 px-2.5 py-1 text-[#0F1F17] transition-colors cursor-pointer rounded-lg"
                     >
                       &quot;মাত্র&quot; ছাড়া কপি
+                    </button>
+                  )}
+                  {result.englishWords && (
+                    <button
+                      type="button"
+                      onClick={() => copyEnglish(result.englishWords || '')}
+                      className="border border-[#D5E4DB] bg-[#F0F4F2] hover:bg-[#D5E4DB]/60 px-2.5 py-1 text-[#0F1F17] transition-colors cursor-pointer rounded-lg"
+                    >
+                      English (&quot;Only&quot; সহ)
+                    </button>
+                  )}
+                  {result.englishWordsWithoutOnly && (
+                    <button
+                      type="button"
+                      onClick={() => copyEnglish(result.englishWordsWithoutOnly || '')}
+                      className="border border-[#D5E4DB] bg-[#F0F4F2] hover:bg-[#D5E4DB]/60 px-2.5 py-1 text-[#0F1F17] transition-colors cursor-pointer rounded-lg"
+                    >
+                      English (&quot;Only&quot; ছাড়া)
                     </button>
                   )}
                   <button

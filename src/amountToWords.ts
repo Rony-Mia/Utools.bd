@@ -170,8 +170,155 @@ export interface ConversionResult {
   words?: string;
   wordsWithoutMatra?: string;
   colloquialWords?: string;
+  englishWords?: string;
+  englishWordsWithoutOnly?: string;
+  englishInternationalWords?: string;
   warning?: string;
   error?: string;
+}
+
+const EN_ONES = [
+  '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+  'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+];
+
+const EN_TENS = [
+  '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+];
+
+export function convertUnderThousandToEnglish(n: number): string {
+  const parts: string[] = [];
+  if (n >= 100) {
+    const hundreds = Math.floor(n / 100);
+    parts.push(`${EN_ONES[hundreds]} Hundred`);
+    n %= 100;
+  }
+  if (n >= 20) {
+    const tens = Math.floor(n / 10);
+    const ones = n % 10;
+    if (ones > 0) {
+      parts.push(`${EN_TENS[tens]} ${EN_ONES[ones]}`);
+    } else {
+      parts.push(EN_TENS[tens]);
+    }
+  } else if (n > 0) {
+    parts.push(EN_ONES[n]);
+  }
+  return parts.join(' ');
+}
+
+/**
+ * Converts integer to English words using South Asian numbering (Lakh, Crore)
+ * standard in Bangladeshi bank checks and official deeds.
+ */
+export function convertIntegerToEnglishWordsLakhCrore(n: number): string {
+  if (n === 0) return 'Zero';
+
+  const parts: string[] = [];
+
+  // Crore (1,00,00,000)
+  if (n >= 10000000) {
+    const crores = Math.floor(n / 10000000);
+    parts.push(`${convertIntegerToEnglishWordsLakhCrore(crores)} Crore`);
+    n %= 10000000;
+  }
+
+  // Lakh (1,00,000)
+  if (n >= 100000) {
+    const lakhs = Math.floor(n / 100000);
+    parts.push(`${convertUnderThousandToEnglish(lakhs)} Lakh`);
+    n %= 100000;
+  }
+
+  // Thousand (1,000)
+  if (n >= 1000) {
+    const thousands = Math.floor(n / 1000);
+    parts.push(`${convertUnderThousandToEnglish(thousands)} Thousand`);
+    n %= 1000;
+  }
+
+  // Remainder (< 1,000)
+  if (n > 0) {
+    parts.push(convertUnderThousandToEnglish(n));
+  }
+
+  return parts.join(' ');
+}
+
+/**
+ * Converts integer to English words using International Western numbering (Million, Billion)
+ */
+export function convertIntegerToEnglishWordsInternational(n: number): string {
+  if (n === 0) return 'Zero';
+
+  const parts: string[] = [];
+
+  // Billion (1,000,000,000)
+  if (n >= 1000000000) {
+    const billions = Math.floor(n / 1000000000);
+    parts.push(`${convertUnderThousandToEnglish(billions)} Billion`);
+    n %= 1000000000;
+  }
+
+  // Million (1,000,000)
+  if (n >= 1000000) {
+    const millions = Math.floor(n / 1000000);
+    parts.push(`${convertUnderThousandToEnglish(millions)} Million`);
+    n %= 1000000;
+  }
+
+  // Thousand (1,000)
+  if (n >= 1000) {
+    const thousands = Math.floor(n / 1000);
+    parts.push(`${convertUnderThousandToEnglish(thousands)} Thousand`);
+    n %= 1000;
+  }
+
+  // Remainder (< 1,000)
+  if (n > 0) {
+    parts.push(convertUnderThousandToEnglish(n));
+  }
+
+  return parts.join(' ');
+}
+
+/**
+ * Formats full English words with Taka and Paisa
+ */
+export function formatAmountInEnglishWords(
+  integerVal: number,
+  paisaVal: number,
+  system: 'lakh-crore' | 'international' = 'lakh-crore'
+): { fullWords: string; wordsWithoutOnly: string } {
+  if (integerVal === 0 && paisaVal === 0) {
+    return {
+      fullWords: 'Zero Taka Only',
+      wordsWithoutOnly: 'Zero Taka',
+    };
+  }
+
+  const parts: string[] = [];
+
+  if (integerVal > 0) {
+    const intWords = system === 'lakh-crore'
+      ? convertIntegerToEnglishWordsLakhCrore(integerVal)
+      : convertIntegerToEnglishWordsInternational(integerVal);
+    parts.push(`${intWords} Taka`);
+  }
+
+  if (paisaVal > 0) {
+    const paisaWords = convertUnderThousandToEnglish(paisaVal);
+    if (parts.length > 0) {
+      parts.push(`and ${paisaWords} Paisa`);
+    } else {
+      parts.push(`${paisaWords} Paisa`);
+    }
+  }
+
+  const wordsWithoutOnly = parts.join(' ');
+  const fullWords = `${wordsWithoutOnly} Only`;
+
+  return { fullWords, wordsWithoutOnly };
 }
 
 /**
@@ -371,6 +518,8 @@ export function convertAmountToBengaliWords(input: string): ConversionResult {
       formattedEnglishNumber: '0.00',
       words: 'শূন্য টাকা মাত্র',
       wordsWithoutMatra: 'শূন্য টাকা',
+      englishWords: 'Zero Taka Only',
+      englishWordsWithoutOnly: 'Zero Taka',
       warning
     };
   }
@@ -405,6 +554,16 @@ export function convertAmountToBengaliWords(input: string): ConversionResult {
     }
   }
 
+  // English In Words representation (Lakh/Crore for Bangladeshi banking and Million/Billion international)
+  const enLakhCrore = formatAmountInEnglishWords(adjustedInteger, paisa, 'lakh-crore');
+  const enInternational = formatAmountInEnglishWords(adjustedInteger, paisa, 'international');
+
+  const englishWords = enLakhCrore.fullWords;
+  const englishWordsWithoutOnly = enLakhCrore.wordsWithoutOnly;
+  const englishInternationalWords = (adjustedInteger >= 1000000)
+    ? enInternational.fullWords
+    : undefined;
+
   // Formatted representations
   const formattedRawEn = formatBangladeshiCurrency(
     paisa > 0 ? `${adjustedInteger}.${String(paisa).padStart(2, '0')}` : `${adjustedInteger}`
@@ -420,6 +579,9 @@ export function convertAmountToBengaliWords(input: string): ConversionResult {
     words: officialWording,
     wordsWithoutMatra: fullSentenceWithoutMatra,
     colloquialWords,
+    englishWords,
+    englishWordsWithoutOnly,
+    englishInternationalWords,
     warning
   };
 }
